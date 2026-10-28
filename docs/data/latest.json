@@ -1,0 +1,996 @@
+{
+ "date": "2026-10-28",
+ "generated": "2026-10-28T18:27:39-04:00",
+ "generated_label": "Oct 28, 2026 at 6:27 PM ET",
+ "events": [
+  {
+   "time": "2:00 PM",
+   "ts": "2026-10-28T14:00:00-04:00",
+   "title": "Federal Funds Rate",
+   "impact": "High",
+   "forecast": "4.00%",
+   "previous": "4.00%"
+  },
+  {
+   "time": "2:00 PM",
+   "ts": "2026-10-28T14:00:00-04:00",
+   "title": "FOMC Statement",
+   "impact": "High",
+   "forecast": "",
+   "previous": ""
+  },
+  {
+   "time": "2:30 PM",
+   "ts": "2026-10-28T14:30:00-04:00",
+   "title": "FOMC Press Conference",
+   "impact": "High",
+   "forecast": "",
+   "previous": ""
+  }
+ ],
+ "macro": {
+  "CL=F": {
+   "last": 102.04,
+   "chg_pct": 0.69
+  },
+  "DX-Y.NYB": {
+   "last": 102.155,
+   "chg_pct": -0.24
+  },
+  "ES=F": {
+   "last": 7753.5,
+   "chg_pct": -0.12
+  },
+  "NQ=F": {
+   "last": 29699.75,
+   "chg_pct": -0.78
+  },
+  "^TNX": {
+   "last": 5.045,
+   "chg_pct": 1.04
+  },
+  "^VIX": {
+   "last": 16.91,
+   "chg_pct": -3.43
+  },
+  "^VIX3M": {
+   "last": 19.22,
+   "chg_pct": -1.99
+  },
+  "^VXN": {
+   "last": 23.78,
+   "chg_pct": -4.88
+  }
+ },
+ "markets": {
+  "NQ": {
+   "name": "Nasdaq-100 futures",
+   "bias": {
+    "bias": "Bearish",
+    "score": -0.214,
+    "conviction": "Low",
+    "ups": 3,
+    "downs": 5,
+    "total": 12,
+    "overall": "Bearish, low-conviction read on NQ for the New York morning (09:30\u201312:00 ET). The case rests on Gamma flip, Wall range, Overnight session. Working against it: Vanna (vega \u2192 delta), VXN overnight. Dealers are net short gamma at 29,700, so expect wider ranges and follow-through on breaks. Mega-cap earnings in play: MSFT (after close), GOOGL (after close).",
+    "invalidation": "A reclaim and hold above the gamma flip at 30,076"
+   },
+   "signals": [
+    {
+     "key": "flip",
+     "label": "Gamma flip",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.5,
+     "text": "Price is 375.84 pts below the gamma flip (30,075.59). Below the flip dealers are short gamma, so their hedging sells into weakness and buys into strength. Moves extend, and drawdowns get sharper.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "tilt",
+     "label": "Gamma tilt",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Call \u00f7 put gamma is 0.72. Put-heavy positioning: hedges sit below, and dealers sell as price falls.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "walls",
+     "label": "Wall range",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.0,
+     "text": "Put wall 29,050 to call wall 29,950: 250 pts of room up vs 650 down. Pressed against the call wall, where dealer supply tends to cap rallies.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "charm",
+     "label": "Charm (theta \u2192 delta)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "Time decay alone shifts dealer hedges by $0.00B into the close. Small relative to positioning.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "vanna",
+     "label": "Vanna (vega \u2192 delta)",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VXN down 1.22 pts overnight. Through vanna that is about $3.30B of dealer buying. Falling implied vol forces hedge buy-backs, which is supportive.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "flow",
+     "label": "Options flow (prior session)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "Short-dated premium: calls $200.0M vs puts $173.9M (put/call 0.87). Balanced.",
+     "group": "Options flow"
+    },
+    {
+     "key": "volchg",
+     "label": "VXN overnight",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VXN 23.78 (-4.9%). Fear bleeding out. Vol sellers are back in control.",
+     "group": "Volatility"
+    },
+    {
+     "key": "term",
+     "label": "Vol term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX \u00f7 VIX3M = 0.88. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "overnight",
+     "label": "Overnight session",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.0,
+     "text": "Futures -0.78% vs settlement (29,699.75). Selling came in overnight.",
+     "group": "Macro"
+    },
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.0,
+     "text": "10Y at 5.05% (+5.2 bp). Higher discount rates squeeze long-duration growth multiples.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "DXY 102.15 (-0.24%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 102.04 (+0.7%). No energy shock in play.",
+     "group": "Macro"
+    }
+   ],
+   "changed": null,
+   "expected_range": {
+    "move": 511.64,
+    "low": 29188.11,
+    "high": 30211.39,
+    "basis": "VXN implied, gamma-adjusted"
+   },
+   "levels": {
+    "price": 29699.75,
+    "flip": 30075.59,
+    "flip_close": null,
+    "call_wall": 29950,
+    "put_wall": 29050,
+    "majors": [
+     {
+      "level": 28225,
+      "net_gex": -604009670.9152732
+     },
+     {
+      "level": 28625,
+      "net_gex": -789071584.5025039
+     },
+     {
+      "level": 29050,
+      "net_gex": -941355190.0317132
+     },
+     {
+      "level": 29475,
+      "net_gex": -599476574.6044436
+     },
+     {
+      "level": 29950,
+      "net_gex": 787282550.3208405
+     }
+    ]
+   },
+   "dealer": {
+    "net_gex_bn": -4.967,
+    "dealer_delta_bn": 185.01,
+    "call_put_gamma": 0.72,
+    "charm_bn": -0.0,
+    "vanna_bn_per_pt": 2.706,
+    "chains": [
+     "NDX",
+     "QQQ"
+    ]
+   },
+   "flow": {
+    "calls_m": 200.0,
+    "puts_m": 173.9,
+    "top": [
+     {
+      "level": 30100,
+      "side": "call",
+      "premium": 21360735.0
+     },
+     {
+      "level": 30000,
+      "side": "call",
+      "premium": 20946158.5
+     },
+     {
+      "level": 29975,
+      "side": "call",
+      "premium": 20367658.0
+     },
+     {
+      "level": 29975,
+      "side": "put",
+      "premium": 16347758.5
+     },
+     {
+      "level": 29875,
+      "side": "put",
+      "premium": 16324920.5
+     }
+    ]
+   },
+   "profile": [
+    {
+     "px": 27917.76,
+     "gex": -11436274932.44903
+    },
+    {
+     "px": 27977.16,
+     "gex": -11550873921.654303
+    },
+    {
+     "px": 28036.56,
+     "gex": -11657243422.258472
+    },
+    {
+     "px": 28095.96,
+     "gex": -11753995819.592216
+    },
+    {
+     "px": 28155.36,
+     "gex": -11839642199.33864
+    },
+    {
+     "px": 28214.76,
+     "gex": -11912600549.43338
+    },
+    {
+     "px": 28274.16,
+     "gex": -11971206651.868351
+    },
+    {
+     "px": 28333.56,
+     "gex": -12013727795.357788
+    },
+    {
+     "px": 28392.96,
+     "gex": -12038379401.065212
+    },
+    {
+     "px": 28452.36,
+     "gex": -12043344551.26005
+    },
+    {
+     "px": 28511.76,
+     "gex": -12026796186.045803
+    },
+    {
+     "px": 28571.16,
+     "gex": -11986921338.7503
+    },
+    {
+     "px": 28630.56,
+     "gex": -11921946214.566856
+    },
+    {
+     "px": 28689.96,
+     "gex": -11830160257.8581
+    },
+    {
+     "px": 28749.36,
+     "gex": -11709936775.935781
+    },
+    {
+     "px": 28808.76,
+     "gex": -11559747443.54442
+    },
+    {
+     "px": 28868.16,
+     "gex": -11378168369.715736
+    },
+    {
+     "px": 28927.56,
+     "gex": -11163876551.04966
+    },
+    {
+     "px": 28986.96,
+     "gex": -10915637463.057358
+    },
+    {
+     "px": 29046.36,
+     "gex": -10632287011.57386
+    },
+    {
+     "px": 29105.76,
+     "gex": -10312713613.604778
+    },
+    {
+     "px": 29165.15,
+     "gex": -9955848214.665224
+    },
+    {
+     "px": 29224.55,
+     "gex": -9560671020.084995
+    },
+    {
+     "px": 29283.95,
+     "gex": -9126243227.654528
+    },
+    {
+     "px": 29343.35,
+     "gex": -8651769939.072002
+    },
+    {
+     "px": 29402.75,
+     "gex": -8136696769.858322
+    },
+    {
+     "px": 29462.15,
+     "gex": -7580837742.445068
+    },
+    {
+     "px": 29521.55,
+     "gex": -6984526298.273282
+    },
+    {
+     "px": 29580.95,
+     "gex": -6348775394.208024
+    },
+    {
+     "px": 29640.35,
+     "gex": -5675427606.131924
+    },
+    {
+     "px": 29699.75,
+     "gex": -4967273086.369112
+    },
+    {
+     "px": 29759.15,
+     "gex": -4228113213.3409243
+    },
+    {
+     "px": 29818.55,
+     "gex": -3462751552.780346
+    },
+    {
+     "px": 29877.95,
+     "gex": -2676901329.0735927
+    },
+    {
+     "px": 29937.35,
+     "gex": -1877009119.5240762
+    },
+    {
+     "px": 29996.75,
+     "gex": -1070006299.6030989
+    },
+    {
+     "px": 30056.15,
+     "gex": -263010814.9228053
+    },
+    {
+     "px": 30115.55,
+     "gex": 536989920.2709064
+    },
+    {
+     "px": 30174.95,
+     "gex": 1323440421.388924
+    },
+    {
+     "px": 30234.35,
+     "gex": 2090469806.6787047
+    },
+    {
+     "px": 30293.74,
+     "gex": 2833069581.324557
+    },
+    {
+     "px": 30353.14,
+     "gex": 3547181539.8014736
+    },
+    {
+     "px": 30412.54,
+     "gex": 4229694419.3494616
+    },
+    {
+     "px": 30471.94,
+     "gex": 4878361558.487797
+    },
+    {
+     "px": 30531.34,
+     "gex": 5491662836.047674
+    },
+    {
+     "px": 30590.74,
+     "gex": 6068640448.587326
+    },
+    {
+     "px": 30650.14,
+     "gex": 6608738502.838648
+    },
+    {
+     "px": 30709.54,
+     "gex": 7111671173.335626
+    },
+    {
+     "px": 30768.94,
+     "gex": 7577334815.14609
+    },
+    {
+     "px": 30828.34,
+     "gex": 8005768299.074824
+    },
+    {
+     "px": 30887.74,
+     "gex": 8397155510.634871
+    },
+    {
+     "px": 30947.14,
+     "gex": 8751856493.531933
+    },
+    {
+     "px": 31006.54,
+     "gex": 9070450240.964046
+    },
+    {
+     "px": 31065.94,
+     "gex": 9353772681.605274
+    },
+    {
+     "px": 31125.34,
+     "gex": 9602937118.556995
+    },
+    {
+     "px": 31184.74,
+     "gex": 9819329899.878874
+    },
+    {
+     "px": 31244.14,
+     "gex": 10004579988.743717
+    },
+    {
+     "px": 31303.54,
+     "gex": 10160506175.041136
+    },
+    {
+     "px": 31362.94,
+     "gex": 10289049181.675861
+    },
+    {
+     "px": 31422.34,
+     "gex": 10392197590.387333
+    },
+    {
+     "px": 31481.74,
+     "gex": 10471916457.758202
+    }
+   ],
+   "earnings": [
+    {
+     "symbol": "MSFT",
+     "when": "after close",
+     "eps_est": "$4.71"
+    },
+    {
+     "symbol": "GOOGL",
+     "when": "after close",
+     "eps_est": "$2.94"
+    }
+   ],
+   "scorecard": {
+    "hits": 0,
+    "misses": 0,
+    "recent": []
+   }
+  },
+  "ES": {
+   "name": "S&P 500 futures",
+   "bias": {
+    "bias": "Bullish",
+    "score": 0.22,
+    "conviction": "Low",
+    "ups": 5,
+    "downs": 2,
+    "total": 12,
+    "overall": "Bullish, low-conviction read on ES for the New York morning (09:30\u201312:00 ET). The case rests on Wall range, Vanna (vega \u2192 delta), VIX overnight. Working against it: Gamma flip, 10-year yield. Dealers are net short gamma at 7,754, so expect wider ranges and follow-through on breaks. Mega-cap earnings in play: MSFT (after close), GOOGL (after close).",
+    "invalidation": "Failure to reclaim the gamma flip at 7,777, or a break of the put wall at 7,740"
+   },
+   "signals": [
+    {
+     "key": "flip",
+     "label": "Gamma flip",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.5,
+     "text": "Price is 23.55 pts below the gamma flip (7,777.05). Below the flip dealers are short gamma, so their hedging sells into weakness and buys into strength. Moves extend, and drawdowns get sharper.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "tilt",
+     "label": "Gamma tilt",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "Call \u00f7 put gamma is 0.90. Roughly balanced, so no edge here.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "walls",
+     "label": "Wall range",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "Put wall 7,740 to call wall 8,040: 286 pts of room up vs 14 down. Sitting near support, so the asymmetry favours a bounce.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "charm",
+     "label": "Charm (theta \u2192 delta)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "Time decay alone shifts dealer hedges by $0.00B into the close. Small relative to positioning.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "vanna",
+     "label": "Vanna (vega \u2192 delta)",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX down 0.60 pts overnight. Through vanna that is about $18.54B of dealer buying. Falling implied vol forces hedge buy-backs, which is supportive.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "flow",
+     "label": "Options flow (prior session)",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.5,
+     "text": "Short-dated premium: calls $755.2M vs puts $484.0M (put/call 0.64). Call-led, risk appetite.",
+     "group": "Options flow"
+    },
+    {
+     "key": "volchg",
+     "label": "VIX overnight",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX 16.91 (-3.4%). Fear bleeding out. Vol sellers are back in control.",
+     "group": "Volatility"
+    },
+    {
+     "key": "term",
+     "label": "Vol term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX \u00f7 VIX3M = 0.88. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "overnight",
+     "label": "Overnight session",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.0,
+     "text": "Futures -0.12% vs settlement (7,753.50). A quiet Globex session.",
+     "group": "Macro"
+    },
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "10Y at 5.05% (+5.2 bp). Higher discount rates squeeze long-duration growth multiples.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "DXY 102.15 (-0.24%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 102.04 (+0.7%). No energy shock in play.",
+     "group": "Macro"
+    }
+   ],
+   "changed": null,
+   "expected_range": {
+    "move": 94.98,
+    "low": 7658.52,
+    "high": 7848.48,
+    "basis": "VIX implied, gamma-adjusted"
+   },
+   "levels": {
+    "price": 7753.5,
+    "flip": 7777.05,
+    "flip_close": null,
+    "call_wall": 8040,
+    "put_wall": 7740,
+    "majors": [
+     {
+      "level": 7540,
+      "net_gex": -4682800333.542582
+     },
+     {
+      "level": 7640,
+      "net_gex": -5127776097.43964
+     },
+     {
+      "level": 7690,
+      "net_gex": -4720059757.364427
+     },
+     {
+      "level": 7740,
+      "net_gex": -3723129193.338457
+     },
+     {
+      "level": 7940,
+      "net_gex": 3973274587.8985415
+     }
+    ]
+   },
+   "dealer": {
+    "net_gex_bn": -21.467,
+    "dealer_delta_bn": 2494.32,
+    "call_put_gamma": 0.9,
+    "charm_bn": -0.0,
+    "vanna_bn_per_pt": 30.896,
+    "chains": [
+     "SPX",
+     "SPY"
+    ]
+   },
+   "flow": {
+    "calls_m": 755.2,
+    "puts_m": 484.0,
+    "top": [
+     {
+      "level": 7775,
+      "side": "call",
+      "premium": 58701943.5
+     },
+     {
+      "level": 7765,
+      "side": "put",
+      "premium": 53888172.0
+     },
+     {
+      "level": 7765,
+      "side": "call",
+      "premium": 50970655.5
+     },
+     {
+      "level": 7785,
+      "side": "call",
+      "premium": 46868741.0
+     },
+     {
+      "level": 7790,
+      "side": "call",
+      "premium": 43362280.0
+     }
+    ]
+   },
+   "profile": [
+    {
+     "px": 7288.29,
+     "gex": -111538587628.22891
+    },
+    {
+     "px": 7303.8,
+     "gex": -112607317742.43863
+    },
+    {
+     "px": 7319.3,
+     "gex": -113679859735.81522
+    },
+    {
+     "px": 7334.81,
+     "gex": -114745492686.73073
+    },
+    {
+     "px": 7350.32,
+     "gex": -115790583679.63051
+    },
+    {
+     "px": 7365.82,
+     "gex": -116798339580.90652
+    },
+    {
+     "px": 7381.33,
+     "gex": -117748640561.13547
+    },
+    {
+     "px": 7396.84,
+     "gex": -118617981477.10826
+    },
+    {
+     "px": 7412.35,
+     "gex": -119379543500.6538
+    },
+    {
+     "px": 7427.85,
+     "gex": -120003404132.8829
+    },
+    {
+     "px": 7443.36,
+     "gex": -120456865537.34079
+    },
+    {
+     "px": 7458.87,
+     "gex": -120704840564.76926
+    },
+    {
+     "px": 7474.37,
+     "gex": -120710192577.87009
+    },
+    {
+     "px": 7489.88,
+     "gex": -120433897344.60147
+    },
+    {
+     "px": 7505.39,
+     "gex": -119834905055.69339
+    },
+    {
+     "px": 7520.9,
+     "gex": -118869644353.26251
+    },
+    {
+     "px": 7536.4,
+     "gex": -117491226096.4304
+    },
+    {
+     "px": 7551.91,
+     "gex": -115648542803.83638
+    },
+    {
+     "px": 7567.42,
+     "gex": -113285565492.64777
+    },
+    {
+     "px": 7582.92,
+     "gex": -110341152390.1524
+    },
+    {
+     "px": 7598.43,
+     "gex": -106749571289.30241
+    },
+    {
+     "px": 7613.94,
+     "gex": -102441729546.04007
+    },
+    {
+     "px": 7629.44,
+     "gex": -97346908022.4181
+    },
+    {
+     "px": 7644.95,
+     "gex": -91394753570.5751
+    },
+    {
+     "px": 7660.46,
+     "gex": -84517501586.27432
+    },
+    {
+     "px": 7675.97,
+     "gex": -76652835103.56302
+    },
+    {
+     "px": 7691.47,
+     "gex": -67748211052.39458
+    },
+    {
+     "px": 7706.98,
+     "gex": -57767559672.83023
+    },
+    {
+     "px": 7722.49,
+     "gex": -46700743058.23726
+    },
+    {
+     "px": 7737.99,
+     "gex": -34575097458.63945
+    },
+    {
+     "px": 7753.5,
+     "gex": -21467188182.70453
+    },
+    {
+     "px": 7769.01,
+     "gex": -7512152185.090245
+    },
+    {
+     "px": 7784.51,
+     "gex": 7091881066.334571
+    },
+    {
+     "px": 7800.02,
+     "gex": 22085797937.310333
+    },
+    {
+     "px": 7815.53,
+     "gex": 37158025584.94688
+    },
+    {
+     "px": 7831.04,
+     "gex": 51958614531.58482
+    },
+    {
+     "px": 7846.54,
+     "gex": 66117896133.28374
+    },
+    {
+     "px": 7862.05,
+     "gex": 79269552109.5616
+    },
+    {
+     "px": 7877.56,
+     "gex": 91078293231.80641
+    },
+    {
+     "px": 7893.06,
+     "gex": 101270726408.1807
+    },
+    {
+     "px": 7908.57,
+     "gex": 109664503800.37051
+    },
+    {
+     "px": 7924.08,
+     "gex": 116188040212.01044
+    },
+    {
+     "px": 7939.58,
+     "gex": 120884042537.55472
+    },
+    {
+     "px": 7955.09,
+     "gex": 123895244346.17119
+    },
+    {
+     "px": 7970.6,
+     "gex": 125436955628.68651
+    },
+    {
+     "px": 7986.11,
+     "gex": 125764408483.43173
+    },
+    {
+     "px": 8001.61,
+     "gex": 125142124339.01784
+    },
+    {
+     "px": 8017.12,
+     "gex": 123819474049.03925
+    },
+    {
+     "px": 8032.63,
+     "gex": 122013810440.15846
+    },
+    {
+     "px": 8048.13,
+     "gex": 119901119723.17384
+    },
+    {
+     "px": 8063.64,
+     "gex": 117613591047.66632
+    },
+    {
+     "px": 8079.15,
+     "gex": 115243032983.39528
+    },
+    {
+     "px": 8094.65,
+     "gex": 112848434854.01062
+    },
+    {
+     "px": 8110.16,
+     "gex": 110465482751.3942
+    },
+    {
+     "px": 8125.67,
+     "gex": 108115841866.53857
+    },
+    {
+     "px": 8141.18,
+     "gex": 105814560494.79031
+    },
+    {
+     "px": 8156.68,
+     "gex": 103574801085.55637
+    },
+    {
+     "px": 8172.19,
+     "gex": 101409933877.74355
+    },
+    {
+     "px": 8187.7,
+     "gex": 99333602265.5967
+    },
+    {
+     "px": 8203.2,
+     "gex": 97358607457.1308
+    },
+    {
+     "px": 8218.71,
+     "gex": 95495415004.51416
+    }
+   ],
+   "earnings": [
+    {
+     "symbol": "MSFT",
+     "when": "after close",
+     "eps_est": "$4.71"
+    },
+    {
+     "symbol": "GOOGL",
+     "when": "after close",
+     "eps_est": "$2.94"
+    }
+   ],
+   "scorecard": {
+    "hits": 0,
+    "misses": 0,
+    "recent": []
+   }
+  }
+ },
+ "notes": []
+}
