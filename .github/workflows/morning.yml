@@ -1,0 +1,36 @@
+name: Morning bias report
+
+on:
+  schedule:
+    - cron: "10 12,13 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: morning-report
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Build report
+        run: python scripts/build_report.py
+      - name: Publish
+        run: |
+          git config user.name  "bias-bot"
+          git config user.email "bias-bot@users.noreply.github.com"
+          git add docs/data
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Report $(date -u +%Y-%m-%d\ %H:%M)Z"
+          git push
