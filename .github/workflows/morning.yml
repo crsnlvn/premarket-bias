@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "10 12,13 * * 1-5"
   workflow_dispatch:
+    inputs:
+      date:
+        description: "Rebuild a past morning (YYYY-MM-DD). Leave blank for today."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -25,6 +30,8 @@ jobs:
       - name: Install
         run: pip install -r requirements.txt
       - name: Build report
+        env:
+          REPORT_DATE: ${{ github.event.inputs.date }}
         run: python scripts/build_report.py
       - name: Publish
         run: |
@@ -33,4 +40,5 @@ jobs:
           git add docs/data
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "Report $(date -u +%Y-%m-%d\ %H:%M)Z"
+          git pull --rebase
           git push
