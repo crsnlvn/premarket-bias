@@ -115,7 +115,7 @@ def _get_json(url, fixture):
     return r.json()
 
 
-def fetch_quotes(tickers, target: date, as_of: datetime):
+def fetch_quotes(tickers, target: date, as_of: datetime, marks: dict | None = None):
     """
     For each ticker: last = last bar at or before `as_of`, prev = last bar at
     or before 4:00 PM ET of the prior weekday. Intraday bars include pre- and
@@ -124,7 +124,9 @@ def fetch_quotes(tickers, target: date, as_of: datetime):
     if FIXTURES:
         p = Path(FIXTURES) / "quotes.json"
         out = json.loads(p.read_text()) if p.exists() else {}
-        out = {k: v for k, v in out.items() if k in tickers}
+        out = {k: dict(v) for k, v in out.items() if k in tickers}
+        for v in out.values():   # fixtures: fake marks halfway between prev and last
+            v["marks"] = {m: (v["prev"] + v["last"]) / 2 for m in (marks or {})}
         stamp("Yahoo prices", bool(out), as_of.isoformat(), f"{len(out)} of {len(tickers)} tickers")
         return out
     try:
@@ -156,6 +158,11 @@ def fetch_quotes(tickers, target: date, as_of: datetime):
                  "ts": last_ts.isoformat()}
             # a "last" older than the baseline means it hasn't traded since: no change
             q["fresh"] = last_ts > prev_mark
+            q["marks"] = {}
+            for name, when in (marks or {}).items():
+                mk = h[h.index <= when]
+                if not mk.empty and mk.index[-1] > prev_mark:
+                    q["marks"][name] = float(mk["Close"].iloc[-1])
             out[t] = q
         except Exception as e:  # noqa: BLE001
             missing.append(t)
@@ -190,6 +197,9 @@ def fetch_chain(symbol):
     return spot, prev, d["options"], ts
 
 
+WEEK_EVENTS: list[dict] = []
+
+
 def fetch_calendar(target):
     try:
         js = _get_json("https://nfs.faireconomy.media/ff_calendar_thisweek.json", "calendar.json") or []
@@ -206,6 +216,12 @@ def fetch_calendar(target):
             when = datetime.fromisoformat(ev["date"]).astimezone(ET)
         except Exception:  # noqa: BLE001
             continue
+        item = {"day": when.strftime("%a %b %-d"), "date": when.date().isoformat(),
+                "time": when.strftime("%-I:%M %p") if when.time() != time(0, 0) else "All day",
+                "ts": when.isoformat(), "title": ev.get("title", ""), "impact": ev.get("impact"),
+                "forecast": ev.get("forecast") or "", "previous": ev.get("previous") or ""}
+        if not any(w["ts"] == item["ts"] and w["title"] == item["title"] for w in WEEK_EVENTS):
+            WEEK_EVENTS.append(item)
         if when.date() != target:
             continue
         events.append({"time": when.strftime("%-I:%M %p") if when.time() != time(0, 0) else "All day",
@@ -463,7 +479,7 @@ def macro_signals(cfg, q):
     c = chg(q, "HYG")
     if c is not None:
         sc = 1 if c > 0.15 else -1 if c < -0.15 else 0
-        S.append(sig("credit", "Credit (HYG pre-market)", sc, 0.75,
+        S.append(sig("credit", "Credit (HYG)", sc, 0.75,
                      f"High-yield bonds {c:+.2f}%. " +
                      ("Credit is bid. Equity rallies backed by credit tend to stick." if sc > 0 else
                       "Credit is leaking. Equity often follows credit lower." if sc < 0
@@ -495,6 +511,46 @@ def macro_signals(cfg, q):
     return S
 
 
+def overnight_signals(cfg, q):
+    """Evening read for the 6 PM–8:30 AM Globex session, built from data up to 6 PM ET."""
+    S = [s for s in macro_signals(cfg, q) if s["key"] not in ("overnight", "global", "volpre")]
+    f = q.get(cfg["future"])
+    mk = (f or {}).get("marks", {})
+    sym = cfg["future"][:2]
+    if f and "close" in mk:
+        day = pct(mk["close"], f["prev"])
+        sc = 1 if day > 0.4 else -1 if day < -0.4 else 0
+        S.append(sig("day", "Day session", sc, 1.0,
+                     f"{sym} {day:+.2f}% from yesterday's 4 PM to today's 4 PM. " +
+                     ("A strong cash session tends to carry into Globex." if sc > 0 else
+                      "A weak cash session tends to keep sellers active overnight." if sc < 0
+                      else "A flat day, with no momentum handed off."), "Session"))
+        ah = pct(f["last"], mk["close"])
+        sc = 1 if ah > 0.2 else -1 if ah < -0.2 else 0
+        S.append(sig("afterhours", "After-hours reaction", sc, 1.25,
+                     f"{sym} {ah:+.2f}% from 4 PM to the 6 PM cutoff. " +
+                     ("After-hours buyers, often an earnings beat, set the overnight tone." if sc > 0 else
+                      "After-hours selling, often an earnings miss, sets a heavy tone." if sc < 0
+                      else "No after-hours reaction."), "Session"))
+    if f and "close" in mk and "lasthour" in mk:
+        lh = pct(mk["close"], mk["lasthour"])
+        sc = 1 if lh > 0.15 else -1 if lh < -0.15 else 0
+        S.append(sig("lasthour", "Last-hour trend", sc, 0.75,
+                     f"{sym} {lh:+.2f}% in the final hour (3 to 4 PM). " +
+                     ("Buyers into the bell, the late-day flow that tends to persist (Baltussen et al.)." if sc > 0 else
+                      "Sellers into the bell, and late-day weakness tends to persist." if sc < 0
+                      else "A neutral close."), "Session"))
+    v = q.get("^VIX")
+    if v and v.get("fresh", True):
+        c = pct(v["last"], v["prev"])
+        sc = 1 if c < -4 else -1 if c > 4 else 0
+        S.append(sig("vixday", "VIX today", sc, 1.0,
+                     f"VIX {v['last']:.2f} ({c:+.1f}% on the day). " +
+                     ("Fear came out of the market today." if sc > 0 else "Fear rose into the close." if sc < 0
+                      else "Vol is little changed."), "Volatility"))
+    return S
+
+
 def dealer_signals(cfg, pos, q):
     S, px = [], pos["px"]
     if pos["flip"]:
@@ -519,7 +575,7 @@ def dealer_signals(cfg, pos, q):
     thr = 0.0015 * pos["gross_delta"]
     ch = pos["charm_hedge_flow"]
     sc = 1 if ch > thr else -1 if ch < -thr else 0
-    S.append(sig("charm", "Charm into close", sc, 0.4,
+    if abs(ch) > 0: S.append(sig("charm", "Charm into close", sc, 0.4,
                  f"Time decay shifts dealer hedges by ${abs(ch)/1e9:,.2f}B by 4 PM. " +
                  ("Dealers buy back hedges, an afternoon bid." if sc > 0 else
                   "Dealers sell, an afternoon offer." if sc < 0 else "Small."), "Dealer positioning"))
@@ -548,7 +604,7 @@ def label_of(x):
     return "Bullish" if x > 0.12 else "Bearish" if x < -0.12 else "Neutral"
 
 
-def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer):
+def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="preopen"):
     own = own_score(signals)
     score = own if not peer else (1 - PEER_WEIGHT) * own + PEER_WEIGHT * peer[1]
     bias = label_of(score)
@@ -562,7 +618,15 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer):
     downs = [s for s in signals if s["score"] < 0]
     top = lambda L: sorted(L, key=lambda s: s["weight"], reverse=True)  # noqa: E731
 
-    parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the New York morning (09:30–12:00 ET)."]
+    if view == "overnight":
+        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the overnight session "
+                 "(6 PM–8:30 AM ET), from data up to the 6 PM cutoff."]
+    elif view == "now":
+        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} from data up to {as_of:%-I:%M %p} ET."]
+        if as_of.time() > time(9, 30) and as_of.weekday() < 5:
+            parts.append("This includes today's trading, so part of it reflects moves that already happened.")
+    else:
+        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the New York morning (09:30–12:00 ET)."]
     if bias != "Neutral":
         lead, against = (ups, downs) if bias == "Bullish" else (downs, ups)
         parts.append("The case rests on " + ", ".join(s["label"] for s in top(lead)[:3]) + ".")
@@ -596,6 +660,8 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer):
             else f"Holding above {f:,.0f}, or a push through the call wall at {pos['call_wall']:,.0f}",
             "Neutral": f"A decisive break of {pos['put_wall']:,.0f} or {pos['call_wall']:,.0f} sets direction",
         }[bias]
+    elif view == "overnight":
+        invalid = "Futures reversing through today's 4 PM close during the Asia session"
     elif cfg["future"] in ("NQ=F", "ES=F"):
         invalid = "Overnight futures reversing through yesterday's 4 PM level after the open"
 
@@ -627,8 +693,21 @@ def divergence(markets):
 
 
 # ─────────────────────────────── grading ──────────────────────────────────
-def grade_history(hist_dir):
-    """Score each saved morning on the 9:30 → 12:00 ET futures move, once noon has passed."""
+def next_weekday(d):
+    d += timedelta(days=1)
+    while d.weekday() >= 5:
+        d += timedelta(days=1)
+    return d
+
+
+def grade_window(kind, d):
+    """(start, end) of the move each session's call is graded on, in ET."""
+    if kind == "overnight":
+        return datetime.combine(d, time(18, 0), ET), datetime.combine(next_weekday(d), time(8, 30), ET)
+    return datetime.combine(d, time(9, 30), ET), datetime.combine(d, time(12, 0), ET)
+
+
+def grade_history(hist_dir, kind):
     if FIXTURES:
         return
     try:
@@ -638,7 +717,8 @@ def grade_history(hist_dir):
     now = datetime.now(ET)
     for f in sorted(hist_dir.glob("20*.json"))[-40:]:
         d = date.fromisoformat(f.stem)
-        if now < datetime.combine(d, time(12, 5), ET):
+        t0, t1 = grade_window(kind, d)
+        if now < t1 + timedelta(minutes=5):
             continue
         rep = json.loads(f.read_text())
         changed = False
@@ -648,13 +728,18 @@ def grade_history(hist_dir):
             try:
                 age = (now.date() - d).days
                 iv = "1m" if age <= 6 else "5m" if age <= 55 else "60m"
-                h = yf.Ticker(MARKETS[sym]["future"]).history(start=d, end=d + timedelta(days=1), interval=iv)
+                h = yf.Ticker(MARKETS[sym]["future"]).history(start=d, end=t1.date() + timedelta(days=1),
+                                                               interval=iv, prepost=True)
                 h.index = h.index.tz_convert(ET)
-                o = float(h[h.index >= datetime.combine(d, time(9, 30), ET)]["Open"].iloc[0])
-                c = float(h[h.index <= datetime.combine(d, time(12, 0), ET)]["Close"].iloc[-1])
+                if kind == "overnight":   # Globex reopens at 6 PM: start from the last print at or before it
+                    o = float(h[h.index <= t0]["Close"].iloc[-1])
+                else:
+                    o = float(h[h.index >= t0]["Open"].iloc[0])
+                c = float(h[h.index <= t1]["Close"].iloc[-1])
                 mv, b = c - o, m["bias"]["bias"]
                 hit = (mv > 0 and b == "Bullish") or (mv < 0 and b == "Bearish")
-                m["outcome"] = {"open": o, "noon": c, "move": round(mv, 2),
+                m["outcome"] = {"open": o, "noon": c, "move": round(mv, 2), "start": t0.isoformat(),
+                                "end": t1.isoformat(),
                                 "result": "n/a" if b == "Neutral" else ("hit" if hit else "miss")}
                 changed = True
             except Exception:  # noqa: BLE001
@@ -663,36 +748,66 @@ def grade_history(hist_dir):
             f.write_text(json.dumps(rep, indent=1))
 
 
-def scorecard(hist_dir, sym):
-    hits = misses = 0
-    recent = []
-    for f in sorted(hist_dir.glob("20*.json"))[-30:]:
+def record_stats(hist_dir, sym):
+    """Hit rate overall, by call, by conviction, and which signals actually pointed the right way."""
+    rows, attrib = [], {}
+    for f in sorted(hist_dir.glob("20*.json"))[-120:]:
         m = json.loads(f.read_text()).get("markets", {}).get(sym, {})
         o = m.get("outcome")
         if not o:
             continue
-        hits += o["result"] == "hit"
-        misses += o["result"] == "miss"
-        recent.append({"date": f.stem, "bias": m["bias"]["bias"], "move": o["move"], "result": o["result"]})
-    return {"hits": hits, "misses": misses, "recent": recent[-12:]}
+        rows.append({"date": f.stem, "bias": m["bias"]["bias"], "conviction": m["bias"]["conviction"],
+                     "score": m["bias"]["score"], "move": o["move"], "result": o["result"]})
+        if o["move"] == 0:
+            continue
+        for sg in m.get("signals", []):
+            if not sg["score"]:
+                continue
+            a = attrib.setdefault(sg["key"], {"label": sg["label"], "n": 0, "right": 0})
+            a["n"] += 1
+            a["right"] += (sg["score"] > 0) == (o["move"] > 0)
+
+    def rate(rs):
+        h = sum(r["result"] == "hit" for r in rs)
+        ms = sum(r["result"] == "miss" for r in rs)
+        return {"hits": h, "misses": ms, "pct": round(100 * h / (h + ms)) if h + ms else None}
+
+    streak, kind = 0, None
+    for r in reversed([r for r in rows if r["result"] != "n/a"]):
+        if kind in (None, r["result"]):
+            kind, streak = r["result"], streak + 1
+        else:
+            break
+    sig_rows = sorted(({"key": k, **v, "pct": round(100 * v["right"] / v["n"])} for k, v in attrib.items()),
+                      key=lambda x: (-x["pct"], -x["n"]))
+    return {
+        **rate(rows),
+        "by_bias": {b: rate([r for r in rows if r["bias"] == b]) for b in ("Bullish", "Bearish")},
+        "by_conviction": {c: rate([r for r in rows if r["conviction"] == c]) for c in ("Low", "Medium", "High")},
+        "streak": {"n": streak, "kind": kind},
+        "signals": sig_rows,
+        "recent": rows[-40:],
+    }
 
 
 # ──────────────────────────────── main ────────────────────────────────────
-def main():
-    now = datetime.now(ET)
-    if os.environ.get("REPORT_NOW"):
-        now = datetime.fromisoformat(os.environ["REPORT_NOW"]).astimezone(ET)
-    target, as_of, live = resolve_session(now)
-    hist = OUT / "history"
-    hist.mkdir(parents=True, exist_ok=True)
-    print(f"Session {target} · {'LIVE' if live else 'POINT-IN-TIME'} · evidence cut at {as_of:%Y-%m-%d %H:%M} ET",
-          file=sys.stderr)
-
-    quotes = fetch_quotes(MACRO_TICKERS, target, as_of)
-    events = fetch_calendar(target)
-    earnings = fetch_earnings(target) + [dict(e, when="last night") for e in fetch_earnings(prev_weekday(target))
-                                         if e["when"] == "after close"]
-    grade_history(hist)
+def build_view(target, as_of, live, now, view, hist):
+    """One complete read: view = 'preopen' (9:25 ET cut), 'now' (latest) or 'overnight' (6 PM cut)."""
+    NOTES.clear(); SOURCES.clear()
+    print(f"[{view}] session {target} · evidence cut at {as_of:%Y-%m-%d %H:%M} ET", file=sys.stderr)
+    marks = None
+    if view == "overnight":
+        marks = {"close": datetime.combine(target, time(16, 0), ET),
+                 "lasthour": datetime.combine(target, time(15, 0), ET)}
+    quotes = fetch_quotes(MACRO_TICKERS, target, as_of, marks)
+    events = fetch_calendar(target if view != "overnight" else next_weekday(target))
+    if view == "overnight":   # tonight's reporters plus tomorrow morning's
+        earnings = [e for e in fetch_earnings(target) if e["when"] == "after close"] + \
+                   [dict(e, when="tomorrow before open") for e in fetch_earnings(next_weekday(target))
+                    if e["when"] == "before open"]
+    else:
+        earnings = fetch_earnings(target) + [dict(e, when="last night") for e in
+                                             fetch_earnings(prev_weekday(target)) if e["when"] == "after close"]
     prior_files = [f for f in sorted(hist.glob("20*.json")) if f.stem < target.isoformat()]
     prior = json.loads(prior_files[-1].read_text()) if prior_files else None
 
@@ -706,18 +821,18 @@ def main():
             why = f"positioning failed ({type(e).__name__})"
         if why:
             note(f"{sym}: dealer positioning skipped, {why}. The read is macro only.")
-        sigs = macro_signals(cfg, quotes) + (dealer_signals(cfg, pos, quotes) if pos else [])
-        pre[sym] = (pos, sigs)
+        base = overnight_signals(cfg, quotes) if view == "overnight" else macro_signals(cfg, quotes)
+        pre[sym] = (pos, base + (dealer_signals(cfg, pos, quotes) if pos else []))
 
     markets = {}
     for sym, cfg in MARKETS.items():
         pos, sigs = pre[sym]
         peers = [k for k in pre if k != sym and pre[k][1]]
         peer = (peers[0], own_score(pre[peers[0]][1])) if peers and sigs else None
-        bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer)
+        bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer, view)
         px = pos["px"] if pos else (quotes.get(cfg["future"]) or {}).get("last")
         changed = None
-        if prior and sym in prior.get("markets", {}):
+        if view != "now" and prior and sym in prior.get("markets", {}):
             pb = prior["markets"][sym]["bias"]
             changed = {"prev_date": prior["date"], "prev_bias": pb["bias"], "prev_score": pb["score"],
                        "delta": round(bias["score"] - pb["score"], 3)}
@@ -739,29 +854,96 @@ def main():
                 "top": pos["top_flow"]},
             "profile": pos["profile"] if pos else [],
             "earnings": [e for e in earnings if e["symbol"] in cfg["megacaps"]],
-            "scorecard": None,
+            "scorecard": None, "outcome": None,
         }
-
-    macro_tape = {t: {"last": round(v["last"], 4), "chg_pct": round(pct(v["last"], v["prev"]), 2),
-                      "ts": v.get("ts")} for t, v in quotes.items() if v.get("fresh", True)}
-    report = {
-        "date": target.isoformat(),
+    return {
+        "view": view, "session": "overnight" if view == "overnight" else "ny", "date": target.isoformat(),
         "mode": "live" if live else "point-in-time",
         "as_of": as_of.isoformat(timespec="seconds"),
         "generated": now.isoformat(timespec="seconds"),
-        "events": events, "macro": macro_tape, "markets": markets,
-        "divergence": divergence(markets), "notes": NOTES, "sources": SOURCES,
+        "events": events,
+        "macro": {t: {"last": round(v["last"], 4), "chg_pct": round(pct(v["last"], v["prev"]), 2), "ts": v.get("ts")}
+                  for t, v in quotes.items() if v.get("fresh", True)},
+        "markets": markets, "divergence": divergence(markets),
+        "notes": list(NOTES), "sources": dict(SOURCES),
     }
-    OUT.mkdir(parents=True, exist_ok=True)
-    (hist / f"{target.isoformat()}.json").write_text(json.dumps(report, indent=1, default=float))
-    grade_history(hist)       # same-day runs after noon get graded right away
-    for sym in markets:
-        report["markets"][sym]["scorecard"] = scorecard(hist, sym)
-        saved = json.loads((hist / f"{target.isoformat()}.json").read_text())
-        report["markets"][sym]["outcome"] = saved["markets"][sym].get("outcome")
-    (OUT / "latest.json").write_text(json.dumps(report, indent=1, default=float))
-    print(json.dumps({s: {k: m["bias"][k] for k in ("bias", "score", "own_score", "conviction", "macro_share")}
-                      for s, m in markets.items()}, indent=1))
+
+
+def finish(read, hist, kind):
+    """Save a session read to history, grade it if its window has passed, attach its record."""
+    path = hist / f"{read['date']}.json"
+    old = json.loads(path.read_text()) if path.exists() else None
+    for sym, m in read["markets"].items():            # keep an existing grade on re-runs
+        if old and old.get("markets", {}).get(sym, {}).get("outcome"):
+            m["outcome"] = old["markets"][sym]["outcome"]
+    path.write_text(json.dumps(read, indent=1, default=float))
+    grade_history(hist, kind)
+    saved = json.loads(path.read_text())
+    for sym in read["markets"]:
+        read["markets"][sym]["outcome"] = saved["markets"][sym].get("outcome")
+        read["markets"][sym]["scorecard"] = record_stats(hist, sym)
+    return read
+
+
+def resolve_overnight(now):
+    forced = os.environ.get("REPORT_DATE", "").strip()
+    if forced:
+        return date.fromisoformat(forced)
+    d = now.date()
+    while d.weekday() >= 5 or now < datetime.combine(d, time(18, 0), ET):
+        d -= timedelta(days=1)
+    return d
+
+
+def main():
+    now = datetime.now(ET)
+    if os.environ.get("REPORT_NOW"):
+        now = datetime.fromisoformat(os.environ["REPORT_NOW"]).astimezone(ET)
+    backfill = bool(os.environ.get("REPORT_DATE", "").strip())
+    hist_ny = OUT / "history"
+    hist_on = OUT / "history" / "overnight"
+    hist_on.mkdir(parents=True, exist_ok=True)
+    grade_history(hist_ny, "ny")
+    grade_history(hist_on, "overnight")
+
+    # NY morning: pre-open (9:25 ET cut, or live before then) + "now"
+    target, as_of, live = resolve_session(now)
+    preopen = finish(build_view(target, as_of, live, now, "preopen", hist_ny), hist_ny, "ny")
+    if backfill:
+        current = None
+    elif live:
+        current = dict(preopen, view="now")
+    else:
+        current = build_view(now.date() if now.weekday() < 5 else target, now, True, now, "now", hist_ny)
+
+    # Overnight: the most recent weekday evening whose 6 PM cutoff has passed
+    on_day = resolve_overnight(now)
+    on_cut = datetime.combine(on_day, time(18, 0), ET)
+    overnight = finish(build_view(on_day, on_cut, False, now, "overnight", hist_on), hist_on, "overnight")
+
+    report = {"generated": now.isoformat(timespec="seconds"),
+              "ny": {"preopen": preopen, "now": current}, "overnight": overnight,
+              "week": sorted(WEEK_EVENTS, key=lambda e: e["ts"])}
+    latest = OUT / "latest.json"
+    if backfill and latest.exists():
+        # a backfill only adds history; keep today's reads on the page, refresh the records
+        try:
+            old = json.loads(latest.read_text())
+            if "ny" in old:
+                report = old
+                for sess, hist in (("ny", hist_ny), ("overnight", hist_on)):
+                    r = old[sess]["preopen"] if sess == "ny" else old[sess]
+                    for sym in r["markets"]:
+                        r["markets"][sym]["scorecard"] = record_stats(hist, sym)
+        except Exception:  # noqa: BLE001
+            pass
+    report["preopen"] = report["ny"]["preopen"]       # older app versions read these keys
+    report["now"] = report["ny"]["now"]
+    latest.write_text(json.dumps(report, indent=1, default=float))
+    for name, v in (("NY PRE-OPEN", preopen), ("NY NOW", current), ("OVERNIGHT", overnight)):
+        if v:
+            print(name, v["date"], json.dumps({s: f"{m['bias']['bias']} {m['bias']['score']:+.2f}"
+                                               for s, m in v["markets"].items()}))
 
 
 if __name__ == "__main__":

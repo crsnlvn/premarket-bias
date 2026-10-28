@@ -16,40 +16,55 @@
 :root{
   --bg:#07090b; --card:#0e1215; --line:#1b2126; --line2:#2c353c; --text:#e8edf0; --sub:#b4bec5; --dim:#8a959d; --faint:#55606a;
   --up:#3ee6a4; --down:#ff5a6e; --flat:#9aa4ac; --amber:#f2b84b; --accent:#3ee6a4;
+  --glass:rgba(22,27,32,.55); --glass-line:rgba(255,255,255,.10);
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
   --pad:16px; --gap:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
-body{padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 28px)}
+body{padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 96px)}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px}
-header{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 82%,transparent);padding:14px 0 10px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea,select{font:inherit;color:var(--text)}
+
+/* header */
+header{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 84%,transparent);padding:14px 0 10px}
 .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.brand{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand{min-width:0;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand b{color:var(--text);font-weight:600}
 .live{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--up);margin-right:8px;box-shadow:0 0 10px var(--up)}
 .live.stale{background:var(--amber);box-shadow:0 0 10px var(--amber)}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-.btns{display:flex;gap:6px;flex:none}
+.btns{display:flex;gap:6px;flex:none;align-items:center}
 .hbtn{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
-.gear{width:31px;height:31px;padding:0;display:grid;place-items:center}
-.gear svg{width:15px;height:15px}
-.tabs{display:flex;gap:6px;margin-top:12px}
-.tab{flex:1;font-family:var(--mono);font-size:13px;padding:9px 0;border:1px solid var(--line);border-radius:10px;color:var(--dim)}
+.icon{width:31px;height:31px;padding:0;display:grid;place-items:center}
+.icon svg{width:15px;height:15px}
+.spin svg{animation:sp .7s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.pill2{display:flex;border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
+.pill2 button{font-family:var(--mono);font-size:11px;color:var(--dim);padding:5px 10px;border-radius:999px;white-space:nowrap}
+.pill2 button.on{background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1px var(--line2)}
+.row2{display:flex;gap:8px;margin-top:12px;align-items:stretch}
+.tabs{display:flex;gap:6px;flex:1}
+.tab{flex:1;font-family:var(--mono);font-size:13px;padding:8px 0;border:1px solid var(--line);border-radius:10px;color:var(--dim)}
 .tab.on{color:var(--text);border-color:var(--line2);background:var(--card)}
 .tab .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:7px;vertical-align:middle}
+.sess{display:flex;border:1px solid var(--line);border-radius:10px;padding:2px;gap:2px}
+.sess button{font-family:var(--mono);font-size:11.5px;color:var(--dim);padding:0 10px;border-radius:8px}
+.sess button.on{background:var(--card);color:var(--text);box-shadow:inset 0 0 0 1px var(--line2)}
+.ptitle{font-size:26px;font-weight:750;letter-spacing:-.02em;margin:16px 0 2px}
+.psub{font-size:13.5px;color:var(--dim);line-height:1.5}
 
+/* hero */
 .hero{padding:18px 0 6px}
 .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
 .bias{display:flex;align-items:center;gap:12px;margin:10px 0 2px;font-size:52px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .bias svg{width:38px;height:38px;flex:none}
 .conv{font-size:17px;font-weight:600;margin-top:10px}
-.mode{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid}
+.mode{margin-top:8px;font-size:13px;color:var(--dim);line-height:1.45}
+.mode b{color:var(--text);font-weight:600}
 .meter{position:relative;height:6px;border-radius:6px;margin:18px 0 8px;background:linear-gradient(90deg,var(--down),var(--line2) 50%,var(--up))}
 .meter i{position:absolute;top:-5px;width:3px;height:16px;border-radius:2px;background:var(--text);transform:translateX(-50%);box-shadow:0 0 0 3px var(--bg)}
-.meter-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
-
+.meter-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--faint);gap:6px}
 .stamps{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .stamps div{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 12px;border-top:1px solid var(--line);font-size:13px}
 .stamps div:first-child{border-top:0}
@@ -59,6 +74,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .flash{animation:fl 1.2s ease}
 @keyframes fl{0%{background:color-mix(in srgb,var(--up) 22%,transparent)}100%{background:transparent}}
 
+/* cards */
 section{margin-top:var(--gap)}
 h2{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
@@ -86,15 +102,87 @@ svg.prof{display:block;width:100%;height:150px}
 .ev:first-child{border-top:0}
 .ev .t{font-family:var(--mono);color:var(--dim);width:72px;flex:none}
 .ev small{display:block;color:var(--faint);font-family:var(--mono);font-size:11px;margin-top:3px}
+.dayhead{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding:12px var(--pad) 2px;border-top:1px solid var(--line)}
+.card > .dayhead:first-child{border-top:0}
+.dayhead.today{color:var(--up)}
 .imp{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px}
-.sc{display:flex;gap:6px;flex-wrap:wrap;padding:14px var(--pad)}
-.sc span{font-family:var(--mono);font-size:11px;padding:5px 8px;border-radius:7px;border:1px solid var(--line)}
 .foot{font-size:12.5px;line-height:1.6;color:var(--faint)}
 .foot p{margin-bottom:10px}
 .foot b{color:var(--dim);font-weight:600}
 .err{color:var(--amber);font-family:var(--mono);font-size:12px;line-height:1.6}
 .empty{padding:60px 0;text-align:center;color:var(--dim);font-size:15px;line-height:1.6}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);transform:translateX(-50%);background:var(--card);border:1px solid var(--line2);color:var(--text);font-size:13px;padding:10px 14px;border-radius:12px;max-width:90vw;text-align:center;opacity:0;transition:opacity .25s;pointer-events:none;z-index:30;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:12px;border:1px solid var(--line2);background:var(--card);font-size:14px;font-weight:600}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#06100c}
+.btnrow{display:flex;gap:8px;margin-top:12px}
+.btnrow .btn{flex:1}
+
+/* record */
+.big{display:flex;gap:10px}
+.big > div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.big b{display:block;font-size:28px;font-weight:750;letter-spacing:-.02em;margin-top:4px}
+.big span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.big small{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:2px}
+.bar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;border-radius:6px}
+.dots{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;padding:var(--pad)}
+.dots span{aspect-ratio:1;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:9px;color:var(--bg);font-weight:700}
+
+/* research */
+details.rs{border-top:1px solid var(--line)}
+.card > details.rs:first-child{border-top:0}
+details.rs summary{list-style:none;display:flex;align-items:center;gap:12px;padding:14px var(--pad);cursor:pointer}
+details.rs summary::-webkit-details-marker{display:none}
+details.rs summary h3{flex:1;font-size:15px;font-weight:650}
+details.rs summary em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--faint)}
+details.rs[open] summary em{transform:rotate(90deg)}
+.rsb{padding:0 var(--pad) 16px 52px;font-size:14px;line-height:1.55;color:var(--sub)}
+.rsb p{margin-top:8px}
+.rsb b{color:var(--text);font-weight:600}
+.rsb .paper{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+
+/* journal */
+.field{display:block;margin-top:12px}
+.field > span{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.field input,.field textarea{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:15px}
+.field textarea{min-height:70px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{flex:1;min-width:80px;font-size:13px;padding:9px 6px;border:1px solid var(--line);border-radius:10px;color:var(--dim);background:var(--bg)}
+.chips button.on{color:var(--text);border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.jrow{padding:12px var(--pad);border-top:1px solid var(--line);font-size:14px}
+.jrow:first-child{border-top:0}
+.jrow .h{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.jrow p{margin-top:6px;color:var(--sub);line-height:1.5}
+.jrow .del{color:var(--faint);font-size:12px}
+
+/* bottom bar */
+.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:12;
+  width:calc(100% - 24px);max-width:520px;display:flex;justify-content:space-around;padding:6px;border-radius:22px;
+  background:var(--glass);border:1px solid var(--glass-line);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);
+  box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 6px;border-radius:16px;color:var(--dim);font-size:10.5px;font-weight:600;letter-spacing:.02em}
+.tabbar button svg{width:21px;height:21px}
+.tabbar button.on{color:var(--text);background:rgba(255,255,255,.07)}
+.tabbar button.on svg{color:var(--accent)}
+
+/* glass "All" panel */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.scrim.on{opacity:1;pointer-events:auto}
+.glass{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 86px);z-index:22;width:calc(100% - 28px);max-width:500px;
+  transform:translate(-50%,16px) scale(.97);opacity:0;pointer-events:none;transition:all .22s cubic-bezier(.2,.8,.2,1);
+  padding:18px;border-radius:26px;background:var(--glass);border:1px solid var(--glass-line);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
+  box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08)}
+.glass.on{opacity:1;transform:translate(-50%,0) scale(1);pointer-events:auto}
+.glass h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 2px 12px;display:flex;justify-content:space-between}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tiles button{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px 12px;border-radius:18px;text-align:left;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.tiles button.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.tiles svg{width:22px;height:22px;color:var(--accent)}
+.tiles b{font-size:14px;font-weight:650}
+.tiles small{display:block;font-size:11px;color:var(--dim);margin-top:2px;line-height:1.3}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 92px);transform:translateX(-50%);background:var(--card);border:1px solid var(--line2);color:var(--text);font-size:13px;padding:10px 14px;border-radius:12px;max-width:90vw;text-align:center;opacity:0;transition:opacity .25s;pointer-events:none;z-index:30;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 .toast.on{opacity:1}
 
 /* compact layout */
@@ -106,10 +194,8 @@ body.compact .bias{font-size:42px}
 body.compact .idea{font-size:15px}
 
 /* settings sheet */
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
-.scrim.on{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--bg);border-top:1px solid var(--line2);border-radius:18px 18px 0 0;
-  transform:translateY(100%);transition:transform .25s ease;z-index:21;padding:0 0 calc(env(safe-area-inset-bottom) + 20px)}
+  transform:translateY(100%);transition:transform .25s ease;z-index:25;padding:0 0 calc(env(safe-area-inset-bottom) + 20px)}
 .sheet.on{transform:none}
 .sheet .in{max-width:560px;margin:0 auto;padding:0 16px}
 .sh-top{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;padding:16px 0 12px;z-index:1}
@@ -139,60 +225,77 @@ body.compact .idea{font-size:15px}
 <div class="wrap" id="wrap">
   <header>
     <div class="top">
-      <div class="brand"><span class="live" id="live"></span><b>NY AM</b> · Pre-Market Bias</div>
+      <div class="brand"><span class="live" id="live"></span><b>NY AM</b> Bias</div>
       <div class="btns">
-        <button class="hbtn" id="refresh">↻ Refresh</button>
-        <button class="hbtn gear" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+        <div class="pill2" id="vt"><button data-view="preopen" class="on">Pre-open</button><button data-view="now">Now</button></div>
+        <button class="hbtn icon" id="refresh" aria-label="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button>
+        <button class="hbtn icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       </div>
     </div>
-    <div class="tabs" id="tabs"></div>
+    <div class="row2"><div class="tabs" id="tabs"></div><div class="sess" id="sess"><button data-s="ny" class="on">NY AM</button><button data-s="overnight">Overnight</button></div></div>
   </header>
   <main id="app"><div class="empty">Loading this morning's read…</div></main>
 </div>
-<div class="toast" id="toast"></div>
+
+<nav class="tabbar" id="tabbar"></nav>
 <div class="scrim" id="scrim"></div>
+<div class="glass" id="glass"></div>
 <div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
+<div class="toast" id="toast"></div>
 
 <script>
 const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 const fmt = (n,d=2) => n==null||isNaN(n) ? '—' : Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const usd = (n,d=2) => n==null||isNaN(n) ? '—' : (n<0?'−':'')+'$'+fmt(Math.abs(n),d);
 const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const C = b => ({Bullish:'var(--up)',Bearish:'var(--down)',Neutral:'var(--flat)'}[b]);
+const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
+                set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
+
+/* ───────── icons ───────── */
+const I = {
+  today:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+  levels:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h16"/><circle cx="18" cy="12" r="2"/></svg>',
+  macro:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+  record:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  research:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h6"/></svg>',
+  journal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  all:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>',
+};
+const PAGES = {
+  today:{name:'Today', sub:'The bias and why'}, levels:{name:'Levels', sub:'Flip, walls, range'},
+  macro:{name:'Macro', sub:'Tape and calendar'}, record:{name:'Record', sub:'Is it working?'},
+  research:{name:'Research', sub:'What each signal means'}, journal:{name:'Journal', sub:'Your trades vs the bias'},
+};
+const BAR = ['today','levels','macro','research'];
 
 /* ───────── settings ───────── */
 const THEMES = {
-  classic:{name:'Classic', up:'#3ee6a4', down:'#ff5a6e'},
-  ocean:  {name:'Ocean',   up:'#4da3ff', down:'#ff9f43'},
-  neon:   {name:'Neon',    up:'#36f1ff', down:'#ff4fd8'},
-  gold:   {name:'Gold',    up:'#f2c94c', down:'#9b8cff'},
-  mono:   {name:'Mono',    up:'#f2f4f5', down:'#7d8790'},
+  classic:{name:'Classic', up:'#3ee6a4', down:'#ff5a6e'}, ocean:{name:'Ocean', up:'#4da3ff', down:'#ff9f43'},
+  neon:{name:'Neon', up:'#36f1ff', down:'#ff4fd8'}, gold:{name:'Gold', up:'#f2c94c', down:'#9b8cff'}, mono:{name:'Mono', up:'#f2f4f5', down:'#7d8790'},
 };
 const BGS = {
-  black:   {name:'Black',    bg:'#07090b', card:'#0e1215', line:'#1b2126', line2:'#2c353c', text:'#e8edf0', sub:'#b4bec5', dim:'#8a959d', faint:'#55606a'},
-  charcoal:{name:'Charcoal', bg:'#16181b', card:'#1f2226', line:'#2b2f34', line2:'#3a4047', text:'#eceff1', sub:'#bcc3c8', dim:'#939ca3', faint:'#646d75'},
-  midnight:{name:'Midnight', bg:'#0a0f1f', card:'#111831', line:'#1d2643', line2:'#2c3760', text:'#e6ebff', sub:'#b3bddc', dim:'#8590b4', faint:'#56608a'},
-  light:   {name:'Light',    bg:'#f5f6f7', card:'#ffffff', line:'#e3e6e9', line2:'#cfd4d9', text:'#12161a', sub:'#3d464e', dim:'#66707a', faint:'#98a1a9'},
+  black:{name:'Black', bg:'#07090b', card:'#0e1215', line:'#1b2126', line2:'#2c353c', text:'#e8edf0', sub:'#b4bec5', dim:'#8a959d', faint:'#55606a', glass:'rgba(22,27,32,.55)', 'glass-line':'rgba(255,255,255,.10)'},
+  charcoal:{name:'Charcoal', bg:'#16181b', card:'#1f2226', line:'#2b2f34', line2:'#3a4047', text:'#eceff1', sub:'#bcc3c8', dim:'#939ca3', faint:'#646d75', glass:'rgba(40,44,49,.55)', 'glass-line':'rgba(255,255,255,.12)'},
+  midnight:{name:'Midnight', bg:'#0a0f1f', card:'#111831', line:'#1d2643', line2:'#2c3760', text:'#e6ebff', sub:'#b3bddc', dim:'#8590b4', faint:'#56608a', glass:'rgba(22,30,60,.55)', 'glass-line':'rgba(180,195,255,.14)'},
+  light:{name:'Light', bg:'#f5f6f7', card:'#ffffff', line:'#e3e6e9', line2:'#cfd4d9', text:'#12161a', sub:'#3d464e', dim:'#66707a', faint:'#98a1a9', glass:'rgba(255,255,255,.6)', 'glass-line':'rgba(0,0,0,.08)'},
 };
 const SECTIONS = {
   divergence:'NQ vs ES split', changed:'What changed', outcome:'How it played out', signals:'Signals',
-  macro:'Macro tape', levels:'Key levels', profile:'Gamma profile', dealer:'Dealer positioning',
-  flow:'Options flow', calendar:'Economic calendar', earnings:'Mega-cap earnings', record:'Track record',
-  freshness:'Data freshness', method:'Methodology'
+  calendar:'Today\'s calendar', earnings:'Mega-cap earnings', freshness:'Data freshness', method:'Methodology'
 };
 const DEFAULTS = {theme:'classic', up:null, down:null, bg:'black', size:'m', density:'comfortable', market:'NQ', reasons:true,
   order:Object.keys(SECTIONS), hidden:[]};
-let P = {...DEFAULTS};
-try{ P = {...DEFAULTS, ...JSON.parse(localStorage.getItem('prefs')||'{}')}; }catch(e){}
-for(const k of Object.keys(SECTIONS)) if(!P.order.includes(k)) P.order.push(k);   // new sections appear
+let P = {...DEFAULTS, ...store.get('prefs',{})};
+for(const k of Object.keys(SECTIONS)) if(!P.order.includes(k)) P.order.push(k);
 P.order = P.order.filter(k=>SECTIONS[k]);
-const save = () => { try{ localStorage.setItem('prefs', JSON.stringify(P)); }catch(e){} };
+const save = () => store.set('prefs', P);
 
 function applyPrefs(){
   const r = document.documentElement.style, t = THEMES[P.theme]||THEMES.classic, b = BGS[P.bg]||BGS.black;
-  const up = P.up || t.up, down = P.down || t.down;
   for(const [k,v] of Object.entries(b)) if(k!=='name') r.setProperty('--'+k, v);
-  r.setProperty('--up', up); r.setProperty('--down', down); r.setProperty('--accent', up);
+  r.setProperty('--up', P.up||t.up); r.setProperty('--down', P.down||t.down); r.setProperty('--accent', P.up||t.up);
   document.querySelector('meta[name=theme-color]').content = b.bg;
   document.body.classList.toggle('compact', P.density==='compact');
   $('#wrap').style.zoom = {s:.9, m:1, l:1.12}[P.size] || 1;
@@ -202,80 +305,136 @@ function applyPrefs(){
 const tET = d => d.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET';
 const tLocal = (d,sec) => d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',...(sec?{second:'2-digit'}:{})});
 const dayLocal = d => d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+const dayOf = iso => new Date(iso+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
 function ago(d){
   const m = Math.round((Date.now()-d)/60000);
   if(m<1) return 'just now'; if(m<60) return m+' min ago';
   const h=Math.floor(m/60); if(h<24) return h+' hr '+(m%60)+' min ago';
   const dd=Math.floor(h/24); return dd+' day'+(dd>1?'s':'')+' ago';
 }
-function nextRun(){            // mirrors the GitHub schedule: weekdays 12:10 + 13:10 UTC
-  const now=new Date();
-  for(let i=0;i<10;i++) for(const h of [12,13]){
-    const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+i,h,10));
+function nextRun(){   // mirrors the GitHub schedule (UTC): weekdays 12:10, 13:10, then hourly :40 from 14 to 23
+  const now=new Date(), slots=[[12,10],[13,10],...[14,15,16,17,18,19,20,21,22,23].map(h=>[h,40])];
+  for(let i=0;i<10;i++) for(const [h,mi] of slots){
+    const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+i,h,mi));
     if(d.getUTCDay()>=1 && d.getUTCDay()<=5 && d>now) return d;
   }
 }
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2800); }
-
 const arrow = b => ({
   Bullish:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 18L18 6M9 6h9v9"/></svg>',
   Bearish:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 9v9H9"/></svg>',
   Neutral:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 12h16M15 7l5 5-5 5"/></svg>'}[b]);
 
-/* ───────── data ───────── */
-let DATA=null, SYM=P.market, CHECKED=null;
+/* ───────── state ───────── */
+let ROOT=null, SYM=P.market, CHECKED=null, VIEW='preopen', SESSION='ny', PAGE='today';
+
+function readFor(sess=SESSION, view=VIEW){
+  if(!ROOT) return null;
+  if(!ROOT.ny) return ROOT.preopen ? ((view==='now'&&ROOT.now)||ROOT.preopen) : ROOT;   // older formats
+  if(sess==='overnight') return ROOT.overnight;
+  return (view==='now' && ROOT.ny.now) ? ROOT.ny.now : ROOT.ny.preopen;
+}
+
 async function load(manual){
-  $('#refresh').textContent='↻ …';
-  const before = DATA && DATA.generated; let ok=false;
+  $('#refresh').classList.add('spin');
+  const before = ROOT && ROOT.generated; let ok=false;
   try{
     const r = await fetch('data/latest.json?t='+Date.now(), {cache:'no-store'});
     if(!r.ok) throw new Error(r.status);
-    DATA = await r.json(); ok=true; CHECKED=new Date();
-  }catch(e){ if(!DATA) $('#app').innerHTML='<div class="empty">No report yet.<br>The first one appears after the morning run.</div>'; }
-  $('#refresh').textContent='↻ Refresh';
-  if(DATA) render();
+    ROOT = await r.json(); ok=true; CHECKED=new Date();
+  }catch(e){ if(!ROOT) $('#app').innerHTML='<div class="empty">No report yet.<br>The first one appears after the morning run.</div>'; }
+  $('#refresh').classList.remove('spin');
+  if(ROOT) render();
   if(manual){
     const n=nextRun();
     if(!ok) toast('Could not reach the server. Showing the last report.');
-    else if(before && before!==DATA.generated) toast('New report loaded ✓');
-    else toast('Up to date. Next report lands '+dayLocal(n)+' at '+tLocal(n)+'.');
+    else if(before && before!==ROOT.generated) toast('New data loaded');
+    else toast('Up to date. Next update '+dayLocal(n)+' at '+tLocal(n)+'.');
     const c=$('#checkedRow'); if(c){ c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash'); }
   }
 }
-setInterval(()=>{ if(!DATA) return;
-  const a=$('#agoTxt'); if(a) a.textContent=ago(new Date(DATA.generated));
+setInterval(()=>{ const D=readFor(); if(!D) return;
+  const a=$('#agoTxt'); if(a) a.textContent=ago(new Date(D.generated));
   const c=$('#chkAgo'); if(c&&CHECKED) c.textContent=ago(CHECKED); }, 30000);
 
-/* ───────── render ───────── */
-const MACRO_NAMES = {'NQ=F':'Nasdaq futures','ES=F':'S&P futures','ZN=F':'10Y T-note futures','ZT=F':'2Y T-note futures','DX-Y.NYB':'Dollar index',
-  'CL=F':'WTI crude','HYG':'High-yield bonds','BTC-USD':'Bitcoin','VXX':'VXX (vol)','^N225':'Nikkei','^GDAXI':'DAX','^HSI':'Hang Seng'};
+/* ───────── shell ───────── */
+function shell(){
+  const D = readFor();
+  // header: market tabs, session switch, Pre-open/Now only where it applies
+  const syms = D ? Object.keys(D.markets) : ['NQ','ES'];
+  if(!syms.includes(SYM)) SYM = syms[0];
+  $('#tabs').innerHTML = syms.map(s=>`<button class="tab ${s===SYM?'on':''}" data-s="${s}">${s}${D?`<span class="dot" style="background:${C(D.markets[s].bias.bias)}"></span>`:''}</button>`).join('');
+  $$('#tabs .tab').forEach(t=>t.onclick=()=>{SYM=t.dataset.s;render();window.scrollTo({top:0})});
+  const sessUsed = ['today','levels','record'].includes(PAGE);
+  $('#sess').style.display = sessUsed && ROOT && ROOT.ny ? '' : 'none';
+  $$('#sess button').forEach(b=>b.classList.toggle('on', b.dataset.s===SESSION));
+  $('#vt').style.display = (SESSION==='ny' && ['today','levels'].includes(PAGE)) ? '' : 'none';
+  $$('#vt button').forEach(b=>b.classList.toggle('on', b.dataset.view===VIEW));
+  $('.brand').innerHTML = `<span class="live ${D && D.date!==todayET() && SESSION==='ny' ? 'stale':''}" id="live"></span><b>${SESSION==='overnight'?'Overnight':'NY AM'}</b> Bias`;
+  // tab bar
+  $('#tabbar').innerHTML = BAR.map(k=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}${PAGES[k].name}</button>`).join('')
+    + `<button data-p="all" class="${!BAR.includes(PAGE)?'on':''}">${I.all}All</button>`;
+  $$('#tabbar button').forEach(b=>b.onclick=()=> b.dataset.p==='all' ? openGlass() : go(b.dataset.p));
+}
+const todayET = () => new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+function go(p){ PAGE=p; closeGlass(); render(); window.scrollTo({top:0}); }
+
+function openGlass(){
+  $('#glass').innerHTML = `<h4><span>All sections</span><span>${esc(SYM)} · ${SESSION==='overnight'?'Overnight':'NY AM'}</span></h4><div class="tiles">${
+    Object.entries(PAGES).map(([k,v])=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}<span><b>${v.name}</b><small>${v.sub}</small></span></button>`).join('')}</div>`;
+  $$('#glass .tiles button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+  $('#scrim').classList.add('on'); $('#glass').classList.add('on');
+}
+function closeGlass(){ $('#glass').classList.remove('on'); if(!$('#sheet').classList.contains('on')) $('#scrim').classList.remove('on'); }
+
+$$('#vt button').forEach(b=>b.onclick=()=>{
+  if(b.dataset.view==='now' && ROOT && ROOT.ny && !ROOT.ny.now){ toast('No "Now" read yet. It appears after the next run.'); return; }
+  VIEW=b.dataset.view; render(); window.scrollTo({top:0});
+  toast(VIEW==='now' ? 'Now: latest data, including today\'s moves' : 'Pre-open: only data from before 9:25 AM ET');
+});
+$$('#sess button').forEach(b=>b.onclick=()=>{
+  if(b.dataset.s==='overnight' && !(ROOT && ROOT.overnight)){ toast('No overnight read yet. It is built after 6 PM ET.'); return; }
+  SESSION=b.dataset.s; render(); window.scrollTo({top:0});
+});
 
 function render(){
-  const syms = Object.keys(DATA.markets);
-  if(!syms.includes(SYM)) SYM = syms[0];
-  $('#tabs').innerHTML = syms.map(s=>`<button class="tab ${s===SYM?'on':''}" data-s="${s}">${s}<span class="dot" style="background:${C(DATA.markets[s].bias.bias)}"></span></button>`).join('');
-  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{SYM=t.dataset.s;render();window.scrollTo({top:0})});
+  shell();
+  const D = readFor();
+  if(!D && !['research','journal'].includes(PAGE)){ $('#app').innerHTML='<div class="empty">No report for this session yet.</div>'; return; }
+  $('#app').innerHTML = ({today:pageToday, levels:pageLevels, macro:pageMacro, record:pageRecord, research:pageResearch, journal:pageJournal}[PAGE])(D);
+  if(PAGE==='journal') wireJournal();
+  if(PAGE==='levels'){ const c=$('#copyLv'); if(c) c.onclick=copyLevels; }
+}
 
-  const today = new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
-  const stale = DATA.date!==today; $('#live').classList.toggle('stale', stale);
-  const m = DATA.markets[SYM], b = m.bias, L = m.levels||{}, D = m.dealer, F = m.flow, R = m.expected_range;
-  const g = new Date(DATA.generated), asof = new Date(DATA.as_of), n = nextRun();
-  const pit = DATA.mode==='point-in-time';
-  const sessionDay = new Date(DATA.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-
+/* ───────── TODAY ───────── */
+function stampsHTML(D){
+  const g=new Date(D.generated), asof=new Date(D.as_of), n=nextRun(), pit=D.mode==='point-in-time';
+  const stale = SESSION==='ny' && D.date!==todayET();
+  return `<div class="stamps">
+    <div><span>Data cut at</span><b>${dayLocal(asof)} · ${tLocal(asof)}<em>${tET(asof)}${pit&&VIEW!=='now'?' · nothing later is used':''}</em></b></div>
+    <div><span>Report built</span><b>${dayLocal(g)} · ${tLocal(g)}<em>${tET(g)} · <span id="agoTxt">${ago(g)}</span></em></b></div>
+    <div id="checkedRow"><span>Last checked</span><b>${CHECKED?tLocal(CHECKED,true):'—'}<em id="chkAgo">${CHECKED?ago(CHECKED):''}</em></b></div>
+    <div><span>Next auto-update</span><b>${dayLocal(n)} · ${tLocal(n)}<em>${tET(n)} · may start a few min late</em></b></div>
+    ${stale?'<div><span style="color:var(--amber)">Not today\'s session</span><b style="color:var(--amber)">waiting on the morning run</b></div>':''}
+  </div>`;
+}
+function modeLine(D){
+  if(SESSION==='overnight') return `<b>Overnight.</b> The call for the Globex session from 6 PM to 8:30 AM ET, built only from data up to the 6 PM cutoff. It's graded the next morning at 8:30.`;
+  if(VIEW==='now') return `<b>Now.</b> Built from the latest data, up to ${tET(new Date(D.as_of))}. After the open this includes today's trading, so it is not a prediction test. Switch to Pre-open for that.`;
+  return D.mode==='point-in-time'
+    ? `<b>Pre-open.</b> What the model said before the bell, using only data from before 9:25 AM ET. Today's trading is excluded, so you can check whether it was right.`
+    : `<b>Pre-open, live.</b> The market hasn't opened yet. This is today's call.`;
+}
+function pageToday(D){
+  const m = D.markets[SYM], b = m.bias;
+  const window_ = SESSION==='overnight' ? `Overnight · ${dayOf(D.date)} 6 PM → 8:30 AM` : `${dayOf(D.date)} · New York AM`;
   let h = `
   <div class="hero">
-    <div class="kicker">${esc(SYM)} · ${sessionDay} · New York AM</div>
+    <div class="kicker">${esc(SYM)} · ${window_}</div>
     <div class="bias" style="color:${C(b.bias)}">${arrow(b.bias)}${b.bias}</div>
     <div class="conv">${b.conviction} conviction</div>
-    <span class="mode" style="color:${pit?'var(--amber)':'var(--up)'}">${pit?'⏪ Point-in-time · evidence cut at '+tET(asof):'● Live pre-market read'}</span>
-    <div class="stamps">
-      <div><span>Evidence as of</span><b>${dayLocal(asof)} · ${tLocal(asof)}<em>${tET(asof)}${pit?' · nothing after this is used':''}</em></b></div>
-      <div><span>Report built</span><b>${dayLocal(g)} · ${tLocal(g)}<em>${tET(g)} · <span id="agoTxt">${ago(g)}</span></em></b></div>
-      <div id="checkedRow"><span>Last checked</span><b>${CHECKED?tLocal(CHECKED,true):'—'}<em id="chkAgo">${CHECKED?ago(CHECKED):''}</em></b></div>
-      <div><span>Next auto-update</span><b>${dayLocal(n)} · ${tLocal(n)}<em>${tET(n)} · may start a few min late</em></b></div>
-      ${stale?'<div><span style="color:var(--amber)">Not today\'s session</span><b style="color:var(--amber)">waiting on the morning run</b></div>':''}
-    </div>
+    <div class="mode">${modeLine(D)}</div>
+    ${stampsHTML(D)}
     <div class="meter"><i style="left:${((b.score+1)/2*100).toFixed(1)}%"></i></div>
     <div class="meter-l"><span>Bearish</span><span>Score ${b.score>0?'+':''}${b.score.toFixed(2)} · ${b.ups}↑ ${b.downs}↓ · ${b.macro_share??''}% macro</span><span>Bullish</span></div>
   </div>
@@ -283,19 +442,18 @@ function render(){
     <div class="card pad"><p class="idea">${esc(b.overall)}</p>
     ${b.invalidation?`<div class="inval"><b>What flips the view:</b> ${esc(b.invalidation)}.</div>`:''}</div>
   </section>`;
-
   const S = {};
-  if(DATA.divergence) S.divergence = `<section><h2>NQ vs ES <span class="pill" style="color:var(--amber)">Split read</span></h2>
-      <div class="card pad" style="font-size:14.5px;line-height:1.55;color:var(--sub)">${esc(DATA.divergence)}</div></section>`;
-  if(m.changed){ const c=m.changed, dir=c.delta>0.05?'More bullish':c.delta<-0.05?'More bearish':'Little changed';
+  if(D.divergence) S.divergence = `<section><h2>NQ vs ES <span class="pill" style="color:var(--amber)">Split read</span></h2>
+      <div class="card pad" style="font-size:14.5px;line-height:1.55;color:var(--sub)">${esc(D.divergence)}</div></section>`;
+  if(m.changed && VIEW!=='now'){ const c=m.changed, dir=c.delta>0.05?'More bullish':c.delta<-0.05?'More bearish':'Little changed';
     S.changed = `<section><h2>What changed <span class="pill" style="color:var(--dim)">${dir}</span></h2>
       <div class="card rows"><div class="r"><span>Prior read (${esc(c.prev_date)})</span><span style="color:${C(c.prev_bias)}">${c.prev_bias} ${c.prev_score>0?'+':''}${c.prev_score.toFixed(2)}</span></div>
       <div class="r"><span>Score change</span><span>${c.delta>0?'+':''}${c.delta.toFixed(2)}</span></div></div></section>`; }
-  if(m.outcome){ const o=m.outcome, col=o.result==='hit'?'var(--up)':o.result==='miss'?'var(--down)':'var(--dim)';
-    S.outcome = `<section><h2>How it played out <span class="pill" style="color:${col}">${o.result==='hit'?'✓ Correct':o.result==='miss'?'✕ Wrong':'Neutral call'}</span></h2>
-      <div class="card rows"><div class="r"><span>9:30 open</span><span>${fmt(o.open)}</span></div><div class="r"><span>12:00 noon</span><span>${fmt(o.noon)}</span></div>
+  if(m.outcome && VIEW!=='now'){ const o=m.outcome, col=o.result==='hit'?'var(--up)':o.result==='miss'?'var(--down)':'var(--dim)';
+    const a=SESSION==='overnight'?['6 PM','8:30 AM']:['9:30 open','12:00 noon'];
+    S.outcome = `<section><h2>How it played out <span class="pill" style="color:${col}">${o.result==='hit'?'Correct':o.result==='miss'?'Wrong':'Neutral call'}</span></h2>
+      <div class="card rows"><div class="r"><span>${a[0]}</span><span>${fmt(o.open)}</span></div><div class="r"><span>${a[1]}</span><span>${fmt(o.noon)}</span></div>
       <div class="r"><span>Move</span><span style="color:${o.move>=0?'var(--up)':'var(--down)'}">${o.move>0?'+':''}${fmt(o.move)} pts</span></div></div></section>`; }
-
   const groups={}; m.signals.forEach(s=>(groups[s.group]=groups[s.group]||[]).push(s));
   S.signals = `<section><h2>Signals</h2><div class="card">${Object.entries(groups).map(([gname,list])=>{
     const w=list.reduce((a,s)=>a+s.weight,0);
@@ -304,63 +462,73 @@ function render(){
       return `<div class="sig"><div class="ico" style="color:${c};border-color:${c}">${s.score>0?'+':s.score<0?'−':'0'}</div>
         <div><h3>${esc(s.label)}<span class="w">×${s.weight}</span></h3>${P.reasons?`<p>${esc(s.text)}</p>`:''}</div></div>`;}).join('');
   }).join('')}</div></section>`;
-
-  const tape = Object.entries(DATA.macro||{}).filter(([k])=>MACRO_NAMES[k]);
-  if(tape.length) S.macro = `<section><h2>Macro tape <span class="pill" style="color:var(--dim)">vs prior 4 PM</span></h2><div class="card rows">${
-    tape.map(([k,v])=>`<div class="r"><span>${MACRO_NAMES[k]}</span><span style="color:${v.chg_pct>0?'var(--up)':v.chg_pct<0?'var(--down)':'var(--text)'}">${v.chg_pct>0?'+':''}${fmt(v.chg_pct)}%<small>${fmt(v.last, v.last>1000?0:2)}${v.ts?' · '+tET(new Date(v.ts)):''}</small></span></div>`).join('')}</div></section>`;
-
-  if(L.price){
-    S.levels = `<section><h2>Key levels <span class="pill" style="color:var(--dim)">${esc(SYM)} points</span></h2><div class="card rows">
-      <div class="r"><span>Futures at cutoff</span><span>${fmt(L.price)}</span></div>
-      ${L.call_wall?`<div class="r"><span>Call wall</span><span style="color:var(--up)">${fmt(L.call_wall,0)}</span></div>`:''}
-      ${L.flip?`<div class="r"><span>Gamma flip</span><span>${fmt(L.flip)}</span></div>`:''}
-      ${L.flip_close?`<div class="r"><span>Flip at 4 PM</span><span>${fmt(L.flip_close)}</span></div>`:''}
-      ${L.put_wall?`<div class="r"><span>Put wall</span><span style="color:var(--down)">${fmt(L.put_wall,0)}</span></div>`:''}
-      ${R?`<div class="r"><span>Expected range (1σ)</span><span>${fmt(R.low,0)} – ${fmt(R.high,0)}</span></div>`:''}
-      ${(L.majors||[]).map(x=>`<div class="r"><span>Major ${x.net_gex>0?'+γ':'−γ'} level</span><span style="color:${x.net_gex>0?'var(--up)':'var(--down)'}">${fmt(x.level,0)}</span></div>`).join('')}
-    </div></section>`;
-  }
-  if(m.profile && m.profile.length) S.profile = `<section><h2>Dealer gamma profile</h2><div class="card pad">${profile(m.profile,L)}</div></section>`;
-  if(D){ const lg=D.net_gex_bn>0;
-    S.dealer = `<section><h2>Dealer positioning <span class="pill" style="color:${lg?'var(--up)':'var(--down)'}">${lg?'Long gamma':'Short gamma'}</span></h2><div class="card rows">
-      <div class="r"><span>Net GEX (per 1% move)</span><span style="color:${lg?'var(--up)':'var(--down)'}">${usd(D.net_gex_bn)}B</span></div>
-      <div class="r"><span>Call ÷ put gamma</span><span>${fmt(D.call_put_gamma)}</span></div>
-      <div class="r"><span>Dealer option delta</span><span>${usd(D.dealer_delta_bn,1)}B</span></div>
-      <div class="r"><span>Charm hedge flow to close</span><span style="color:${D.charm_bn>0?'var(--up)':'var(--down)'}">${D.charm_bn>0?'Buy':'Sell'} ${usd(Math.abs(D.charm_bn))}B</span></div>
-      <div class="r"><span>Vanna per +1 vol pt</span><span>${usd(D.vanna_bn_per_pt)}B Δ</span></div>
-      <div class="r"><span>Chains used</span><span>${D.chains.join(' + ')}</span></div></div></section>`; }
-  if(F && (F.calls_m+F.puts_m)>0){ const cp=(F.calls_m/(F.calls_m+F.puts_m)*100).toFixed(1);
-    S.flow = `<section><h2>Options flow · prior session</h2><div class="card pad">
-      <div class="flowbar"><div style="width:${cp}%;background:var(--up)"></div><div style="flex:1;background:var(--down)"></div></div>
-      <div class="fl"><span style="color:var(--up)">Calls $${fmt(F.calls_m,1)}M</span><span style="color:var(--down)">Puts $${fmt(F.puts_m,1)}M</span></div>
-      <div class="rows" style="margin:12px calc(-1*var(--pad)) calc(-1*var(--pad));border-top:1px solid var(--line)">
-      ${F.top.map(t=>`<div class="r"><span>${fmt(t.level,0)} ${t.side}s</span><span style="color:${t.side==='call'?'var(--up)':'var(--down)'}">$${fmt(t.premium/1e6,1)}M</span></div>`).join('')}</div></div></section>`; }
-  S.calendar = `<section><h2>US calendar · ${sessionDay}</h2><div class="card">${DATA.events.length ? DATA.events.map(e=>`<div class="ev"><div class="t">${esc(e.time)}</div><div>
-      <span class="imp" style="background:${e.impact==='High'?'var(--down)':'var(--amber)'}"></span>${esc(e.title)}
-      ${(e.forecast||e.previous)?`<small>fcst ${esc(e.forecast||'—')} · prev ${esc(e.previous||'—')}</small>`:''}</div></div>`).join('')
-      : '<div class="ev"><div>No medium or high impact US releases.</div></div>'}</div></section>`;
+  S.calendar = `<section><h2>US calendar · ${dayOf((D.events[0]||{}).date || (SESSION==='overnight'?nextWeekdayISO(D.date):D.date))}</h2><div class="card">${eventsHTML(D.events)}</div></section>`;
   if(m.earnings.length) S.earnings = `<section><h2>Mega-cap earnings</h2><div class="card rows">${m.earnings.map(e=>`<div class="r"><span>${esc(e.symbol)}</span><span>${esc(e.when)}</span></div>`).join('')}</div></section>`;
-  const sc = m.scorecard || {hits:0,misses:0,recent:[]};
-  const rate = sc.hits+sc.misses ? Math.round(100*sc.hits/(sc.hits+sc.misses))+'%' : '—';
-  S.record = `<section><h2>Track record · open → noon <span class="pill" style="color:var(--dim)">${sc.hits}–${sc.misses} · ${rate}</span></h2><div class="card">${
-    sc.recent.length ? `<div class="sc">${sc.recent.map(r=>`<span style="color:${r.result==='hit'?'var(--up)':r.result==='miss'?'var(--down)':'var(--dim)'}">${r.date.slice(5)} ${r.bias[0]} ${r.move>0?'+':''}${fmt(r.move,0)}</span>`).join('')}</div>`
-    : '<div class="ev"><div style="color:var(--dim)">Grades appear once a session passes noon ET.</div></div>'}</div></section>`;
-  if(DATA.sources && Object.keys(DATA.sources).length) S.freshness = `<section><h2>Data freshness</h2><div class="card rows">${Object.entries(DATA.sources).map(([k,v])=>{
+  if(D.sources && Object.keys(D.sources).length) S.freshness = `<section><h2>Data freshness</h2><div class="card rows">${Object.entries(D.sources).map(([k,v])=>{
       const t = new Date(v.data_time||v.fetched);
       return `<div class="r"><span>${v.ok?'':'<span style="color:var(--down)">✕ </span>'}${esc(k)}${v.detail?`<small>${esc(v.detail)}</small>`:''}</span>
         <span style="color:${v.ok?'var(--text)':'var(--down)'}">${v.ok?tLocal(t):'failed'}<small>${v.ok?(v.data_time?'data as of':'pulled')+' · '+tET(t):'retries next run'}</small></span></div>`;}).join('')}</div></section>`;
   S.method = `<section class="foot">
-    <p><b>Point-in-time.</b> Every read uses only data that existed at 9:25 AM ET that morning. Run it before then and it's live. Run it later, even at night, and every price is rewound to 9:25, so the session never leaks in and the track record is a fair test. Prior-session option flow is dropped from rewound reads, because option volume after the open would leak the session.</p>
-    <p><b>Mostly macro.</b> About three quarters of the weight sits on macro and volatility: overnight futures, Asia and Europe, 10Y and 2Y Treasury futures, the dollar, crude, credit, Bitcoin, pre-market VXX and the VIX curve. Dealer gamma, charm and vanna are a lighter overlay, built from CBOE open interest on the assumption that dealers are long calls and short puts.</p>
-    <p><b>Scoring.</b> Each signal scores +1, 0 or −1 times its weight, and the total is scaled to −1…+1. Above +0.12 reads Bullish and below −0.12 reads Bearish. NQ and ES are highly correlated, so each final score is 65% its own evidence and 35% the other's. Conviction drops a notch when a high-impact release is still ahead.</p>
-    <p><b>Research.</b> Barbon &amp; Buraschi, "Gamma Fragility" (2021). Baltussen, Da, Lammers &amp; Martens (JFE 2021). Ni, Pearson &amp; Poteshman (JFE 2005). Pan &amp; Poteshman (RFS 2006). Bollerslev, Tauchen &amp; Zhou (RFS 2009). Lou, Polk &amp; Skouras, "A Tug of War: Overnight Versus Intraday Expected Returns" (JFE 2019).</p>
+    <p><b>Sessions.</b> NY AM calls 9:30 to noon ET from data cut at 9:25 AM. Overnight calls the 6 PM to 8:30 AM Globex session from data cut at 6 PM. Each one has its own track record.</p>
+    <p><b>Pre-open vs Now.</b> Pre-open, the default, is the NY call as it stood before the bell, and it's the one that gets graded. Now uses everything up to the latest hourly run, so after the open it includes moves that already happened.</p>
+    <p><b>Mostly macro.</b> About three quarters of the weight is macro and volatility. Dealer gamma, charm and vanna from CBOE open interest are a lighter overlay. NQ and ES are blended 65/35 with each other, since they're highly correlated. See Research for every signal.</p>
     <p>Educational research, not financial advice.</p></section>`;
-
   for(const k of P.order) if(!P.hidden.includes(k) && S[k]) h += S[k];
-  if(DATA.notes && DATA.notes.length) h += `<section><h2>Data notes</h2><div class="card pad err">${DATA.notes.map(esc).join('<br>')}</div></section>`;
-  $('#app').innerHTML = h;
+  if(D.notes && D.notes.length) h += `<section><h2>Data notes</h2><div class="card pad err">${D.notes.map(esc).join('<br>')}</div></section>`;
+  return h;
+}
+function nextWeekdayISO(iso){ const d=new Date(iso+'T12:00:00'); do{ d.setDate(d.getDate()+1); }while([0,6].includes(d.getDay())); return d.toISOString().slice(0,10); }
+function eventsHTML(evs){
+  return evs.length ? evs.map(e=>`<div class="ev"><div class="t">${esc(e.time)}</div><div>
+      <span class="imp" style="background:${e.impact==='High'?'var(--down)':'var(--amber)'}"></span>${esc(e.title)}
+      ${(e.forecast||e.previous)?`<small>fcst ${esc(e.forecast||'—')} · prev ${esc(e.previous||'—')}</small>`:''}</div></div>`).join('')
+    : '<div class="ev"><div style="color:var(--dim)">No medium or high impact US releases.</div></div>';
 }
 
+/* ───────── LEVELS ───────── */
+function pageLevels(D){
+  const m=D.markets[SYM], L=m.levels||{}, R=m.expected_range, Dl=m.dealer, F=m.flow;
+  let h = `<div class="ptitle">Levels</div><div class="psub">${esc(SYM)} points, as of ${tET(new Date(D.as_of))} ${dayOf(D.date)}. Built from CBOE open interest, mapped into futures prices.</div>`;
+  h += `<section><h2>Key levels</h2><div class="card rows">
+      <div class="r"><span>Futures at cutoff</span><span>${fmt(L.price)}</span></div>
+      ${L.call_wall?`<div class="r"><span>Call wall<small>resistance · dealer supply</small></span><span style="color:var(--up)">${fmt(L.call_wall,0)}</span></div>`:''}
+      ${L.flip?`<div class="r"><span>Gamma flip<small>regime line</small></span><span>${fmt(L.flip)}</span></div>`:''}
+      ${L.flip_close?`<div class="r"><span>Flip at 4 PM</span><span>${fmt(L.flip_close)}</span></div>`:''}
+      ${L.put_wall?`<div class="r"><span>Put wall<small>support · dealer demand</small></span><span style="color:var(--down)">${fmt(L.put_wall,0)}</span></div>`:''}
+      ${R?`<div class="r"><span>Expected range (1σ)</span><span>${fmt(R.low,0)} – ${fmt(R.high,0)}<small>± ${fmt(R.move,0)} pts</small></span></div>`:''}
+      ${(L.majors||[]).map(x=>`<div class="r"><span>Major ${x.net_gex>0?'+γ':'−γ'} level</span><span style="color:${x.net_gex>0?'var(--up)':'var(--down)'}">${fmt(x.level,0)}</span></div>`).join('')}
+    </div>
+    <div class="btnrow"><button class="btn" id="copyLv">Copy levels</button></div></section>`;
+  if(!L.flip && !L.call_wall) h += `<section><div class="card pad" style="color:var(--dim);font-size:14px;line-height:1.5">Dealer levels aren't available for this read. Option open interest from that morning isn't in the free feed, so only the price and the vol-based range are shown.</div></section>`;
+  if(m.profile && m.profile.length) h += `<section><h2>Dealer gamma profile</h2><div class="card pad">${profile(m.profile,L)}</div></section>`;
+  if(Dl){ const lg=Dl.net_gex_bn>0;
+    h += `<section><h2>Dealer positioning <span class="pill" style="color:${lg?'var(--up)':'var(--down)'}">${lg?'Long gamma':'Short gamma'}</span></h2><div class="card rows">
+      <div class="r"><span>Net GEX (per 1% move)</span><span style="color:${lg?'var(--up)':'var(--down)'}">${usd(Dl.net_gex_bn)}B</span></div>
+      <div class="r"><span>Call ÷ put gamma</span><span>${fmt(Dl.call_put_gamma)}</span></div>
+      <div class="r"><span>Dealer option delta</span><span>${usd(Dl.dealer_delta_bn,1)}B</span></div>
+      <div class="r"><span>Charm hedge flow to close</span><span style="color:${Dl.charm_bn>0?'var(--up)':'var(--down)'}">${Dl.charm_bn>0?'Buy':'Sell'} ${usd(Math.abs(Dl.charm_bn))}B</span></div>
+      <div class="r"><span>Vanna per +1 vol pt</span><span>${usd(Dl.vanna_bn_per_pt)}B Δ</span></div>
+      <div class="r"><span>Chains used</span><span>${Dl.chains.join(' + ')}</span></div></div></section>`; }
+  if(F && (F.calls_m+F.puts_m)>0){ const cp=(F.calls_m/(F.calls_m+F.puts_m)*100).toFixed(1);
+    h += `<section><h2>Options flow · prior session</h2><div class="card pad">
+      <div class="flowbar"><div style="width:${cp}%;background:var(--up)"></div><div style="flex:1;background:var(--down)"></div></div>
+      <div class="fl"><span style="color:var(--up)">Calls $${fmt(F.calls_m,1)}M</span><span style="color:var(--down)">Puts $${fmt(F.puts_m,1)}M</span></div>
+      <div class="rows" style="margin:12px calc(-1*var(--pad)) calc(-1*var(--pad));border-top:1px solid var(--line)">
+      ${F.top.map(t=>`<div class="r"><span>${fmt(t.level,0)} ${t.side}s</span><span style="color:${t.side==='call'?'var(--up)':'var(--down)'}">$${fmt(t.premium/1e6,1)}M</span></div>`).join('')}</div></div></section>`; }
+  return h;
+}
+function copyLevels(){
+  const D=readFor(), m=D.markets[SYM], L=m.levels||{}, R=m.expected_range;
+  const lines=[`${SYM} levels · ${D.date} · ${tET(new Date(D.as_of))} · ${m.bias.bias} (${m.bias.conviction})`];
+  if(L.call_wall) lines.push(`Call wall ${fmt(L.call_wall,0)}`);
+  if(L.flip) lines.push(`Gamma flip ${fmt(L.flip,2)}`);
+  if(L.put_wall) lines.push(`Put wall ${fmt(L.put_wall,0)}`);
+  (L.majors||[]).forEach(x=>lines.push(`Major ${x.net_gex>0?'+':'−'}γ ${fmt(x.level,0)}`));
+  if(R) lines.push(`Range ${fmt(R.low,0)} – ${fmt(R.high,0)}`);
+  const txt=lines.join('\n');
+  (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(()=>toast('Levels copied'))
+    .catch(()=>{ const t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select(); try{document.execCommand('copy'); toast('Levels copied');}catch(e){} t.remove(); });
+}
 function profile(pts,L){
   const W=520,H=150,p=6, xs=pts.map(d=>d.px), ys=pts.map(d=>d.gex);
   const x0=Math.min(...xs),x1=Math.max(...xs),ym=Math.max(...ys.map(Math.abs))||1;
@@ -376,12 +544,150 @@ function profile(pts,L){
   </svg><div class="meter-l" style="margin-top:6px"><span>${fmt(x0,0)}</span><span>long γ above · short γ below</span><span>${fmt(x1,0)}</span></div>`;
 }
 
+/* ───────── MACRO ───────── */
+const MACRO_NAMES = {'NQ=F':'Nasdaq futures','ES=F':'S&P futures','^N225':'Nikkei','^GDAXI':'DAX','^HSI':'Hang Seng',
+  'ZN=F':'10Y T-note futures','ZT=F':'2Y T-note futures','DX-Y.NYB':'Dollar index','CL=F':'WTI crude','HYG':'High-yield bonds',
+  'BTC-USD':'Bitcoin','VXX':'VXX (vol)','^VIX':'VIX','^VXN':'VXN','^VIX3M':'VIX 3-month','^TNX':'10Y yield'};
+const MACRO_GROUPS = {'Equities':['NQ=F','ES=F','^N225','^GDAXI','^HSI'], 'Rates & dollar':['ZN=F','ZT=F','^TNX','DX-Y.NYB'],
+  'Risk & commodities':['HYG','BTC-USD','CL=F'], 'Volatility':['VXX','^VIX','^VXN','^VIX3M']};
+function pageMacro(D0){
+  const D = readFor(SESSION==='overnight'?'ny':SESSION);   // macro tape follows the NY read
+  const Dx = D || D0, tape=Dx.macro||{}, today=todayET();
+  let h = `<div class="ptitle">Macro</div><div class="psub">Prices at ${tET(new Date(Dx.as_of))} ${dayOf(Dx.date)}, measured against the prior 4 PM.</div>`;
+  for(const [g,list] of Object.entries(MACRO_GROUPS)){
+    const rows=list.filter(k=>tape[k]);
+    if(!rows.length) continue;
+    h += `<section><h2>${g}</h2><div class="card rows">${rows.map(k=>{ const v=tape[k];
+      return `<div class="r"><span>${MACRO_NAMES[k]}</span><span style="color:${v.chg_pct>0?'var(--up)':v.chg_pct<0?'var(--down)':'var(--text)'}">${v.chg_pct>0?'+':''}${fmt(v.chg_pct)}%<small>${fmt(v.last, v.last>1000?0:2)}${v.ts?' · '+tET(new Date(v.ts)):''}</small></span></div>`;}).join('')}</div></section>`;
+  }
+  const macroSigs = (Dx.markets[SYM]||{signals:[]}).signals.filter(s=>s.group!=='Dealer positioning');
+  if(macroSigs.length) h += `<section><h2>How macro reads for ${esc(SYM)}</h2><div class="card">${macroSigs.map(s=>{
+    const c=s.score>0?'var(--up)':s.score<0?'var(--down)':'var(--faint)';
+    return `<div class="sig"><div class="ico" style="color:${c};border-color:${c}">${s.score>0?'+':s.score<0?'−':'0'}</div><div><h3>${esc(s.label)}</h3>${P.reasons?`<p>${esc(s.text)}</p>`:''}</div></div>`;}).join('')}</div></section>`;
+  const week = ROOT.week || Dx.events || [];
+  if(week.length){
+    const byDay={}; week.forEach(e=>(byDay[e.date||Dx.date]=byDay[e.date||Dx.date]||[]).push(e));
+    h += `<section><h2>Week ahead · US releases</h2><div class="card">${Object.entries(byDay).map(([d,evs])=>
+      `<div class="dayhead ${d===today?'today':''}">${dayOf(d)}${d===today?' · today':''}</div>${eventsHTML(evs)}`).join('')}</div></section>`;
+  } else h += `<section><h2>Week ahead</h2><div class="card">${eventsHTML([])}</div></section>`;
+  const ern=(Dx.markets[SYM]||{}).earnings||[];
+  if(ern.length) h += `<section><h2>Mega-cap earnings</h2><div class="card rows">${ern.map(e=>`<div class="r"><span>${esc(e.symbol)}</span><span>${esc(e.when)}</span></div>`).join('')}</div></section>`;
+  return h;
+}
+
+/* ───────── RECORD ───────── */
+function pageRecord(D){
+  const sc=(D.markets[SYM]||{}).scorecard, sess=SESSION==='overnight'?'Overnight · 6 PM → 8:30 AM':'NY AM · 9:30 → noon';
+  let h = `<div class="ptitle">Record</div><div class="psub">${esc(SYM)} · ${sess}. Every call is graded on the futures move over its window. Neutral calls aren't counted.</div>`;
+  if(!sc || (!sc.hits && !sc.misses && !(sc.recent||[]).length))
+    return h+`<section><div class="card pad" style="color:var(--dim);font-size:14px;line-height:1.55">No graded calls yet. A call is graded once its window ends. You can also fill this in fast by rebuilding past dates in GitHub: Actions → Morning bias report → Run workflow → enter a date.</div></section>`;
+  const pc = v => v==null?'—':v+'%';
+  const st = sc.streak||{};
+  h += `<section class="big"><div><span>Hit rate</span><b style="color:${(sc.pct??0)>=50?'var(--up)':'var(--down)'}">${pc(sc.pct)}</b><small>${sc.hits} right · ${sc.misses} wrong</small></div>
+        <div><span>Streak</span><b style="color:${st.kind==='hit'?'var(--up)':'var(--down)'}">${st.n||0}</b><small>${st.kind==='hit'?'in a row right':st.kind==='miss'?'in a row wrong':'—'}</small></div></section>`;
+  const barRow=(label,r)=>`<div class="r" style="display:block"><div style="display:flex;justify-content:space-between"><span style="color:var(--dim)">${label}</span><span style="font-family:var(--mono);font-weight:600">${pc(r.pct)} <small style="display:inline">${r.hits}–${r.misses}</small></span></div>
+     <div class="bar"><i style="width:${r.pct??0}%;background:${(r.pct??0)>=50?'var(--up)':'var(--down)'}"></i></div></div>`;
+  h += `<section><h2>By call</h2><div class="card rows">${barRow('Bullish calls',sc.by_bias.Bullish)}${barRow('Bearish calls',sc.by_bias.Bearish)}</div></section>`;
+  h += `<section><h2>By conviction</h2><div class="card rows">${['High','Medium','Low'].map(c=>barRow(c+' conviction',sc.by_conviction[c])).join('')}</div></section>`;
+  const recent=sc.recent||[];
+  h += `<section><h2>Last ${recent.length} sessions</h2><div class="card"><div class="dots">${recent.map(r=>`<span title="${r.date}" style="background:${r.result==='hit'?'var(--up)':r.result==='miss'?'var(--down)':'var(--line2)'}">${r.bias[0]}</span>`).join('')}</div>
+    <div class="psub" style="padding:0 var(--pad) var(--pad);font-size:12px">Green right · red wrong · grey neutral. Letter is the call.</div></div></section>`;
+  if((sc.signals||[]).length) h += `<section><h2>Which signals worked</h2><div class="card rows">${sc.signals.map(s=>
+    `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between"><span style="color:var(--dim)">${esc(s.label)}</span><span style="font-family:var(--mono);font-weight:600">${s.pct}% <small style="display:inline">${s.right}/${s.n}</small></span></div>
+     <div class="bar"><i style="width:${s.pct}%;background:${s.pct>=55?'var(--up)':s.pct<=45?'var(--down)':'var(--flat)'}"></i></div></div>`).join('')}</div>
+     <div class="psub" style="margin-top:8px;font-size:12px">How often each signal pointed the same way as the move, counted only when it wasn't neutral. Above 55% earns its weight. Under 45% is worse than a coin flip. Small samples are noise, so give it a few weeks.</div></section>`;
+  h += `<section><h2>History</h2><div class="card rows">${recent.slice().reverse().map(r=>`<div class="r"><span>${dayOf(r.date)}<small>${r.conviction} conviction</small></span>
+    <span style="color:${r.result==='hit'?'var(--up)':r.result==='miss'?'var(--down)':'var(--dim)'}">${r.bias} · ${r.move>0?'+':''}${fmt(r.move,0)}<small>${r.result==='hit'?'right':r.result==='miss'?'wrong':'not counted'}</small></span></div>`).join('')}</div></section>`;
+  return h;
+}
+
+/* ───────── RESEARCH ───────── */
+const RS = [
+ ['Macro','overnight','Overnight futures','How far NQ/ES moved on Globex since yesterday\'s 4 PM, measured at the cutoff.','Overnight order flow carries information, and opening gaps on index futures tend to extend early in the session more often than they fade.','Lou, Polk & Skouras, "A Tug of War: Overnight Versus Intraday Expected Returns" (JFE 2019). Cliff, Cooper & Gulen, "Return Differences between Trading and Non-trading Hours" (2008).','Big gaps on thin news often fade at the open. Gap-and-go works best when macro agrees.'],
+ ['Macro','global','Global equities','The average move in the Nikkei, DAX and Hang Seng from their last close to the cutoff.','Equity markets transmit shocks across time zones. Asia and Europe digest overnight news before New York opens.','Hamao, Masulis & Ng, "Correlations in Price Changes and Volatility across International Stock Markets" (RFS 1990). Eun & Shim, "International Transmission of Stock Market Movements" (JFQA 1989).','Region-specific stories, like a China policy move, don\'t always carry over to US tech.'],
+ ['Macro','rates','10-year yield','The 10Y Treasury futures move, converted to an approximate yield change in basis points.','Equities are long-duration assets. Higher discount rates lower the present value of future earnings, and growth and tech are hit hardest.','Bernanke & Kuttner, "What Explains the Stock Market\'s Reaction to Federal Reserve Policy?" (JF 2005).','If yields rise on strong growth data, rather than on inflation, stocks can rally anyway.'],
+ ['Macro','fed','2-year / Fed path','The 2Y Treasury futures move, which tracks where traders think the Fed is heading.','The front end prices policy expectations. A hawkish repricing tightens financial conditions quickly.','Gürkaynak, Sack & Swanson, "Do Actions Speak Louder Than Words?" (IJCB 2005).','Small moves are noise. It matters most around Fed speakers, CPI and payrolls.'],
+ ['Macro','dollar','US dollar','The DXY dollar index change.','A rising dollar tightens global financial conditions and dents the overseas earnings of US multinationals.','Avdjiev, Du, Koch & Shin, "The Dollar, Bank Leverage, and Deviations from Covered Interest Parity" (AER: Insights 2019).','In a risk-off flight to safety, the dollar and stocks can both be driven by the same fear, so the signal double-counts.'],
+ ['Macro','oil','Crude oil','The WTI move. Only a spike above 2.5% counts, as a negative.','Oil supply shocks act as a tax on consumers and push up inflation expectations.','Kilian & Park, "The Impact of Oil Price Shocks on the U.S. Stock Market" (IER 2009).','Demand-driven oil rallies come with strong growth, which is good for stocks. The signal can\'t tell the two apart.'],
+ ['Macro','credit','Credit (HYG)','The high-yield bond ETF, pre-market or at the cutoff.','Credit investors are often first to price stress. Equity rallies without credit confirmation tend to fail.','Gilchrist & Zakrajšek, "Credit Spreads and Business Cycle Fluctuations" (AER 2012).','HYG pre-market liquidity is thin, so small moves can be noise.'],
+ ['Macro','crypto','Crypto risk appetite','Bitcoin\'s move since yesterday\'s 4 PM.','Bitcoin trades all night and reflects speculative appetite, which spills into high-beta tech.','No strong academic evidence. It has a low weight, and you can watch Record to see if it earns it.','Crypto-specific news, like ETF flows or hacks, has nothing to do with stocks.'],
+ ['Volatility','volpre','Pre-market volatility','VXX\'s pre-market change, a tradable stand-in for the VIX before its cash open.','Falling implied vol means hedges are being sold, which supports stocks through dealer flows. Rising vol means demand for protection.','Whaley, "The Investor Fear Gauge" (JPM 2000). Bollerslev, Tauchen & Zhou, "Expected Stock Returns and Variance Risk Premia" (RFS 2009).','Before events like CPI or FOMC, vol stays bid regardless of direction.'],
+ ['Volatility','term','VIX term structure','VIX divided by VIX3M at yesterday\'s close.','Contango, below 0.9, is the calm backdrop where dips get bought. Backwardation, above 1.0, marks acute stress, when rallies tend to get sold.','Johnson, "Risk Premia and the VIX Term Structure" (JFQA 2017).','Backwardation can also mark capitulation lows, so the signal is early at turning points.'],
+ ['Session','day','Day session','The overnight read only. NQ/ES move from yesterday\'s 4 PM to today\'s 4 PM.','Strong cash sessions tend to see follow-through on Globex, as positioning and news flow persist.','Gao, Han, Li & Zhou, "Market Intraday Momentum" (JFE 2018).','After stretched trend days, overnight mean reversion is common.'],
+ ['Session','afterhours','After-hours reaction','The overnight read only. The futures move from 4 PM to the 6 PM cutoff.','This is where earnings from the big tech names land. The first reaction usually sets the overnight tone.','Barclay & Hendershott, "Price Discovery and Trading After Hours" (RFS 2003).','Thin after-hours liquidity can exaggerate the first move, and conference calls can reverse it.'],
+ ['Session','lasthour','Last-hour trend','The overnight read only. The 3 PM to 4 PM move.','Late-day flows driven by hedging and rebalancing tend to persist into the next session.','Baltussen, Da, Lammers & Martens, "Hedging Demand and Market Intraday Momentum" (JFE 2021).','Month-end and index rebalances make the last hour mechanical, not informative.'],
+ ['Volatility','vixday','VIX today','The overnight read only. The VIX change on the day.','Vol coming out of the market into the close tends to support the overnight drift.','Whaley (2000), as above.','Same event caveats as pre-market vol.'],
+ ['Dealer positioning','flip','Gamma flip','The price where dealer gamma, estimated from open interest, switches from long to short.','Above the flip, dealer hedging buys dips and sells rips, which dampens moves. Below it, hedging chases price and amplifies moves.','Barbon & Buraschi, "Gamma Fragility" (2021). Ni, Pearson, Poteshman & White, "Does Option Trading Have a Pervasive Impact on Underlying Stock Prices?" (RFS 2021).','It assumes dealers are long calls and short puts. Real inventory isn\'t public, and big customer call buying flips that assumption.'],
+ ['Dealer positioning','tilt','Gamma tilt','Total call gamma divided by put gamma near the money.','Put-heavy books put dealer selling below price, while call-heavy books cushion rallies.','SqueezeMetrics, "Gamma Exposure" white paper (2017).','A low weight, since it overlaps with the flip.'],
+ ['Dealer positioning','walls','Wall range','Where price sits between the largest put gamma (support) and call gamma (resistance).','Large open-interest strikes attract and pin price, especially into expiration.','Ni, Pearson & Poteshman, "Stock Price Clustering on Option Expiration Dates" (JFE 2005).','Walls can be run over on news. Treat them as magnets, not barriers.'],
+ ['Dealer positioning','charm','Charm into close','The dealer delta change caused purely by time passing until 4 PM.','As options decay, dealers must adjust hedges. With this book, that usually means buying back futures into the afternoon.','Baltussen, Da, Lammers & Martens (JFE 2021).','It mostly affects the afternoon, not the 9:30 to noon window, so it has a low weight.'],
+ ['Dealer positioning','vanna','Vanna','The dealer delta change caused by the pre-market move in implied vol.','When implied vol falls, the deltas of out-of-the-money options shrink, and dealers buy back hedges.','Practitioner research. See SqueezeMetrics (2017).','The vol input is estimated from VXX, so it\'s rough.'],
+ ['Dealer positioning','flow','Options flow','The prior session\'s short-dated premium, puts vs calls. Live pre-open reads only.','Heavy put buying from informed traders tends to precede weakness.','Pan & Poteshman, "The Information in Option Volume for Future Stock Prices" (RFS 2006).','Free data can\'t tell opening buys from closing sells, so the weight is low.'],
+];
+function pageResearch(D){
+  const live = D ? Object.fromEntries((D.markets[SYM]||{signals:[]}).signals.map(s=>[s.key,s])) : {};
+  let h = `<div class="ptitle">Research</div><div class="psub">Every signal behind the bias: what it measures, why it works, the evidence, and when it fails. The dot shows its reading in the current ${esc(SYM)} read.</div>`;
+  const groups={}; RS.forEach(r=>(groups[r[0]]=groups[r[0]]||[]).push(r));
+  for(const [g,list] of Object.entries(groups)){
+    h += `<section><h2>${g}</h2><div class="card">${list.map(([_,key,name,what,why,paper,fails])=>{
+      const s=live[key], c=!s?'var(--line2)':s.score>0?'var(--up)':s.score<0?'var(--down)':'var(--faint)';
+      return `<details class="rs"><summary><div class="ico" style="color:${c};border-color:${c}">${!s?'·':s.score>0?'+':s.score<0?'−':'0'}</div><h3>${name}${s?`<span class="w">×${s.weight}</span>`:''}</h3><em>›</em></summary>
+        <div class="rsb"><p><b>Measures:</b> ${what}</p><p><b>Why it works:</b> ${why}</p><p><b>Fails when:</b> ${fails}</p><p class="paper">${paper}</p>${s?`<p><b>Right now:</b> ${esc(s.text)}</p>`:''}</div></details>`;}).join('')}</div></section>`;
+  }
+  h += `<section><h2>How it all fits</h2><div class="card pad foot" style="font-size:13.5px;color:var(--sub)">
+    <p><b>Point-in-time.</b> Each read uses only data from before its cutoff: 9:25 AM ET for NY, 6 PM ET for overnight. So the record is a fair test, not hindsight.</p>
+    <p><b>Scoring.</b> Signals score +1, 0 or −1 times their weight, and the total is scaled to −1…+1. Above +0.12 reads Bullish and below −0.12 reads Bearish. NQ and ES are blended 65/35 with each other. Conviction drops a notch before a high-impact release.</p>
+    <p><b>Use it right.</b> Check Record. If a signal sits under 45% after a month, its weight should come down. Ask Claude to retune the weights from your Record.</p></div></section>`;
+  return h;
+}
+
+/* ───────── JOURNAL ───────── */
+let J = store.get('journal', []);
+let JF = {action:'with', result:''};
+function pageJournal(D){
+  const m = D && D.markets[SYM];
+  const withB = J.filter(e=>e.action==='with'), against = J.filter(e=>e.action==='against');
+  const winr = L => { const t=L.filter(e=>e.result!=='' && !isNaN(+e.result)); return t.length ? Math.round(100*t.filter(e=>+e.result>0).length/t.length)+'%' : '—'; };
+  const sum = L => L.reduce((a,e)=>a+(isNaN(+e.result)?0:+e.result),0);
+  let h = `<div class="ptitle">Journal</div><div class="psub">Log your trades against the bias. It's saved on this phone only. Export it to back it up.</div>`;
+  h += `<section class="big"><div><span>With the bias</span><b>${winr(withB)}</b><small>${withB.length} trades · ${sum(withB)>0?'+':''}${fmt(sum(withB),1)}</small></div>
+        <div><span>Against it</span><b>${winr(against)}</b><small>${against.length} trades · ${sum(against)>0?'+':''}${fmt(sum(against),1)}</small></div></section>`;
+  h += `<section><h2>New entry</h2><div class="card pad">
+    <div class="psub">${m?`Today's ${esc(SYM)} ${SESSION==='overnight'?'overnight':'NY'} call: <b style="color:${C(m.bias.bias)}">${m.bias.bias}</b> · ${m.bias.conviction}`:''}</div>
+    <label class="field"><span>Your trade</span><div class="chips" id="jAct">
+      <button data-a="with" class="${JF.action==='with'?'on':''}">With bias</button><button data-a="against" class="${JF.action==='against'?'on':''}">Against</button><button data-a="none" class="${JF.action==='none'?'on':''}">No trade</button></div></label>
+    <label class="field"><span>Result (points or $, minus for a loss)</span><input id="jRes" inputmode="decimal" placeholder="e.g. 25 or -12" value="${esc(JF.result)}"></label>
+    <label class="field"><span>Notes</span><textarea id="jNote" placeholder="What happened, what you saw"></textarea></label>
+    <div class="btnrow"><button class="btn primary" id="jSave">Save entry</button></div></div></section>`;
+  h += `<section><h2>Entries <span style="display:flex;gap:6px"><button class="pill" id="jExp" style="color:var(--dim)">Export</button><label class="pill" style="color:var(--dim);cursor:pointer">Import<input type="file" id="jImp" accept=".json" hidden></label></span></h2>
+    <div class="card">${J.length ? J.slice().reverse().map(e=>`<div class="jrow"><div class="h"><span>${dayOf(e.date)} · ${e.sym} · ${e.session==='overnight'?'Overnight':'NY'} · bias ${e.bias||'—'}</span>
+      <span style="color:${+e.result>0?'var(--up)':+e.result<0?'var(--down)':'var(--dim)'}">${e.action==='none'?'no trade':(e.action==='with'?'with':'against')+(e.result!==''?' · '+(+e.result>0?'+':'')+e.result:'')}</span></div>
+      ${e.note?`<p>${esc(e.note)}</p>`:''}<button class="del" data-id="${e.id}">Delete</button></div>`).join('')
+      : '<div class="jrow" style="color:var(--dim)">No entries yet.</div>'}</div></section>`;
+  return h;
+}
+function wireJournal(){
+  $$('#jAct button').forEach(b=>b.onclick=()=>{ JF.action=b.dataset.a; JF.result=$('#jRes').value; render(); });
+  $('#jSave').onclick=()=>{
+    const D=readFor(), m=D&&D.markets[SYM];
+    J.push({id:Date.now(), date:(D&&D.date)||todayET(), sym:SYM, session:SESSION, bias:m?m.bias.bias:'', conviction:m?m.bias.conviction:'',
+      action:JF.action, result:$('#jRes').value.trim(), note:$('#jNote').value.trim()});
+    store.set('journal', J); JF={action:'with', result:''}; toast('Saved to journal'); render();
+  };
+  $$('.jrow .del').forEach(b=>b.onclick=()=>{ if(confirm('Delete this entry?')){ J=J.filter(e=>String(e.id)!==b.dataset.id); store.set('journal',J); render(); } });
+  $('#jExp').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(J,null,1)],{type:'application/json'}));
+    a.download='bias-journal-'+todayET()+'.json'; a.click(); };
+  $('#jImp').onchange=e=>{ const f=e.target.files[0]; if(!f) return; f.text().then(t=>{ try{ const x=JSON.parse(t);
+    if(Array.isArray(x)){ const ids=new Set(J.map(e=>e.id)); J=J.concat(x.filter(e=>!ids.has(e.id))); store.set('journal',J); toast('Imported '+x.length+' entries'); render(); } }catch(err){ toast('That file is not a journal export'); } }); };
+}
+
 /* ───────── settings sheet ───────── */
 function seg(key, opts, label){
   return `<div class="st"><h4>${label}</h4><div class="seg">${Object.entries(opts).map(([v,t])=>
     `<button data-k="${key}" data-v="${v}" class="${String(P[key])===v?'on':''}">${t}</button>`).join('')}</div></div>`;
 }
 function openSettings(){
+  closeGlass();
   const t = THEMES[P.theme]||THEMES.classic;
   $('#sheetIn').innerHTML = `
     <div class="sh-top"><h3>Settings</h3><button class="hbtn" id="done">Done</button></div>
@@ -393,7 +699,7 @@ function openSettings(){
     ${seg('density', {comfortable:'Comfortable', compact:'Compact'}, 'Layout')}
     ${seg('reasons', {true:'Show reasons', false:'Scores only'}, 'Signal detail')}
     ${seg('market', {NQ:'NQ', ES:'ES'}, 'Open on')}
-    <div class="st"><h4>Sections · show, hide and reorder</h4><div class="card">${P.order.map((k,i)=>`
+    <div class="st"><h4>Today page · show, hide and reorder</h4><div class="card">${P.order.map((k,i)=>`
       <div class="secrow"><span>${SECTIONS[k]}</span>
         <button class="mv" data-mv="${i}" data-d="-1" ${i===0?'disabled style="opacity:.3"':''}>↑</button>
         <button class="mv" data-mv="${i}" data-d="1" ${i===P.order.length-1?'disabled style="opacity:.3"':''}>↓</button>
@@ -401,10 +707,8 @@ function openSettings(){
     <button class="reset" id="reset">Reset to defaults</button>`;
   $('#scrim').classList.add('on'); $('#sheet').classList.add('on');
 }
-function closeSettings(){ $('#scrim').classList.remove('on'); $('#sheet').classList.remove('on'); }
-function changed(){ save(); applyPrefs(); if(DATA) render(); openSettingsKeepScroll(); }
-function openSettingsKeepScroll(){ const y=$('#sheet').scrollTop; openSettings(); $('#sheet').scrollTop=y; }
-
+function closeSettings(){ $('#sheet').classList.remove('on'); $('#scrim').classList.remove('on'); }
+function changed(){ save(); applyPrefs(); if(ROOT) render(); const y=$('#sheet').scrollTop; openSettings(); $('#sheet').scrollTop=y; }
 $('#sheet').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
   if(b.id==='done') return closeSettings();
@@ -415,15 +719,14 @@ $('#sheet').addEventListener('click', e=>{
   if(b.dataset.tg){ const k=b.dataset.tg; P.hidden = P.hidden.includes(k) ? P.hidden.filter(x=>x!==k) : [...P.hidden,k]; return changed(); }
 });
 $('#sheet').addEventListener('input', e=>{
-  if(e.target.id==='cUp'){ P.up=e.target.value; save(); applyPrefs(); if(DATA) render(); }
-  if(e.target.id==='cDown'){ P.down=e.target.value; save(); applyPrefs(); if(DATA) render(); }
+  if(e.target.id==='cUp'){ P.up=e.target.value; save(); applyPrefs(); if(ROOT) render(); }
+  if(e.target.id==='cDown'){ P.down=e.target.value; save(); applyPrefs(); if(ROOT) render(); }
 });
 $('#gear').onclick = openSettings;
-$('#scrim').onclick = closeSettings;
+$('#scrim').onclick = () => { closeGlass(); closeSettings(); };
 $('#refresh').onclick = () => load(true);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
-applyPrefs();
-load();
+applyPrefs(); shell(); load();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
