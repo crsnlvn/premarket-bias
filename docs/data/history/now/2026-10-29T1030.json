@@ -1,0 +1,341 @@
+{
+ "date": "2026-10-29",
+ "as_of": "2026-10-29T10:30:43-04:00",
+ "window": {
+  "name": "NY",
+  "start": "2026-10-29T09:30:00-04:00",
+  "end": "2026-10-29T16:00:00-04:00"
+ },
+ "markets": {
+  "NQ": {
+   "bias": {
+    "bias": "Bullish",
+    "score": 0.228,
+    "raw_score": 0.228,
+    "dampened": [],
+    "own_score": 0.221,
+    "conviction": "Low",
+    "ups": 5,
+    "downs": 3,
+    "total": 16,
+    "overall": "For: 10-year yield, VIX term structure, Global equities. Against: Fed pressure (official data), Gamma flip. Dealers short gamma: moves can run. ES agrees.",
+    "invalidation": "A failure to reclaim 29,979, or a break of the put wall at 29,025",
+    "macro_share": 79
+   },
+   "signals": [
+    {
+     "key": "global",
+     "label": "Global equities",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "Nikkei +1.0%, DAX +1.3%, Hang Seng -0.6%. Asia and Europe are risk-on, which hands New York a tailwind.",
+     "group": "Macro"
+    },
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.25,
+     "text": "10Y futures +0.27% \u2248 -4.1 bp in yield (from 5.05%). Falling yields lift equity valuations.",
+     "group": "Macro"
+    },
+    {
+     "key": "fed",
+     "label": "2-year / Fed path",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "2Y futures +0.096% \u2248 -5.0 bp. The market is pricing in easier policy.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "DXY 102.16 (+0.07%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 100.87 (-0.7%). No energy shock.",
+     "group": "Macro"
+    },
+    {
+     "key": "credit",
+     "label": "Credit (HYG)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "High-yield bonds +0.08%. Credit is calm.",
+     "group": "Macro"
+    },
+    {
+     "key": "volpre",
+     "label": "Pre-market volatility",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.25,
+     "text": "VXX -0.6% pre-market. Vol is steady.",
+     "group": "Volatility"
+    },
+    {
+     "key": "term",
+     "label": "VIX term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.02,
+     "text": "VIX \u00f7 VIX3M at yesterday's close = 0.87. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility",
+     "base_weight": 1.0,
+     "learned": 1.02
+    },
+    {
+     "key": "fedpressure",
+     "label": "Fed pressure (official data)",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Unemployment rate 4.2% (in range); Initial jobless claims 194.0K (hot); Payrolls (3-mo avg change) 50.7K (cool); CPI y/y 4.0% (hot); Core CPI y/y 2.8% (hot); PPI m/m 1.3% (hot); Chicago PMI 58.8 (hot); Consumer confidence 81.9 (cool). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
+     "group": "Macro"
+    },
+    {
+     "key": "surprise",
+     "label": "Data surprise",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.5,
+     "text": "Unemployment Claims 194.0K vs 198.0K forecast (in line). In line with expectations, so no repricing of the Fed.",
+     "group": "Macro"
+    },
+    {
+     "key": "flip",
+     "label": "Gamma flip",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Price is 388 pts below the gamma flip (29,979). Dealers are short gamma, so their hedging extends moves.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "tilt",
+     "label": "Gamma tilt",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.25,
+     "text": "Call \u00f7 put gamma 0.62. Put-heavy, so hedges sit below.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "walls",
+     "label": "Wall range",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "Put wall 29,025 / call wall 29,950: 359 pts up vs 566 down. Mid-range.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "charm",
+     "label": "Charm into close",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Time decay shifts dealer hedges by $1.13B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "vanna",
+     "label": "Vanna",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.4,
+     "text": "Implied vol \u2248 -0.07 pts pre-market, worth about $0.20B of dealer buying.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "flow",
+     "label": "Options flow (prior session)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.25,
+     "text": "Short-dated premium put/call 1.06.",
+     "group": "Dealer positioning"
+    }
+   ],
+   "outcome": null
+  },
+  "ES": {
+   "bias": {
+    "bias": "Bullish",
+    "score": 0.235,
+    "raw_score": 0.235,
+    "dampened": [],
+    "own_score": 0.242,
+    "conviction": "Low",
+    "ups": 6,
+    "downs": 3,
+    "total": 16,
+    "overall": "For: Global equities, VIX term structure, 10-year yield. Against: Fed pressure (official data), Gamma flip. Dealers short gamma: moves can run. NQ agrees.",
+    "invalidation": "A failure to reclaim 7,792, or a break of the put wall at 7,705",
+    "macro_share": 78
+   },
+   "signals": [
+    {
+     "key": "global",
+     "label": "Global equities",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "Nikkei +1.0%, DAX +1.3%, Hang Seng -0.6%. Asia and Europe are risk-on, which hands New York a tailwind.",
+     "group": "Macro"
+    },
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.9375,
+     "text": "10Y futures +0.27% \u2248 -4.1 bp in yield (from 5.05%). Falling yields lift equity valuations.",
+     "group": "Macro"
+    },
+    {
+     "key": "fed",
+     "label": "2-year / Fed path",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "2Y futures +0.096% \u2248 -5.0 bp. The market is pricing in easier policy.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "DXY 102.16 (+0.07%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 100.87 (-0.7%). No energy shock.",
+     "group": "Macro"
+    },
+    {
+     "key": "credit",
+     "label": "Credit (HYG)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "High-yield bonds +0.08%. Credit is calm.",
+     "group": "Macro"
+    },
+    {
+     "key": "volpre",
+     "label": "Pre-market volatility",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.25,
+     "text": "VXX -0.6% pre-market. Vol is steady.",
+     "group": "Volatility"
+    },
+    {
+     "key": "term",
+     "label": "VIX term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX \u00f7 VIX3M at yesterday's close = 0.87. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility",
+     "base_weight": 1.0,
+     "learned": 1.0
+    },
+    {
+     "key": "fedpressure",
+     "label": "Fed pressure (official data)",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Unemployment rate 4.2% (in range); Initial jobless claims 194.0K (hot); Payrolls (3-mo avg change) 50.7K (cool); CPI y/y 4.0% (hot); Core CPI y/y 2.8% (hot); PPI m/m 1.3% (hot); Chicago PMI 58.8 (hot); Consumer confidence 81.9 (cool). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
+     "group": "Macro"
+    },
+    {
+     "key": "surprise",
+     "label": "Data surprise",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.5,
+     "text": "Unemployment Claims 194.0K vs 198.0K forecast (in line). In line with expectations, so no repricing of the Fed.",
+     "group": "Macro"
+    },
+    {
+     "key": "flip",
+     "label": "Gamma flip",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Price is 39 pts below the gamma flip (7,792). Dealers are short gamma, so their hedging extends moves.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "tilt",
+     "label": "Gamma tilt",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.25,
+     "text": "Call \u00f7 put gamma 0.78. Put-heavy, so hedges sit below.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "walls",
+     "label": "Wall range",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.5,
+     "text": "Put wall 7,705 / call wall 8,060: 307 pts up vs 48 down. Near support.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "charm",
+     "label": "Charm into close",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Time decay shifts dealer hedges by $9.45B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "vanna",
+     "label": "Vanna",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.4,
+     "text": "Implied vol \u2248 -0.05 pts pre-market, worth about $1.61B of dealer buying.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "flow",
+     "label": "Options flow (prior session)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.25,
+     "text": "Short-dated premium put/call 0.94.",
+     "group": "Dealer positioning"
+    }
+   ],
+   "outcome": null
+  }
+ }
+}
