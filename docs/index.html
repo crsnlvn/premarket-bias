@@ -381,7 +381,7 @@ const todayET = () => new Date().toLocaleDateString('en-CA',{timeZone:'America/N
 function go(p){ PAGE=p; closeGlass(); render(); window.scrollTo({top:0}); }
 
 function openGlass(){
-  $('#glass').innerHTML = `<h4><span>All sections</span><span>${esc(SYM)} · ${SESSION==='overnight'?'Overnight':VIEW==='now'?esc(winName(D)):'NY open'}</span></h4><div class="tiles">${
+  $('#glass').innerHTML = `<h4><span>All sections</span><span>${esc(SYM)} · ${SESSION==='overnight'?'Overnight':VIEW==='now'?esc(winName(readFor())):'NY open'}</span></h4><div class="tiles">${
     Object.entries(PAGES).map(([k,v])=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}<span><b>${v.name}</b><small>${v.sub}</small></span></button>`).join('')}</div>`;
   $$('#glass .tiles button').forEach(b=>b.onclick=()=>go(b.dataset.p));
   $('#scrim').classList.add('on'); $('#glass').classList.add('on');
