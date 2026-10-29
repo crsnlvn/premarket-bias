@@ -90,6 +90,28 @@ def pct(a, b):
 
 
 # ─────────────────────────── session / cutoff ─────────────────────────────
+OPEN_MOVE_END = time(10, 0)   # pre-open call is graded on the opening move, 9:30 → 10:00 ET
+
+
+def current_session(now: datetime):
+    """
+    Which futures session is trading right now, as (name, start, end, ny_date).
+    Asia 6 PM → 2 AM, London 2 AM → 9:30 AM, NY 9:30 AM → 4 PM (ET). Between 4 and
+    6 PM it calls the coming Asia session. ny_date is the NY day the session feeds
+    into, which sets the "yesterday's 4 PM" baseline. None when futures are shut.
+    """
+    wd, t, d = now.weekday(), now.time(), now.date()
+    at = lambda day, hh, mm=0: datetime.combine(day, time(hh, mm), ET)  # noqa: E731
+    if wd == 5 or (wd == 6 and t < time(18)) or (wd == 4 and t >= time(16)):
+        return None
+    if time(9, 30) <= t < time(16):
+        return "NY", at(d, 9, 30), at(d, 16), d
+    if t >= time(16):
+        return "Asia", at(d, 18), at(d + timedelta(days=1), 2), next_weekday(d)
+    if t < time(2):
+        return "Asia", at(d - timedelta(days=1), 18), at(d, 2), d
+    return "London", at(d, 2), at(d, 9, 30), d
+
 def resolve_session(now: datetime):
     """Which morning are we reading, and is the data live or rewound?"""
     forced = os.environ.get("REPORT_DATE", "").strip()
@@ -551,6 +573,64 @@ def overnight_signals(cfg, q):
     return S
 
 
+def fetch_bars(ticker, start: datetime, end: datetime):
+    """1-minute futures bars (incl. Globex) between start and end, ET-indexed. None on failure."""
+    if FIXTURES:
+        return None
+    try:
+        import yfinance as yf
+        age = (datetime.now(ET).date() - start.date()).days
+        iv = "1m" if age <= 6 else "5m" if age <= 55 else "60m"
+        h = yf.Ticker(ticker).history(start=start.date(), end=end.date() + timedelta(days=1),
+                                      interval=iv, prepost=True, auto_adjust=False)
+        if h.empty:
+            return None
+        h.index = h.index.tz_convert(ET)
+        h = h[(h.index >= start) & (h.index <= end)]
+        return h if not h.empty else None
+    except Exception as e:  # noqa: BLE001
+        print(f"bars {ticker}: {type(e).__name__} {e}", file=sys.stderr)
+        return None
+
+
+def session_signals(cfg, sess, as_of):
+    """What the session in progress has done so far. Only bars up to as_of."""
+    name, start, end, _ = sess
+    h = fetch_bars(cfg["future"], start - timedelta(minutes=1), as_of)
+    sym = cfg["future"][:2]
+    if h is None or len(h) < 5:
+        note(f"{sym}: no intraday bars for the {name} session yet")
+        return []
+    S, last, first = [], float(h["Close"].iloc[-1]), float(h["Open"].iloc[0])
+    mins = (as_of - start).total_seconds() / 60
+    drift = pct(last, first)
+    sc = 1 if drift > 0.2 else -1 if drift < -0.2 else 0
+    S.append(sig("sessdrift", f"{name} session so far", sc, 1.5,
+                 f"{sym} {drift:+.2f}% since the {name} session opened ({first:,.2f} → {last:,.2f}). " +
+                 ("Early strength tends to persist through a session (Gao, Han, Li & Zhou 2018)." if sc > 0 else
+                  "Early weakness tends to persist through a session." if sc < 0 else
+                  "Little net movement, so no momentum to lean on."), "Session"))
+    hr = h[h.index <= as_of - timedelta(minutes=60)]
+    if mins >= 75 and not hr.empty:
+        lh = pct(last, float(hr["Close"].iloc[-1]))
+        sc = 1 if lh > 0.15 else -1 if lh < -0.15 else 0
+        S.append(sig("lasthr", "Last hour", sc, 0.75,
+                     f"{sym} {lh:+.2f}% over the past hour. " +
+                     ("Buyers are in control right now." if sc > 0 else "Sellers are in control right now." if sc < 0
+                      else "The last hour went nowhere."), "Session"))
+    if name == "NY" and as_of.time() >= OPEN_MOVE_END:
+        orb = h[h.index < datetime.combine(start.date(), OPEN_MOVE_END, ET)]
+        if len(orb) >= 5:
+            hi, lo = float(orb["High"].max()), float(orb["Low"].min())
+            sc = 1 if last > hi else -1 if last < lo else 0
+            S.append(sig("orange", "Opening range", sc, 1.25,
+                         f"9:30–10:00 range {lo:,.2f}–{hi:,.2f}, price {last:,.2f}. " +
+                         ("Broke above the opening range: range breaks tend to run." if sc > 0 else
+                          "Broke below the opening range: range breaks tend to run." if sc < 0 else
+                          "Still inside the opening range, so expect rotation until it breaks."), "Session"))
+    return S
+
+
 def dealer_signals(cfg, pos, q):
     S, px = [], pos["px"]
     if pos["flip"]:
@@ -592,48 +672,111 @@ def dealer_signals(cfg, pos, q):
         sc = 1 if pc < 0.8 else -1 if pc > 1.25 else 0
         S.append(sig("flow", "Options flow (prior session)", sc, 0.25,
                      f"Short-dated premium put/call {pc:.2f}.", "Dealer positioning"))
+    # Free CBOE chains are delayed and OI is a once-a-day snapshot: good for the regime
+    # (range vs trend) and the levels, too noisy to vote on direction. Still graded in Record.
+    for s in S:
+        s["directional"] = False
+        s["weight"] = 0
     return S
 
 
+NEUTRAL_BAND = 0.30   # |score| below this = no edge. Was 0.12, which let 3 weak votes call a direction.
+EVENT_DAMP = 0.6      # FOMC / CPI / NFP etc. later the same day: positioning, not overnight data, drives the tape
+EARNINGS_DAMP = 0.85  # mega-cap reporting after the close tonight (or last night): pre-report de-risking
+LEARN_MIN_N = 20      # graded samples a signal needs before the Record starts retuning its weight
+
+
 def own_score(signals):
-    tot = sum(s["weight"] for s in signals) or 1
-    return max(-1.0, min(1.0, sum(s["raw"] * s["weight"] for s in signals) / tot))
+    """Only directional signals count. Dealer positioning is shown as regime (range vs trend), not scored."""
+    d = [s for s in signals if s.get("directional", True)]
+    tot = sum(s["weight"] for s in d) or 1
+    return max(-1.0, min(1.0, sum(s["raw"] * s["weight"] for s in d) / tot))
 
 
 def label_of(x):
-    return "Bullish" if x > 0.12 else "Bearish" if x < -0.12 else "Neutral"
+    return "Bullish" if x > NEUTRAL_BAND else "Bearish" if x < -NEUTRAL_BAND else "Neutral"
 
 
-def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="preopen"):
+def learned_multipliers(hist_dir: Path, sym: str, before: str, limit: int = 120) -> dict:
+    """
+    Scale each signal's weight by how often it has actually pointed the right way.
+    Shrunk toward 50% (10 phantom right + 10 phantom wrong) so a lucky streak can't
+    swing it, and only applied once a signal has LEARN_MIN_N real graded samples.
+    """
+    if not hist_dir.exists():
+        return {}
+    out = {}
+    for row in record_stats(hist_dir, sym, before, limit)["signals"]:
+        if row["n"] < LEARN_MIN_N:
+            continue
+        rate = (row["right"] + 10) / (row["n"] + 20)
+        out[row["key"]] = round(min(1.5, max(0.25, 1 + 2 * (rate - 0.5))), 2)
+    return out
+
+
+def apply_learning(signals, mult):
+    for s in signals:
+        m = mult.get(s["key"])
+        if m is not None and s.get("directional", True):
+            s["base_weight"] = s["weight"]
+            s["weight"] = round(s["weight"] * m, 3)
+            s["learned"] = m
+    return signals
+
+
+def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="preopen", sess=None):
     own = own_score(signals)
     score = own if not peer else (1 - PEER_WEIGHT) * own + PEER_WEIGHT * peer[1]
+    raw_score = score
+    # pre-open: anything later today (positioning into it starts at the open);
+    # now / overnight: only releases that land before the session being called ends
+    end = sess[2].isoformat() if sess else None
+    if view == "overnight":
+        end = datetime.combine(next_weekday(as_of.date()), time(9, 30), ET).isoformat()
+    upcoming = [e for e in events if e["impact"] == "High" and e["ts"] > as_of.isoformat()
+                and (end is None or e["ts"] <= end)]
+    mega = [e for e in earnings if e["symbol"] in cfg["megacaps"]]
+    damp = []
+    if upcoming:
+        score *= EVENT_DAMP
+        damp.append("high-impact release later today")
+    if mega:
+        score *= EARNINGS_DAMP
+        damp.append("mega-cap earnings")
     bias = label_of(score)
     a = abs(score)
-    lvl = 0 if a < 0.25 else 1 if a < 0.45 else 2
-    upcoming = [e for e in events if e["impact"] == "High" and e["ts"] > as_of.isoformat()]
+    lvl = 0 if a < 0.45 else 1 if a < 0.6 else 2
     if upcoming:
-        lvl = max(lvl - 1, 0)
+        lvl = 0                      # never better than Low into a binary print
     conviction = ["Low", "Medium", "High"][lvl]
-    ups = [s for s in signals if s["score"] > 0]
-    downs = [s for s in signals if s["score"] < 0]
+    directional = [s for s in signals if s.get("directional", True)]
+    ups = [s for s in directional if s["score"] > 0]
+    downs = [s for s in directional if s["score"] < 0]
     top = lambda L: sorted(L, key=lambda s: s["weight"], reverse=True)  # noqa: E731
 
     if view == "overnight":
-        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the overnight session "
-                 "(6 PM–8:30 AM ET), from data up to the 6 PM cutoff."]
+        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the whole Asia and London move "
+                 "(6 PM–9:30 AM ET), from macro data up to the 6 PM cutoff."]
+    elif view == "now" and sess:
+        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the rest of the {sess[0]} session "
+                 f"({as_of:%-I:%M %p} → {sess[2]:%-I:%M %p} ET), from data up to {as_of:%-I:%M %p} ET."]
     elif view == "now":
-        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} from data up to {as_of:%-I:%M %p} ET."]
-        if as_of.time() > time(9, 30) and as_of.weekday() < 5:
-            parts.append("This includes today's trading, so part of it reflects moves that already happened.")
+        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} from data up to {as_of:%-I:%M %p} ET. Futures are closed."]
     else:
-        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the New York morning (09:30–12:00 ET)."]
+        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the New York open (09:30–10:00 ET)."]
     if bias != "Neutral":
         lead, against = (ups, downs) if bias == "Bullish" else (downs, ups)
         parts.append("The case rests on " + ", ".join(s["label"] for s in top(lead)[:3]) + ".")
         if against:
             parts.append("Working against it: " + ", ".join(s["label"] for s in top(against)[:2]) + ".")
     else:
-        parts.append(f"{len(ups)} signals lean up and {len(downs)} lean down. No edge, so trade the levels and not a story.")
+        lean = "up" if raw_score > 0.05 else "down" if raw_score < -0.05 else None
+        parts.append(f"{len(ups)} signal{'' if len(ups)==1 else 's'} lean{'s' if len(ups)==1 else ''} up and {len(downs)} lean down" +
+                     (f", a slight tilt {lean} ({raw_score:+.2f}) that isn't strong enough to call" if lean else "") +
+                     ". No edge, so trade the levels and not a story.")
+    if damp:
+        parts.append(f"Score shrunk {raw_score:+.2f} → {score:+.2f} for " + " and ".join(damp) +
+                     ": event days are driven by positioning into the release more than by the data before it.")
     if pos:
         parts.append(f"Dealers are net {'long' if pos['net_gex'] > 0 else 'short'} gamma, so expect " +
                      ("contained, mean-reverting trade." if pos["net_gex"] > 0 else "wider ranges and follow-through on breaks."))
@@ -662,21 +805,25 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
         }[bias]
     elif view == "overnight":
         invalid = "Futures reversing through today's 4 PM close during the Asia session"
+    elif view == "now" and sess:
+        invalid = f"Price reversing through where the {sess[0]} session opened"
     elif cfg["future"] in ("NQ=F", "ES=F"):
         invalid = "Overnight futures reversing through yesterday's 4 PM level after the open"
 
     macro_w = sum(s["weight"] for s in signals if s["group"] != "Dealer positioning")
-    return dict(bias=bias, score=round(score, 3), own_score=round(own, 3), conviction=conviction,
+    return dict(bias=bias, score=round(score, 3), raw_score=round(raw_score, 3), dampened=damp,
+                own_score=round(own, 3), conviction=conviction,
                 ups=len(ups), downs=len(downs), total=len(signals), overall=" ".join(parts),
                 invalidation=invalid,
                 macro_share=round(100 * macro_w / (sum(s["weight"] for s in signals) or 1)))
 
 
-def expected_range(cfg, pos, q, px):
+def expected_range(cfg, pos, q, px, hours=6.5):
     v = q.get(cfg["vol_index"])
     if not (v and px):
         return None
-    move = px * v["prev"] / 100 / math.sqrt(252) * (0.85 if pos and pos["net_gex"] > 0 else 1.0 if not pos else 1.15)
+    scale = math.sqrt(max(min(hours, 6.5), 0.25) / 6.5)   # 1-sigma for the window being called
+    move = px * v["prev"] / 100 / math.sqrt(252) * scale * (0.85 if pos and pos["net_gex"] > 0 else 1.0 if not pos else 1.15)
     return {"move": round(move, 2), "low": round(px - move, 2), "high": round(px + move, 2)}
 
 
@@ -702,9 +849,9 @@ def next_weekday(d):
 
 def grade_window(kind, d):
     """(start, end) of the move each session's call is graded on, in ET."""
-    if kind == "overnight":
-        return datetime.combine(d, time(18, 0), ET), datetime.combine(next_weekday(d), time(8, 30), ET)
-    return datetime.combine(d, time(9, 30), ET), datetime.combine(d, time(12, 0), ET)
+    if kind == "overnight":   # all of Asia + London, into the NY open
+        return datetime.combine(d, time(18, 0), ET), datetime.combine(next_weekday(d), time(9, 30), ET)
+    return datetime.combine(d, time(9, 30), ET), datetime.combine(d, OPEN_MOVE_END, ET)
 
 
 def grade_history(hist_dir, kind):
@@ -723,8 +870,8 @@ def grade_history(hist_dir, kind):
         rep = json.loads(f.read_text())
         changed = False
         for sym, m in rep.get("markets", {}).items():
-            if m.get("outcome") or not m.get("bias"):
-                continue
+            if not m.get("bias") or (m.get("outcome") and m["outcome"].get("end") == t1.isoformat()):
+                continue   # already graded on the current window (an old window gets re-graded)
             try:
                 age = (now.date() - d).days
                 iv = "1m" if age <= 6 else "5m" if age <= 55 else "60m"
@@ -738,7 +885,7 @@ def grade_history(hist_dir, kind):
                 c = float(h[h.index <= t1]["Close"].iloc[-1])
                 mv, b = c - o, m["bias"]["bias"]
                 hit = (mv > 0 and b == "Bullish") or (mv < 0 and b == "Bearish")
-                m["outcome"] = {"open": o, "noon": c, "move": round(mv, 2), "start": t0.isoformat(),
+                m["outcome"] = {"open": o, "noon": c, "close": c, "move": round(mv, 2), "start": t0.isoformat(),
                                 "end": t1.isoformat(),
                                 "result": "n/a" if b == "Neutral" else ("hit" if hit else "miss")}
                 changed = True
@@ -748,10 +895,11 @@ def grade_history(hist_dir, kind):
             f.write_text(json.dumps(rep, indent=1))
 
 
-def record_stats(hist_dir, sym):
+def record_stats(hist_dir, sym, before: str | None = None, limit: int = 120):
     """Hit rate overall, by call, by conviction, and which signals actually pointed the right way."""
     rows, attrib = [], {}
-    for f in sorted(hist_dir.glob("20*.json"))[-120:]:
+    files = [f for f in sorted(hist_dir.glob("20*.json")) if before is None or f.stem < before]
+    for f in files[-limit:]:
         m = json.loads(f.read_text()).get("markets", {}).get(sym, {})
         o = m.get("outcome")
         if not o:
@@ -791,7 +939,7 @@ def record_stats(hist_dir, sym):
 
 
 # ──────────────────────────────── main ────────────────────────────────────
-def build_view(target, as_of, live, now, view, hist):
+def build_view(target, as_of, live, now, view, hist, sess=None):
     """One complete read: view = 'preopen' (9:25 ET cut), 'now' (latest) or 'overnight' (6 PM cut)."""
     NOTES.clear(); SOURCES.clear()
     print(f"[{view}] session {target} · evidence cut at {as_of:%Y-%m-%d %H:%M} ET", file=sys.stderr)
@@ -821,15 +969,30 @@ def build_view(target, as_of, live, now, view, hist):
             why = f"positioning failed ({type(e).__name__})"
         if why:
             note(f"{sym}: dealer positioning skipped, {why}. The read is macro only.")
-        base = overnight_signals(cfg, quotes) if view == "overnight" else macro_signals(cfg, quotes)
-        pre[sym] = (pos, base + (dealer_signals(cfg, pos, quotes) if pos else []))
+        if view == "overnight":
+            base = overnight_signals(cfg, quotes)
+        elif view == "now" and sess:
+            # "since yesterday's 4 PM" is stale mid-session: the session's own tape replaces it
+            base = [x for x in macro_signals(cfg, quotes) if x["key"] != "overnight"] + session_signals(cfg, sess, as_of)
+        else:
+            base = macro_signals(cfg, quotes)
+        # learn only from sessions graded before this one, so every read stays point-in-time
+        key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
+        mult = learned_multipliers(hist, sym, key, 1000 if view == "now" else 120)
+        pre[sym] = (pos, apply_learning(base, mult) + (dealer_signals(cfg, pos, quotes) if pos else []))
 
+    if view == "overnight":
+        hours = 6.5          # ~15h of Globex carries roughly one cash session of variance
+    elif view == "now" and sess:
+        hours = (sess[2] - as_of).total_seconds() / 3600
+    else:
+        hours = 0.5
     markets = {}
     for sym, cfg in MARKETS.items():
         pos, sigs = pre[sym]
         peers = [k for k in pre if k != sym and pre[k][1]]
         peer = (peers[0], own_score(pre[peers[0]][1])) if peers and sigs else None
-        bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer, view)
+        bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer, view, sess)
         px = pos["px"] if pos else (quotes.get(cfg["future"]) or {}).get("last")
         changed = None
         if view != "now" and prior and sym in prior.get("markets", {}):
@@ -838,7 +1001,7 @@ def build_view(target, as_of, live, now, view, hist):
                        "delta": round(bias["score"] - pb["score"], 3)}
         markets[sym] = {
             "name": cfg["name"], "bias": bias, "signals": sigs, "changed": changed,
-            "expected_range": expected_range(cfg, pos, quotes, px),
+            "expected_range": expected_range(cfg, pos, quotes, px, hours),
             "levels": {"price": px and round(px, 2), **({} if not pos else {
                 "flip": pos["flip"] and round(pos["flip"], 2),
                 "flip_close": pos["flip_close"] and round(pos["flip_close"], 2),
@@ -858,6 +1021,11 @@ def build_view(target, as_of, live, now, view, hist):
         }
     return {
         "view": view, "session": "overnight" if view == "overnight" else "ny", "date": target.isoformat(),
+        "window": {"name": sess[0], "start": sess[1].isoformat(), "end": sess[2].isoformat()} if sess else
+                  {"name": "Asia + London", "start": datetime.combine(target, time(18), ET).isoformat(),
+                   "end": datetime.combine(next_weekday(target), time(9, 30), ET).isoformat()} if view == "overnight" else
+                  {"name": "NY open", "start": datetime.combine(target, time(9, 30), ET).isoformat(),
+                   "end": datetime.combine(target, OPEN_MOVE_END, ET).isoformat()},
         "mode": "live" if live else "point-in-time",
         "as_of": as_of.isoformat(timespec="seconds"),
         "generated": now.isoformat(timespec="seconds"),
@@ -873,8 +1041,9 @@ def finish(read, hist, kind):
     """Save a session read to history, grade it if its window has passed, attach its record."""
     path = hist / f"{read['date']}.json"
     old = json.loads(path.read_text()) if path.exists() else None
+    t1 = grade_window(kind, date.fromisoformat(read["date"]))[1].isoformat()
     for sym, m in read["markets"].items():            # keep an existing grade on re-runs
-        if old and old.get("markets", {}).get(sym, {}).get("outcome"):
+        if old and (old.get("markets", {}).get(sym, {}).get("outcome") or {}).get("end") == t1:
             m["outcome"] = old["markets"][sym]["outcome"]
     path.write_text(json.dumps(read, indent=1, default=float))
     grade_history(hist, kind)
@@ -883,6 +1052,50 @@ def finish(read, hist, kind):
         read["markets"][sym]["outcome"] = saved["markets"][sym].get("outcome")
         read["markets"][sym]["scorecard"] = record_stats(hist, sym)
     return read
+
+
+def finish_now(read, hist):
+    """Save a compact copy of each Now call, grade the ones whose session has ended, attach the record."""
+    stem = datetime.fromisoformat(read["as_of"]).strftime("%Y-%m-%dT%H%M")
+    keep = {"date": read["date"], "as_of": read["as_of"], "window": read["window"], "markets": {
+        sym: {"bias": m["bias"], "signals": m["signals"], "outcome": None} for sym, m in read["markets"].items()}}
+    path = hist / f"{stem}.json"
+    if not path.exists():
+        path.write_text(json.dumps(keep, indent=1, default=float))
+    grade_now(hist)
+    for sym in read["markets"]:
+        read["markets"][sym]["scorecard"] = record_stats(hist, sym, limit=1000)
+    return read
+
+
+def grade_now(hist):
+    """Each Now call is graded from the price when it was made to the close of its session."""
+    if FIXTURES:
+        return
+    now = datetime.now(ET)
+    for f in sorted(hist.glob("20*.json"))[-400:]:
+        rep_ = json.loads(f.read_text())
+        t0, t1 = datetime.fromisoformat(rep_["as_of"]), datetime.fromisoformat(rep_["window"]["end"])
+        if now < t1 + timedelta(minutes=5):
+            continue
+        changed = False
+        for sym, m in rep_["markets"].items():
+            if m.get("outcome"):
+                continue
+            h = fetch_bars(MARKETS[sym]["future"], t0 - timedelta(minutes=30), t1)
+            if h is None:
+                continue
+            a, b = h[h.index <= t0], h[h.index <= t1]
+            if a.empty or b.empty:
+                continue
+            o, c = float(a["Close"].iloc[-1]), float(b["Close"].iloc[-1])
+            mv, bias = c - o, m["bias"]["bias"]
+            hit = (mv > 0 and bias == "Bullish") or (mv < 0 and bias == "Bearish")
+            m["outcome"] = {"open": o, "noon": c, "close": c, "move": round(mv, 2), "start": t0.isoformat(),
+                            "end": t1.isoformat(), "result": "n/a" if bias == "Neutral" else ("hit" if hit else "miss")}
+            changed = True
+        if changed:
+            f.write_text(json.dumps(rep_, indent=1))
 
 
 def resolve_overnight(now):
@@ -909,12 +1122,16 @@ def main():
     # NY morning: pre-open (9:25 ET cut, or live before then) + "now"
     target, as_of, live = resolve_session(now)
     preopen = finish(build_view(target, as_of, live, now, "preopen", hist_ny), hist_ny, "ny")
-    if backfill:
+    # Now: the rest of whatever session is trading (Asia, London or NY), graded at its close
+    hist_now = OUT / "history" / "now"
+    hist_now.mkdir(parents=True, exist_ok=True)
+    sess = current_session(now)
+    if backfill or not sess:
         current = None
-    elif live:
-        current = dict(preopen, view="now")
+        if not backfill:
+            grade_now(hist_now)
     else:
-        current = build_view(now.date() if now.weekday() < 5 else target, now, True, now, "now", hist_ny)
+        current = finish_now(build_view(sess[3], now, True, now, "now", hist_now, sess), hist_now)
 
     # Overnight: the most recent weekday evening whose 6 PM cutoff has passed
     on_day = resolve_overnight(now)

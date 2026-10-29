@@ -225,14 +225,14 @@ body.compact .idea{font-size:15px}
 <div class="wrap" id="wrap">
   <header>
     <div class="top">
-      <div class="brand"><span class="live" id="live"></span><b>NY AM</b> Bias</div>
+      <div class="brand"><span class="live" id="live"></span><b>NY open</b> Bias</div>
       <div class="btns">
         <div class="pill2" id="vt"><button data-view="preopen" class="on">Pre-open</button><button data-view="now">Now</button></div>
         <button class="hbtn icon" id="refresh" aria-label="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button>
         <button class="hbtn icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       </div>
     </div>
-    <div class="row2"><div class="tabs" id="tabs"></div><div class="sess" id="sess"><button data-s="ny" class="on">NY AM</button><button data-s="overnight">Overnight</button></div></div>
+    <div class="row2"><div class="tabs" id="tabs"></div><div class="sess" id="sess"><button data-s="ny" class="on">NY</button><button data-s="overnight">Overnight</button></div></div>
   </header>
   <main id="app"><div class="empty">Loading this morning's read…</div></main>
 </div>
@@ -312,13 +312,14 @@ function ago(d){
   const h=Math.floor(m/60); if(h<24) return h+' hr '+(m%60)+' min ago';
   const dd=Math.floor(h/24); return dd+' day'+(dd>1?'s':'')+' ago';
 }
-function nextRun(){   // mirrors the GitHub schedule (UTC): weekdays 12:10, 13:10, then hourly :40 from 14 to 23
-  const now=new Date(), slots=[[12,10],[13,10],...[14,15,16,17,18,19,20,21,22,23].map(h=>[h,40])];
+function nextRun(){   // mirrors the GitHub schedule (UTC): weekdays 12:10 and 13:10, plus every hour at :40 Sun–Fri
+  const now=new Date(), slots=[...Array(24).keys()].map(h=>[h,40]).concat([[12,10],[13,10]]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
   for(let i=0;i<10;i++) for(const [h,mi] of slots){
-    const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+i,h,mi));
-    if(d.getUTCDay()>=1 && d.getUTCDay()<=5 && d>now) return d;
+    const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+i,h,mi)), wd=d.getUTCDay();
+    if(mi===10 ? (wd>=1&&wd<=5) : wd<=5) if(d>now) return d;
   }
 }
+const winName = D => (D && D.window && D.window.name) || 'NY open';
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2800); }
 const arrow = b => ({
   Bullish:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 18L18 6M9 6h9v9"/></svg>',
@@ -368,9 +369,9 @@ function shell(){
   const sessUsed = ['today','levels','record'].includes(PAGE);
   $('#sess').style.display = sessUsed && ROOT && ROOT.ny ? '' : 'none';
   $$('#sess button').forEach(b=>b.classList.toggle('on', b.dataset.s===SESSION));
-  $('#vt').style.display = (SESSION==='ny' && ['today','levels'].includes(PAGE)) ? '' : 'none';
+  $('#vt').style.display = (SESSION==='ny' && ['today','levels','record'].includes(PAGE)) ? '' : 'none';
   $$('#vt button').forEach(b=>b.classList.toggle('on', b.dataset.view===VIEW));
-  $('.brand').innerHTML = `<span class="live ${D && D.date!==todayET() && SESSION==='ny' ? 'stale':''}" id="live"></span><b>${SESSION==='overnight'?'Overnight':'NY AM'}</b> Bias`;
+  $('.brand').innerHTML = `<span class="live ${D && D.date!==todayET() && SESSION==='ny' ? 'stale':''}" id="live"></span><b>${SESSION==='overnight'?'Overnight':VIEW==='now'?esc(winName(D)):'NY open'}</b> Bias`;
   // tab bar
   $('#tabbar').innerHTML = BAR.map(k=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}${PAGES[k].name}</button>`).join('')
     + `<button data-p="all" class="${!BAR.includes(PAGE)?'on':''}">${I.all}All</button>`;
@@ -380,7 +381,7 @@ const todayET = () => new Date().toLocaleDateString('en-CA',{timeZone:'America/N
 function go(p){ PAGE=p; closeGlass(); render(); window.scrollTo({top:0}); }
 
 function openGlass(){
-  $('#glass').innerHTML = `<h4><span>All sections</span><span>${esc(SYM)} · ${SESSION==='overnight'?'Overnight':'NY AM'}</span></h4><div class="tiles">${
+  $('#glass').innerHTML = `<h4><span>All sections</span><span>${esc(SYM)} · ${SESSION==='overnight'?'Overnight':VIEW==='now'?esc(winName(D)):'NY open'}</span></h4><div class="tiles">${
     Object.entries(PAGES).map(([k,v])=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}<span><b>${v.name}</b><small>${v.sub}</small></span></button>`).join('')}</div>`;
   $$('#glass .tiles button').forEach(b=>b.onclick=()=>go(b.dataset.p));
   $('#scrim').classList.add('on'); $('#glass').classList.add('on');
@@ -390,7 +391,7 @@ function closeGlass(){ $('#glass').classList.remove('on'); if(!$('#sheet').class
 $$('#vt button').forEach(b=>b.onclick=()=>{
   if(b.dataset.view==='now' && ROOT && ROOT.ny && !ROOT.ny.now){ toast('No "Now" read yet. It appears after the next run.'); return; }
   VIEW=b.dataset.view; render(); window.scrollTo({top:0});
-  toast(VIEW==='now' ? 'Now: latest data, including today\'s moves' : 'Pre-open: only data from before 9:25 AM ET');
+  toast(VIEW==='now' ? 'Now: the rest of the session you\'re in' : 'Pre-open: the 9:30–10:00 open move');
 });
 $$('#sess button').forEach(b=>b.onclick=()=>{
   if(b.dataset.s==='overnight' && !(ROOT && ROOT.overnight)){ toast('No overnight read yet. It is built after 6 PM ET.'); return; }
@@ -419,15 +420,17 @@ function stampsHTML(D){
   </div>`;
 }
 function modeLine(D){
-  if(SESSION==='overnight') return `<b>Overnight.</b> The call for the Globex session from 6 PM to 8:30 AM ET, built only from data up to the 6 PM cutoff. It's graded the next morning at 8:30.`;
-  if(VIEW==='now') return `<b>Now.</b> Built from the latest data, up to ${tET(new Date(D.as_of))}. After the open this includes today's trading, so it is not a prediction test. Switch to Pre-open for that.`;
+  if(SESSION==='overnight') return `<b>Overnight.</b> The call for the whole Asia and London move, 6 PM to the 9:30 AM ET open, from macro data up to the 6 PM cutoff. It's graded at the NY open.`;
+  if(VIEW==='now'){ const w=D.window||{};
+    return `<b>Now · ${esc(w.name||'')}.</b> The call for the rest of the session you're in, from ${tET(new Date(D.as_of))} to ${w.end?tET(new Date(w.end)):'its close'}, using that session's price action plus macro. Every Now call is graded when its session ends.`; }
   return D.mode==='point-in-time'
-    ? `<b>Pre-open.</b> What the model said before the bell, using only data from before 9:25 AM ET. Today's trading is excluded, so you can check whether it was right.`
-    : `<b>Pre-open, live.</b> The market hasn't opened yet. This is today's call.`;
+    ? `<b>Pre-open.</b> The call for the open move, 9:30 to 10:00 AM ET, using only data from before 9:25 AM ET. Today's trading is excluded, so you can check whether it was right.`
+    : `<b>Pre-open, live.</b> The market hasn't opened yet. This is the call for the 9:30–10:00 open move.`;
 }
 function pageToday(D){
   const m = D.markets[SYM], b = m.bias;
-  const window_ = SESSION==='overnight' ? `Overnight · ${dayOf(D.date)} 6 PM → 8:30 AM` : `${dayOf(D.date)} · New York AM`;
+  const window_ = SESSION==='overnight' ? `Asia + London · ${dayOf(D.date)} 6 PM → 9:30 AM`
+    : VIEW==='now' && D.window ? `${esc(D.window.name)} session · until ${tET(new Date(D.window.end))}` : `${dayOf(D.date)} · NY open 9:30 → 10:00`;
   let h = `
   <div class="hero">
     <div class="kicker">${esc(SYM)} · ${window_}</div>
@@ -450,17 +453,19 @@ function pageToday(D){
       <div class="card rows"><div class="r"><span>Prior read (${esc(c.prev_date)})</span><span style="color:${C(c.prev_bias)}">${c.prev_bias} ${c.prev_score>0?'+':''}${c.prev_score.toFixed(2)}</span></div>
       <div class="r"><span>Score change</span><span>${c.delta>0?'+':''}${c.delta.toFixed(2)}</span></div></div></section>`; }
   if(m.outcome && VIEW!=='now'){ const o=m.outcome, col=o.result==='hit'?'var(--up)':o.result==='miss'?'var(--down)':'var(--dim)';
-    const a=SESSION==='overnight'?['6 PM','8:30 AM']:['9:30 open','12:00 noon'];
+    const a=SESSION==='overnight'?['6 PM','9:30 AM open']:['9:30 open','10:00'];
     S.outcome = `<section><h2>How it played out <span class="pill" style="color:${col}">${o.result==='hit'?'Correct':o.result==='miss'?'Wrong':'Neutral call'}</span></h2>
       <div class="card rows"><div class="r"><span>${a[0]}</span><span>${fmt(o.open)}</span></div><div class="r"><span>${a[1]}</span><span>${fmt(o.noon)}</span></div>
       <div class="r"><span>Move</span><span style="color:${o.move>=0?'var(--up)':'var(--down)'}">${o.move>0?'+':''}${fmt(o.move)} pts</span></div></div></section>`; }
   const groups={}; m.signals.forEach(s=>(groups[s.group]=groups[s.group]||[]).push(s));
   S.signals = `<section><h2>Signals</h2><div class="card">${Object.entries(groups).map(([gname,list])=>{
     const w=list.reduce((a,s)=>a+s.weight,0);
-    return `<div class="grp"><span>${esc(gname)}</span><span>weight ${w.toFixed(1)}</span></div>`+list.map(s=>{
+    const regime=list.every(s=>s.directional===false);
+    return `<div class="grp"><span>${esc(gname)}</span><span>${regime?'regime · not scored':'weight '+w.toFixed(1)}</span></div>`+list.map(s=>{
       const c=s.score>0?'var(--up)':s.score<0?'var(--down)':'var(--faint)';
+      const tag=s.directional===false?'regime':`×${s.weight}${s.learned?` · learned ×${s.learned}`:''}`;
       return `<div class="sig"><div class="ico" style="color:${c};border-color:${c}">${s.score>0?'+':s.score<0?'−':'0'}</div>
-        <div><h3>${esc(s.label)}<span class="w">×${s.weight}</span></h3>${P.reasons?`<p>${esc(s.text)}</p>`:''}</div></div>`;}).join('');
+        <div><h3>${esc(s.label)}<span class="w">${tag}</span></h3>${P.reasons?`<p>${esc(s.text)}</p>`:''}</div></div>`;}).join('');
   }).join('')}</div></section>`;
   S.calendar = `<section><h2>US calendar · ${dayOf((D.events[0]||{}).date || (SESSION==='overnight'?nextWeekdayISO(D.date):D.date))}</h2><div class="card">${eventsHTML(D.events)}</div></section>`;
   if(m.earnings.length) S.earnings = `<section><h2>Mega-cap earnings</h2><div class="card rows">${m.earnings.map(e=>`<div class="r"><span>${esc(e.symbol)}</span><span>${esc(e.when)}</span></div>`).join('')}</div></section>`;
@@ -469,8 +474,8 @@ function pageToday(D){
       return `<div class="r"><span>${v.ok?'':'<span style="color:var(--down)">✕ </span>'}${esc(k)}${v.detail?`<small>${esc(v.detail)}</small>`:''}</span>
         <span style="color:${v.ok?'var(--text)':'var(--down)'}">${v.ok?tLocal(t):'failed'}<small>${v.ok?(v.data_time?'data as of':'pulled')+' · '+tET(t):'retries next run'}</small></span></div>`;}).join('')}</div></section>`;
   S.method = `<section class="foot">
-    <p><b>Sessions.</b> NY AM calls 9:30 to noon ET from data cut at 9:25 AM. Overnight calls the 6 PM to 8:30 AM Globex session from data cut at 6 PM. Each one has its own track record.</p>
-    <p><b>Pre-open vs Now.</b> Pre-open, the default, is the NY call as it stood before the bell, and it's the one that gets graded. Now uses everything up to the latest hourly run, so after the open it includes moves that already happened.</p>
+    <p><b>Three calls.</b> Pre-open calls the 9:30–10:00 open move from data cut at 9:25 AM. Now calls the rest of whichever session is trading (Asia 6 PM–2 AM, London 2–9:30 AM, NY 9:30 AM–4 PM), refreshed hourly. Overnight calls the whole Asia and London move, 6 PM to the 9:30 open, from macro at 6 PM.</p>
+    <p><b>All graded.</b> Each call is graded on its own window and keeps its own record and its own learned weights, so a signal that's good at the open but useless overnight only loses weight overnight.</p>
     <p><b>Mostly macro.</b> About three quarters of the weight is macro and volatility. Dealer gamma, charm and vanna from CBOE open interest are a lighter overlay. NQ and ES are blended 65/35 with each other, since they're highly correlated. See Research for every signal.</p>
     <p>Educational research, not financial advice.</p></section>`;
   for(const k of P.order) if(!P.hidden.includes(k) && S[k]) h += S[k];
@@ -577,7 +582,7 @@ function pageMacro(D0){
 
 /* ───────── RECORD ───────── */
 function pageRecord(D){
-  const sc=(D.markets[SYM]||{}).scorecard, sess=SESSION==='overnight'?'Overnight · 6 PM → 8:30 AM':'NY AM · 9:30 → noon';
+  const sc=(D.markets[SYM]||{}).scorecard, sess=SESSION==='overnight'?'Overnight · Asia + London, 6 PM → 9:30 AM':VIEW==='now'?'Now calls · each graded to its session close':'Pre-open · NY open 9:30 → 10:00';
   let h = `<div class="ptitle">Record</div><div class="psub">${esc(SYM)} · ${sess}. Every call is graded on the futures move over its window. Neutral calls aren't counted.</div>`;
   if(!sc || (!sc.hits && !sc.misses && !(sc.recent||[]).length))
     return h+`<section><div class="card pad" style="color:var(--dim);font-size:14px;line-height:1.55">No graded calls yet. A call is graded once its window ends. You can also fill this in fast by rebuilding past dates in GitHub: Actions → Morning bias report → Run workflow → enter a date.</div></section>`;
@@ -620,7 +625,10 @@ const RS = [
  ['Dealer positioning','flip','Gamma flip','The price where dealer gamma, estimated from open interest, switches from long to short.','Above the flip, dealer hedging buys dips and sells rips, which dampens moves. Below it, hedging chases price and amplifies moves.','Barbon & Buraschi, "Gamma Fragility" (2021). Ni, Pearson, Poteshman & White, "Does Option Trading Have a Pervasive Impact on Underlying Stock Prices?" (RFS 2021).','It assumes dealers are long calls and short puts. Real inventory isn\'t public, and big customer call buying flips that assumption.'],
  ['Dealer positioning','tilt','Gamma tilt','Total call gamma divided by put gamma near the money.','Put-heavy books put dealer selling below price, while call-heavy books cushion rallies.','SqueezeMetrics, "Gamma Exposure" white paper (2017).','A low weight, since it overlaps with the flip.'],
  ['Dealer positioning','walls','Wall range','Where price sits between the largest put gamma (support) and call gamma (resistance).','Large open-interest strikes attract and pin price, especially into expiration.','Ni, Pearson & Poteshman, "Stock Price Clustering on Option Expiration Dates" (JFE 2005).','Walls can be run over on news. Treat them as magnets, not barriers.'],
- ['Dealer positioning','charm','Charm into close','The dealer delta change caused purely by time passing until 4 PM.','As options decay, dealers must adjust hedges. With this book, that usually means buying back futures into the afternoon.','Baltussen, Da, Lammers & Martens (JFE 2021).','It mostly affects the afternoon, not the 9:30 to noon window, so it has a low weight.'],
+ ['Dealer positioning','charm','Charm into close','The dealer delta change caused purely by time passing until 4 PM.','As options decay, dealers must adjust hedges. With this book, that usually means buying back futures into the afternoon.','Baltussen, Da, Lammers & Martens (JFE 2021).','It mostly affects the afternoon, not the opening half hour. It sets the regime and does not vote on direction.'],
+ ['Session','sessdrift','Session so far','The futures move since the current session (Asia, London or NY) opened. Used by the Now call.','Order flow that builds early in a session tends to keep going: institutions work big orders over hours, and early moves pull in trend followers.','Gao, Han, Li & Zhou, Market Intraday Momentum (JFE 2018).','A news shock or a scheduled release mid-session resets it.'],
+ ['Session','lasthr','Last hour','The futures move over the past 60 minutes. Used by the Now call.','The most recent flow is the freshest read on who is in control.','Short-horizon order-flow persistence; Heston, Korajczyk & Sadka (JF 2010).','Lunchtime chop and pre-release positioning make it noisy.'],
+ ['Session','orange','Opening range','Where NY price sits versus the 9:30–10:00 high and low. Used by the Now call after 10:00.','A break of the opening range shows one side won the open auction, and those moves tend to extend.','Crabel, Day Trading with Short Term Price Patterns and Opening Range Breakout (1990); Zarattini & Aziz (2023).','Inside-range days, and false breaks on light volume.'],
  ['Dealer positioning','vanna','Vanna','The dealer delta change caused by the pre-market move in implied vol.','When implied vol falls, the deltas of out-of-the-money options shrink, and dealers buy back hedges.','Practitioner research. See SqueezeMetrics (2017).','The vol input is estimated from VXX, so it\'s rough.'],
  ['Dealer positioning','flow','Options flow','The prior session\'s short-dated premium, puts vs calls. Live pre-open reads only.','Heavy put buying from informed traders tends to precede weakness.','Pan & Poteshman, "The Information in Option Volume for Future Stock Prices" (RFS 2006).','Free data can\'t tell opening buys from closing sells, so the weight is low.'],
 ];
@@ -631,13 +639,16 @@ function pageResearch(D){
   for(const [g,list] of Object.entries(groups)){
     h += `<section><h2>${g}</h2><div class="card">${list.map(([_,key,name,what,why,paper,fails])=>{
       const s=live[key], c=!s?'var(--line2)':s.score>0?'var(--up)':s.score<0?'var(--down)':'var(--faint)';
-      return `<details class="rs"><summary><div class="ico" style="color:${c};border-color:${c}">${!s?'·':s.score>0?'+':s.score<0?'−':'0'}</div><h3>${name}${s?`<span class="w">×${s.weight}</span>`:''}</h3><em>›</em></summary>
+      return `<details class="rs"><summary><div class="ico" style="color:${c};border-color:${c}">${!s?'·':s.score>0?'+':s.score<0?'−':'0'}</div><h3>${name}${s?`<span class="w">${s.directional===false?'regime':'×'+s.weight}</span>`:''}</h3><em>›</em></summary>
         <div class="rsb"><p><b>Measures:</b> ${what}</p><p><b>Why it works:</b> ${why}</p><p><b>Fails when:</b> ${fails}</p><p class="paper">${paper}</p>${s?`<p><b>Right now:</b> ${esc(s.text)}</p>`:''}</div></details>`;}).join('')}</div></section>`;
   }
   h += `<section><h2>How it all fits</h2><div class="card pad foot" style="font-size:13.5px;color:var(--sub)">
     <p><b>Point-in-time.</b> Each read uses only data from before its cutoff: 9:25 AM ET for NY, 6 PM ET for overnight. So the record is a fair test, not hindsight.</p>
-    <p><b>Scoring.</b> Signals score +1, 0 or −1 times their weight, and the total is scaled to −1…+1. Above +0.12 reads Bullish and below −0.12 reads Bearish. NQ and ES are blended 65/35 with each other. Conviction drops a notch before a high-impact release.</p>
-    <p><b>Use it right.</b> Check Record. If a signal sits under 45% after a month, its weight should come down. Ask Claude to retune the weights from your Record.</p></div></section>`;
+    <p><b>Scoring.</b> Signals score +1, 0 or −1 times their weight, and the total is scaled to −1…+1. Above +0.30 reads Bullish and below −0.30 reads Bearish; anything in between is Neutral (no edge). NQ and ES are blended 65/35 with each other.</p>
+    <p><b>Event days.</b> With a high-impact release later the same day (FOMC, CPI, jobs) the score is multiplied by 0.6 and conviction is capped at Low. Mega-cap earnings that night or last night multiply it by 0.85.</p>
+    <p><b>Dealer positioning.</b> Gamma, charm and vanna come from delayed, once-a-day option data, so they set the regime (range vs trend) and the levels but don't vote on direction. Record still grades them, so they can earn a vote back.</p>
+    <p><b>Self-tuning.</b> Once a signal has 20 graded sessions, its weight is scaled by its own hit rate (0.25× to 1.5×, shrunk toward 50% so streaks don't fool it), using only sessions before the one being read.</p>
+    <p><b>Use it right.</b> Check Record. Weights retune themselves after 20 graded sessions. Under 45% after a month means that signal is fighting you.</p></div></section>`;
   return h;
 }
 
