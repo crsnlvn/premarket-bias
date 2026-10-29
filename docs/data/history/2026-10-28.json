@@ -9,7 +9,7 @@
  },
  "mode": "point-in-time",
  "as_of": "2026-10-28T09:25:00-04:00",
- "generated": "2026-10-28T21:10:57-04:00",
+ "generated": "2026-10-28T21:36:54-04:00",
  "events": [
   {
    "time": "2:00 PM",
@@ -93,9 +93,9 @@
    "ts": "2026-10-28T09:25:00-04:00"
   },
   "^HSI": {
-   "last": 23094.8301,
-   "chg_pct": 0.23,
-   "ts": "2026-10-28T04:08:00-04:00"
+   "last": 23088.1406,
+   "chg_pct": 0.2,
+   "ts": "2026-10-28T04:10:00-04:00"
   },
   "^VIX": {
    "last": 17.31,
@@ -603,7 +603,7 @@
     "downs": 0,
     "total": 15,
     "overall": "Bullish, low-conviction read on ES for the New York open (09:30\u201310:00 ET). The case rests on Global equities, Gamma flip, Wall range. Score shrunk +0.25 \u2192 +0.13 for high-impact release later today and mega-cap earnings: event days are driven by positioning into the release more than by the data before it. Dealers are net long gamma, so expect contained, mean-reverting trade. NQ agrees (+0.27). Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
-    "invalidation": "A 15-minute close below the gamma flip at 7,761",
+    "invalidation": "A 15-minute close below the gamma flip at 7,739",
     "macro_share": 80
    },
    "signals": [
@@ -703,7 +703,7 @@
      "score": 1,
      "raw": 1,
      "weight": 0.75,
-     "text": "Price is 15 pts above the gamma flip (7,761). Dealers are long gamma, so they buy dips and sell rips.",
+     "text": "Price is 36 pts above the gamma flip (7,739). Dealers are long gamma, so they buy dips and sell rips.",
      "group": "Dealer positioning"
     },
     {
@@ -712,7 +712,7 @@
      "score": 0,
      "raw": 0,
      "weight": 0.25,
-     "text": "Call \u00f7 put gamma 1.09. Balanced.",
+     "text": "Call \u00f7 put gamma 1.24. Balanced.",
      "group": "Dealer positioning"
     },
     {
@@ -721,7 +721,7 @@
      "score": 1,
      "raw": 1,
      "weight": 0.5,
-     "text": "Put wall 7,735 / call wall 8,035: 260 pts up vs 40 down. Near support.",
+     "text": "Put wall 7,710 / call wall 8,015: 240 pts up vs 66 down. Near support.",
      "group": "Dealer positioning"
     },
     {
@@ -730,7 +730,7 @@
      "score": 1,
      "raw": 1,
      "weight": 0.4,
-     "text": "Time decay shifts dealer hedges by $16.40B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+     "text": "Time decay shifts dealer hedges by $17.37B by 4 PM. Dealers buy back hedges, an afternoon bid.",
      "group": "Dealer positioning"
     },
     {
@@ -739,7 +739,7 @@
      "score": 0,
      "raw": 0,
      "weight": 0.4,
-     "text": "Implied vol \u2248 -0.05 pts pre-market, worth about $1.60B of dealer buying.",
+     "text": "Implied vol \u2248 -0.05 pts pre-market, worth about $1.61B of dealer buying.",
      "group": "Dealer positioning"
     }
    ],
@@ -751,39 +751,39 @@
    },
    "levels": {
     "price": 7775.5,
-    "flip": 7760.8,
-    "flip_close": 7769.14,
-    "call_wall": 8035,
-    "put_wall": 7735,
+    "flip": 7739.34,
+    "flip_close": 7747.55,
+    "call_wall": 8015,
+    "put_wall": 7710,
     "majors": [
      {
-      "level": 7535,
-      "net_gex": -4312229634.302219
+      "level": 7785,
+      "net_gex": 5895910284.081752
      },
      {
-      "level": 7635,
-      "net_gex": -4489231415.365028
+      "level": 7815,
+      "net_gex": 6426153473.636692
      },
      {
-      "level": 7835,
-      "net_gex": 4961120924.973042
+      "level": 7865,
+      "net_gex": 5909703414.539751
      },
      {
-      "level": 7885,
-      "net_gex": 4381885675.577917
+      "level": 7915,
+      "net_gex": 6767414444.282014
      },
      {
-      "level": 7935,
-      "net_gex": 5491272416.267028
+      "level": 8015,
+      "net_gex": 4731269721.399506
      }
     ]
    },
    "dealer": {
-    "net_gex_bn": 18.807,
-    "call_put_gamma": 1.09,
-    "dealer_delta_bn": 2551.97,
-    "charm_bn": 16.398,
-    "vanna_bn_per_pt": 33.025,
+    "net_gex_bn": 46.945,
+    "call_put_gamma": 1.24,
+    "dealer_delta_bn": 2565.42,
+    "charm_bn": 17.371,
+    "vanna_bn_per_pt": 33.112,
     "chains": [
      "SPX",
      "SPY"
@@ -793,247 +793,247 @@
    "profile": [
     {
      "px": 7308.97,
-     "gex": -119237217214.81134
+     "gex": -121157202586.99243
     },
     {
      "px": 7324.52,
-     "gex": -120748905230.87225
+     "gex": -123138837065.76181
     },
     {
      "px": 7340.07,
-     "gex": -122610302722.23709
+     "gex": -125516863285.86841
     },
     {
      "px": 7355.62,
-     "gex": -124835713368.94945
+     "gex": -128395992482.223
     },
     {
      "px": 7371.17,
-     "gex": -127511073079.9468
+     "gex": -131891541867.2669
     },
     {
      "px": 7386.72,
-     "gex": -130783665349.39125
+     "gex": -135884546955.05736
     },
     {
      "px": 7402.28,
-     "gex": -134658385173.31909
+     "gex": -139793703506.437
     },
     {
      "px": 7417.83,
-     "gex": -138705448678.55463
+     "gex": -142732629347.24158
     },
     {
      "px": 7433.38,
-     "gex": -142049884775.2896
+     "gex": -144126578176.02612
     },
     {
      "px": 7448.93,
-     "gex": -143893447536.9125
+     "gex": -144277285891.27362
     },
     {
      "px": 7464.48,
-     "gex": -144221402242.19962
+     "gex": -144227595815.8826
     },
     {
      "px": 7480.03,
-     "gex": -143955480067.36935
+     "gex": -144898690735.8763
     },
     {
      "px": 7495.58,
-     "gex": -144240942719.26752
+     "gex": -146233413641.4829
     },
     {
      "px": 7511.13,
-     "gex": -145425463285.42395
+     "gex": -147150217532.2349
     },
     {
      "px": 7526.68,
-     "gex": -146667396559.42072
+     "gex": -146371029085.80768
     },
     {
      "px": 7542.23,
-     "gex": -146562781608.7861
+     "gex": -143362870574.70047
     },
     {
      "px": 7557.79,
-     "gex": -144219102617.02484
+     "gex": -138572915058.2691
     },
     {
      "px": 7573.34,
-     "gex": -139809150013.99075
+     "gex": -132863807116.03792
     },
     {
      "px": 7588.89,
-     "gex": -134203150864.05746
+     "gex": -126761430481.4377
     },
     {
      "px": 7604.44,
-     "gex": -128147293111.20544
+     "gex": -120145418844.91405
     },
     {
      "px": 7619.99,
-     "gex": -121740350432.26398
+     "gex": -112488835550.96811
     },
     {
      "px": 7635.54,
-     "gex": -114525850460.69981
+     "gex": -103291307326.23984
     },
     {
      "px": 7651.09,
-     "gex": -105938266104.46346
+     "gex": -92323133539.92531
     },
     {
      "px": 7666.64,
-     "gex": -95652439850.56224
+     "gex": -79593025241.09526
     },
     {
      "px": 7682.19,
-     "gex": -83626942860.09567
+     "gex": -65204917998.05393
     },
     {
      "px": 7697.74,
-     "gex": -69959234532.4148
+     "gex": -49268884156.75689
     },
     {
      "px": 7713.3,
-     "gex": -54761108889.62538
+     "gex": -31892231853.50543
     },
     {
      "px": 7728.85,
-     "gex": -38129166394.94328
+     "gex": -13215932110.687912
     },
     {
      "px": 7744.4,
-     "gex": -20171042000.438564
+     "gex": 6504423195.621063
     },
     {
      "px": 7759.95,
-     "gex": -1069859698.3586798
+     "gex": 26794084919.732613
     },
     {
      "px": 7775.5,
-     "gex": 18806571967.547085
+     "gex": 46945087540.31512
     },
     {
      "px": 7791.05,
-     "gex": 38834053847.05541
+     "gex": 66180004268.398506
     },
     {
      "px": 7806.6,
-     "gex": 58234665612.293304
+     "gex": 83869320643.62663
     },
     {
      "px": 7822.15,
-     "gex": 76320283560.102
+     "gex": 99571714571.05327
     },
     {
      "px": 7837.7,
-     "gex": 92626059773.21779
+     "gex": 112896138895.13676
     },
     {
      "px": 7853.26,
-     "gex": 106794769678.25998
+     "gex": 123460837442.76529
     },
     {
      "px": 7868.81,
-     "gex": 118432357882.12613
+     "gex": 131115523945.442
     },
     {
      "px": 7884.36,
-     "gex": 127232592583.3576
+     "gex": 136212144920.3641
     },
     {
      "px": 7899.91,
-     "gex": 133303720649.82428
+     "gex": 139566546353.1901
     },
     {
      "px": 7915.46,
-     "gex": 137308509556.03809
+     "gex": 142032014856.24377
     },
     {
      "px": 7931.01,
-     "gex": 140169410963.63678
+     "gex": 143984743968.93588
     },
     {
      "px": 7946.56,
-     "gex": 142512867398.2605
+     "gex": 145130478596.24478
     },
     {
      "px": 7962.11,
-     "gex": 144285291796.29242
+     "gex": 144805287058.11273
     },
     {
      "px": 7977.66,
-     "gex": 144859755409.6562
+     "gex": 142555666120.87988
     },
     {
      "px": 7993.21,
-     "gex": 143576057979.57928
+     "gex": 138555082664.71725
     },
     {
      "px": 8008.77,
-     "gex": 140307569716.26166
+     "gex": 133553956004.84534
     },
     {
      "px": 8024.32,
-     "gex": 135624296265.06007
+     "gex": 128451014828.25009
     },
     {
      "px": 8039.87,
-     "gex": 130464846975.18967
+     "gex": 123851683822.50087
     },
     {
      "px": 8055.42,
-     "gex": 125623678298.77975
+     "gex": 119912983948.18068
     },
     {
      "px": 8070.97,
-     "gex": 121444741412.50418
+     "gex": 116487623373.51065
     },
     {
      "px": 8086.52,
-     "gex": 117866030282.70187
+     "gex": 113365681318.10323
     },
     {
      "px": 8102.07,
-     "gex": 114665402523.07407
+     "gex": 110422869066.30884
     },
     {
      "px": 8117.62,
-     "gex": 111671181823.94713
+     "gex": 107633167564.98766
     },
     {
      "px": 8133.17,
-     "gex": 108824840966.71642
+     "gex": 105015011080.1593
     },
     {
      "px": 8148.72,
-     "gex": 106138282532.44217
+     "gex": 102581992576.74722
     },
     {
      "px": 8164.28,
-     "gex": 103633988301.11517
+     "gex": 100321704344.44327
     },
     {
      "px": 8179.83,
-     "gex": 101311648672.92697
+     "gex": 98200383974.06464
     },
     {
      "px": 8195.38,
-     "gex": 99143016973.16827
+     "gex": 96186520273.60593
     },
     {
      "px": 8210.93,
-     "gex": 97089164253.0816
+     "gex": 94278270954.9555
     },
     {
      "px": 8226.48,
-     "gex": 95130379523.38861
+     "gex": 92512944723.54662
     },
     {
      "px": 8242.03,
-     "gex": 93287552277.69052
+     "gex": 90947488256.36385
     }
    ],
    "earnings": [
@@ -1076,56 +1076,56 @@
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-28T21:11:01-04:00",
+   "fetched": "2026-10-28T21:36:57-04:00",
    "data_time": "2026-10-28T09:25:00-04:00",
    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 9:25 AM ET"
   },
   "Economic calendar": {
    "ok": true,
-   "fetched": "2026-10-28T21:11:01-04:00",
+   "fetched": "2026-10-28T21:36:57-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 28": {
    "ok": true,
-   "fetched": "2026-10-28T21:11:02-04:00",
+   "fetched": "2026-10-28T21:36:58-04:00",
    "data_time": null,
    "detail": "222 companies"
   },
   "Earnings Oct 27": {
    "ok": true,
-   "fetched": "2026-10-28T21:11:05-04:00",
+   "fetched": "2026-10-28T21:36:59-04:00",
    "data_time": null,
    "detail": "185 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-28T21:11:06-04:00",
+   "fetched": "2026-10-28T21:36:59-04:00",
    "data_time": "2026-10-28T21:08:12-04:00",
    "detail": "15,384 contracts"
   },
   "CBOE QQQ options": {
    "ok": true,
-   "fetched": "2026-10-28T21:11:07-04:00",
+   "fetched": "2026-10-28T21:37:00-04:00",
    "data_time": "2026-10-28T21:06:16-04:00",
    "detail": "10,092 contracts"
   },
   "News headlines": {
    "ok": true,
-   "fetched": "2026-10-28T21:14:12-04:00",
+   "fetched": "2026-10-28T21:40:04-04:00",
    "data_time": null,
    "detail": "5 of 6 feeds live \u00b7 100 headlines"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-28T21:14:11-04:00",
-   "data_time": "2026-10-28T20:33:44-04:00",
+   "fetched": "2026-10-28T21:40:03-04:00",
+   "data_time": "2026-10-28T21:37:29-04:00",
    "detail": "28,948 contracts"
   },
   "CBOE SPY options": {
    "ok": true,
-   "fetched": "2026-10-28T21:14:12-04:00",
-   "data_time": "2026-10-28T20:04:37-04:00",
+   "fetched": "2026-10-28T21:40:04-04:00",
+   "data_time": "2026-10-28T21:31:27-04:00",
    "detail": "12,374 contracts"
   }
  }
