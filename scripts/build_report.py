@@ -1207,66 +1207,39 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
     downs = [s for s in directional if s["score"] < 0]
     top = lambda L: sorted(L, key=lambda s: s["weight"], reverse=True)  # noqa: E731
 
-    if view == "overnight":
-        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the whole Asia and London move "
-                 "(6 PM–9:30 AM ET), from macro data up to the 6 PM cutoff."]
-    elif view == "now" and sess:
-        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the rest of the {sess[0]} session "
-                 f"({as_of:%-I:%M %p} → {sess[2]:%-I:%M %p} ET), from data up to {as_of:%-I:%M %p} ET."]
-    elif view == "now":
-        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} from data up to {as_of:%-I:%M %p} ET. Futures are closed."]
-    else:
-        parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the New York open (09:30–10:00 ET)."]
-    if bias != "Neutral":
-        lead, against = (ups, downs) if bias == "Bullish" else (downs, ups)
-        if lead:
-            parts.append("The case rests on " + ", ".join(s["label"] for s in top(lead)[:3]) + ".")
-        else:
-            parts.append("The signals are dead even, so the call follows the market's long-run upward drift.")
-        if abs(score) < NEUTRAL_BAND:
-            parts.append("The two sides nearly cancel out, so wait for price to confirm before leaning on it.")
-        if against:
-            parts.append("Working against it: " + ", ".join(s["label"] for s in top(against)[:2]) + ".")
-    else:
-        lean = "up" if raw_score > 0.05 else "down" if raw_score < -0.05 else None
-        parts.append(f"{len(ups)} signal{'' if len(ups)==1 else 's'} lean{'s' if len(ups)==1 else ''} up and {len(downs)} lean down" +
-                     (f", a slight tilt {lean} ({raw_score:+.2f}) that isn't strong enough to call" if lean else "") +
-                     ". No edge, so trade the levels and not a story.")
-    if damp:
-        parts.append(f"Score shrunk {raw_score:+.2f} → {score:+.2f} for " + " and ".join(damp) +
-                     ": event days are driven by positioning into the release more than by the data before it.")
+    # Desk-note style: the app already shows the call, conviction and window above this.
+    names = lambda L, n: ", ".join(s["label"] for s in top(L)[:n])  # noqa: E731
+    lead, against = (ups, downs) if bias == "Bullish" else (downs, ups)
+    parts = ["Futures are closed."] if view == "now" and not sess else []
+    parts.append(f"For: {names(lead, 3)}." if lead else "The votes are dead even, so the call defaults long.")
+    if against:
+        parts.append(f"Against: {names(against, 2)}.")
+    if abs(score) < NEUTRAL_BAND:
+        parts.append("Close to a coin flip. Let price confirm.")
     if pos:
-        parts.append(f"Dealers are net {'long' if pos['net_gex'] > 0 else 'short'} gamma, so expect " +
-                     ("contained, mean-reverting trade." if pos["net_gex"] > 0 else "wider ranges and follow-through on breaks."))
+        parts.append("Dealers long gamma: expect chop and fades." if pos["net_gex"] > 0
+                     else "Dealers short gamma: moves can run.")
     if peer:
-        if label_of(own) != label_of(peer[1]):
-            parts.append(f"On its own {sym} reads {label_of(own).lower()} ({own:+.2f}) and {peer[0]} "
-                         f"{label_of(peer[1]).lower()} ({peer[1]:+.2f}). They move together, so the split pulls this toward neutral.")
-        else:
-            parts.append(f"{peer[0]} agrees ({peer[1]:+.2f}).")
+        parts.append(f"{peer[0]} leans the other way." if label_of(own) != label_of(peer[1]) else f"{peer[0]} agrees.")
     if upcoming:
-        parts.append("Scheduled risk: " + "; ".join(f"{e['title']} at {e['time']}" for e in upcoming) +
-                     ". A binary print can override all of this, so reassess after the release.")
-    mega = [e for e in earnings if e["symbol"] in cfg["megacaps"]]
-    if mega:
-        parts.append("Mega-cap earnings: " + ", ".join(f"{m['symbol']} ({m['when']})" for m in mega) + ".")
+        parts.append("On deck: " + ", ".join(f"{e['title']} {e['time']}" for e in upcoming) + ". Reassess after.")
 
     invalid = None
     if pos and pos["flip"]:
         f, above = pos["flip"], pos["px"] >= pos["flip"]
         invalid = {
             "Bullish": f"A 15-minute close below the gamma flip at {f:,.0f}" if above
-            else f"Failure to reclaim {f:,.0f}, or a break of the put wall at {pos['put_wall']:,.0f}",
-            "Bearish": f"A reclaim and hold above the gamma flip at {f:,.0f}" if not above
-            else f"Holding above {f:,.0f}, or a push through the call wall at {pos['call_wall']:,.0f}",
-            "Neutral": f"A decisive break of {pos['put_wall']:,.0f} or {pos['call_wall']:,.0f} sets direction",
+            else f"A failure to reclaim {f:,.0f}, or a break of the put wall at {pos['put_wall']:,.0f}",
+            "Bearish": f"A reclaim and hold of the gamma flip at {f:,.0f}" if not above
+            else f"A hold above {f:,.0f}, or a push through the call wall at {pos['call_wall']:,.0f}",
+            "Neutral": f"A break of {pos['put_wall']:,.0f} or {pos['call_wall']:,.0f}",
         }[bias]
     elif view == "overnight":
-        invalid = "Futures reversing through today's 4 PM close during the Asia session"
+        invalid = "Futures reversing through today's 4 PM close in Asia"
     elif view == "now" and sess:
-        invalid = f"Price reversing through where the {sess[0]} session opened"
+        invalid = f"Price reversing through the {sess[0]} session open"
     elif cfg["future"] in ("NQ=F", "ES=F"):
-        invalid = "Overnight futures reversing through yesterday's 4 PM level after the open"
+        invalid = "Futures reversing through yesterday's 4 PM close after the open"
 
     macro_w = sum(s["weight"] for s in signals if s["group"] != "Dealer positioning")
     return dict(bias=bias, score=round(score, 3), raw_score=round(raw_score, 3), dampened=damp,
@@ -1291,10 +1264,9 @@ def divergence(markets):
     n, e = markets["NQ"]["bias"]["own_score"], markets["ES"]["bias"]["own_score"]
     if label_of(n) == label_of(e):
         return None
-    lead = "tech is weaker than the broad market" if n < e else "tech is leading the broad market"
-    return (f"NQ reads {label_of(n)} ({n:+.2f}) and ES reads {label_of(e)} ({e:+.2f}) on their own evidence. "
-            f"They are highly correlated, so both final reads are blended toward each other. The split says {lead}. "
-            "Treat it as a lower-conviction day, size down, or wait for them to line up after the open.")
+    lead = "Tech is lagging the broad market" if n < e else "Tech is leading the broad market"
+    return (f"On their own, NQ reads {label_of(n).lower()} ({n:+.2f}) and ES {label_of(e).lower()} ({e:+.2f}). {lead}. "
+            "Each call is blended toward the other, so size down or wait for them to line up.")
 
 
 # ─────────────────────────────── grading ──────────────────────────────────
