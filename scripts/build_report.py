@@ -418,12 +418,15 @@ def fred(series):
         return _FRED[series]
     out = []
     key = os.environ.get("FRED_API_KEY", "").strip()
+    vintage = os.environ.get("REPORT_DATE", "").strip()     # backfill: ask ALFRED for the data as it stood that day
     if key and not FIXTURES and "fredapi" not in DEAD:     # official FRED API first (free key, GitHub secret)
         try:
+            params = {"series_id": series, "api_key": key, "file_type": "json",
+                      "observation_start": (datetime.now(ET).date() - timedelta(days=1500)).isoformat()}
+            if vintage:
+                params.update(realtime_start=vintage, realtime_end=vintage)
             r = requests.get("https://api.stlouisfed.org/fred/series/observations",
-                             params={"series_id": series, "api_key": key, "file_type": "json",
-                                     "observation_start": (datetime.now(ET).date() - timedelta(days=1500)).isoformat()},
-                             headers=BROWSER_UA, timeout=(5, 15))
+                             params=params, headers=BROWSER_UA, timeout=(5, 15))
             r.raise_for_status()
             for o in r.json().get("observations", []):
                 try:
@@ -470,7 +473,7 @@ def fred(series):
         if not out and series in BLS_IDS:
             out = bls(series)
         cache = _fred_cache()
-        if out:
+        if out and not os.environ.get("REPORT_DATE", "").strip():   # never overwrite live data with a vintage
             cache[series] = [[d.isoformat(), v] for d, v in out[-400:]]
             try:
                 FRED_CACHE.write_text(json.dumps(cache))
@@ -512,6 +515,62 @@ FED_GAUGES = {
 # PMIs: over 55 is strong expansion, under 50 contraction. Confidence: over 120 strong, under 100 weak.
 CAL_GAUGES = {"ISM Manufacturing PMI": (55, 50, "ISM manufacturing"), "ISM Services PMI": (55, 50, "ISM services"),
               "Chicago PMI": (55, 50, "Chicago PMI"), "CB Consumer Confidence": (120, 100, "Consumer confidence")}
+
+
+def _at(rows, d):
+    """Latest value dated on or before d."""
+    v = None
+    for dd, x in rows:
+        if dd > d:
+            break
+        v = x
+    return v
+
+
+def liquidity_signals(cfg, as_of):
+    """
+    Macro-desk inputs from FRED, each lagged to when it is actually published so nothing
+    from after the cutoff leaks in: daily series use yesterday's value, weekly ones their release lag.
+    """
+    S = []
+    r = _upto(fred("DFII10"), as_of, 1)                       # 10-year TIPS: the real rate tech is priced off
+    if len(r) > 6:
+        d = (r[-1][1] - r[-6][1]) * 100
+        sc = -1 if d > 10 else 1 if d < -10 else 0
+        S.append(sig("realyield", "Real 10-year yield", sc, 1.0 * cfg["rates_weight"],
+                     f"10-year TIPS yield {r[-1][1]:.2f}%, {d:+.0f} bp over the last 5 sessions. " +
+                     ("Rising real rates compress long-duration valuations, tech hardest." if sc < 0 else
+                      "Falling real rates support valuations." if sc > 0 else "Real rates are steady."), "Macro"))
+    r = _upto(fred("BAMLH0A0HYM2"), as_of, 1)                 # ICE BofA high-yield option-adjusted spread
+    if len(r) > 6:
+        d = (r[-1][1] - r[-6][1]) * 100
+        sc = -1 if d > 15 else 1 if d < -15 else 0
+        S.append(sig("hyoas", "High-yield spreads", sc, 0.75,
+                     f"High-yield spread {r[-1][1]:.2f}%, {d:+.0f} bp over 5 sessions. " +
+                     ("Widening spreads mean credit is pricing more risk, which equities usually follow." if sc < 0 else
+                      "Tightening spreads mean credit is comfortable taking risk." if sc > 0 else "Credit spreads are steady."), "Macro"))
+    r = _upto(fred("NFCI"), as_of, 6)                          # Chicago Fed financial conditions, weekly
+    if len(r) > 5:
+        lvl, d = r[-1][1], r[-1][1] - r[-5][1]
+        sc = -1 if d > .05 else 1 if d < -.05 else 0
+        S.append(sig("nfci", "Financial conditions", sc, 0.75,
+                     f"Chicago Fed NFCI {lvl:+.2f} ({'tighter' if lvl > 0 else 'looser'} than average), {d:+.2f} over 4 weeks. " +
+                     ("Conditions are tightening." if sc < 0 else "Conditions are easing." if sc > 0 else "Conditions are steady."), "Macro"))
+    walcl, tga, rrp = _upto(fred("WALCL"), as_of, 2), _upto(fred("WTREGEN"), as_of, 2), _upto(fred("RRPONTSYD"), as_of, 1)
+    if len(walcl) > 5 and tga and rrp:                          # Fed balance sheet minus TGA minus reverse repo, $ millions
+        def net(i):
+            d0, w = walcl[i]
+            t, q = _at(tga, d0), _at(rrp, d0)
+            return None if t is None or q is None else w - t - q * 1000
+        now, before = net(-1), net(-5)
+        if now is not None and before is not None:
+            chg = (now - before) / 1000
+            sc = 1 if chg > 50 else -1 if chg < -50 else 0
+            S.append(sig("liquidity", "Fed net liquidity", sc, 0.75,
+                         f"Fed balance sheet minus the Treasury account and reverse repo: ${now/1e6:,.2f}T, {chg:+,.0f}B over 4 weeks. " +
+                         ("More dollars in the system tends to lift risk assets." if sc > 0 else
+                          "Liquidity is draining, a headwind for risk assets." if sc < 0 else "Liquidity is roughly flat."), "Macro"))
+    return S
 
 
 def fed_pressure_signal(as_of):
@@ -993,9 +1052,44 @@ def apply_learning(signals, mult):
     return signals
 
 
-def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="preopen", sess=None):
+HOLD_BAND = NEUTRAL_BAND   # an earlier call for the same window only flips once the new score clears this
+# Conviction is ranked against the model's own recent reads, so the labels mean the same thing
+# whatever the scale of the score: High = strongest ~10% of reads, Medium = next 20%, Low = next 35%.
+CONV_PCTS = (0.35, 0.70, 0.90)
+CONV_MIN_READS = 40
+CONV_FALLBACK = (0.06, 0.15, 0.22)   # used until there's enough history; set from the first 74 reads
+
+
+def conviction_cuts(sym, before: str):
+    """|score| cut-offs for Low / Medium / High from up to 400 earlier reads of this market (all three calls)."""
+    vals = []
+    for sub in ("", "overnight", "now"):
+        d = OUT / "history" / sub if sub else OUT / "history"
+        if not d.exists():
+            continue
+        for f in sorted(d.glob("20*.json"))[-400:]:
+            if f.stem >= before:
+                continue
+            try:
+                m = json.loads(f.read_text()).get("markets", {}).get(sym, {})
+                b = m.get("bias") or {}
+                x = b.get("raw_score", b.get("score"))
+                if x is not None:
+                    vals.append(abs(x))
+            except Exception:  # noqa: BLE001
+                continue
+    if len(vals) < CONV_MIN_READS:
+        return CONV_FALLBACK, len(vals)
+    vals.sort()
+    q = lambda p: vals[min(len(vals) - 1, int(p * len(vals)))]  # noqa: E731
+    return tuple(max(q(p), floor) for p, floor in zip(CONV_PCTS, (NEUTRAL_BAND * .75, 0.10, 0.15))), len(vals)
+
+
+def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="preopen", sess=None, prev=None, cuts=None):
     own = own_score(signals)
     score = own if not peer else (1 - PEER_WEIGHT) * own + PEER_WEIGHT * peer[1]
+    if peer and own and (score > 0) != (own > 0):
+        score = own * (1 - PEER_WEIGHT)   # the peer can soften a market's own lean, never reverse it
     raw_score = score
     # pre-open: anything later today (positioning into it starts at the open);
     # now / overnight: only releases that land before the session being called ends
@@ -1010,8 +1104,14 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
         score *= EVENT_DAMP
         damp.append("high-impact release later today")
     bias = label_of(score)
-    a = abs(score)
-    lvl = 0 if a < NEUTRAL_BAND else 1 if a < 0.30 else 2 if a < 0.50 else 3
+    held = False
+    if prev in ("Bullish", "Bearish") and prev != bias and abs(score) < HOLD_BAND:
+        bias, held = prev, True          # hysteresis: a near-zero wobble doesn't flip a standing call
+    a = abs(raw_score)                    # rank the undamped score; event days are capped below
+    c1, c2, c3 = cuts or CONV_FALLBACK
+    lvl = 0 if a < c1 else 1 if a < c2 else 2 if a < c3 else 3
+    if held:
+        lvl = 0
     if upcoming:
         lvl = min(lvl, 1)            # never better than Low into a binary print
     conviction = ["Very low", "Low", "Medium", "High"][lvl]
@@ -1024,6 +1124,8 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
     names = lambda L, n: ", ".join(s["label"] for s in top(L)[:n])  # noqa: E731
     lead, against = (ups, downs) if bias == "Bullish" else (downs, ups)
     parts = ["Futures are closed."] if view == "now" and not sess else []
+    if held:
+        parts.append(f"Holding the earlier {bias.lower()} call: the score ({score:+.2f}) hasn't moved far enough the other way to flip it.")
     parts.append(f"For: {names(lead, 3)}." if lead else "The votes are dead even, so the call defaults long.")
     if against:
         parts.append(f"Against: {names(against, 2)}.")
@@ -1055,7 +1157,7 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
         invalid = "Futures reversing through yesterday's 4 PM close after the open"
 
     macro_w = sum(s["weight"] for s in signals if s["group"] != "Dealer positioning")
-    return dict(bias=bias, score=round(score, 3), raw_score=round(raw_score, 3), dampened=damp,
+    return dict(bias=bias, score=round(score, 3), raw_score=round(raw_score, 3), dampened=damp, held=held,
                 own_score=round(own, 3), conviction=conviction,
                 ups=len(ups), downs=len(downs), total=len(signals), overall=" ".join(parts),
                 invalidation=invalid,
@@ -1182,6 +1284,26 @@ def record_stats(hist_dir, sym, before: str | None = None, limit: int = 120):
 
 
 # ──────────────────────────────── main ────────────────────────────────────
+def previous_call(hist, view, target, as_of, sess):
+    """The last call already published for this same window, so near-zero wobbles don't flip it."""
+    try:
+        if view == "now" and sess:
+            end = sess[2].isoformat()
+            for f in sorted(hist.glob("20*.json"), reverse=True)[:12]:
+                d = json.loads(f.read_text())
+                if (d.get("window") or {}).get("end") == end and d.get("as_of", "") < as_of.isoformat():
+                    return {k: m["bias"]["bias"] for k, m in d.get("markets", {}).items()}
+            return {}
+        f = hist / f"{target.isoformat()}.json"
+        if f.exists():
+            d = json.loads(f.read_text())
+            if d.get("as_of", "") < as_of.isoformat():
+                return {k: m["bias"]["bias"] for k, m in d.get("markets", {}).items()}
+    except Exception:  # noqa: BLE001
+        pass
+    return {}
+
+
 def build_view(target, as_of, live, now, view, hist, sess=None):
     """One complete read: view = 'preopen' (9:25 ET cut), 'now' (latest) or 'overnight' (6 PM cut)."""
     NOTES.clear(); SOURCES.clear()
@@ -1218,7 +1340,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
             base = macro_signals(cfg, quotes)
         else:
             base = macro_signals(cfg, quotes)
-        extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of)) if x]
+        extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of)) if x] + liquidity_signals(cfg, as_of)
         base = base + extra
         # learn only from sessions graded before this one, so every read stays point-in-time
         key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
@@ -1231,12 +1353,16 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
         hours = (sess[2] - as_of).total_seconds() / 3600
     else:
         hours = 0.5
+    prior_call = previous_call(hist, view, target, as_of, sess)
+    stamp_key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
     markets = {}
     for sym, cfg in MARKETS.items():
         pos, sigs = pre[sym]
         peers = [k for k in pre if k != sym and pre[k][1]]
         peer = (peers[0], own_score(pre[peers[0]][1])) if peers and sigs else None
-        bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer, view, sess)
+        cuts, n_hist = conviction_cuts(sym, stamp_key)
+        bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer, view, sess, prior_call.get(sym), cuts)
+        bias["conv_cuts"] = [round(c, 3) for c in cuts]; bias["conv_basis"] = n_hist
         px = pos["px"] if pos else (quotes.get(cfg["future"]) or {}).get("last")
         changed = None
         if view != "now" and prior and sym in prior.get("markets", {}):
