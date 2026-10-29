@@ -407,6 +407,157 @@ def earnings_signal(cfg, earnings, as_of):
                 "A mixed or muted reaction, so earnings aren't moving the index much."), "News")
 
 
+# ───────────────────── official macro data (Fed reaction function) ────────────────
+# Framework: the user's macro notes. The Fed reacts to three things (jobs, inflation,
+# activity); hot data → contractionary Fed → bearish for stocks, cool data → expansionary
+# → bullish. Only official numbers count, because those are what the Fed watches.
+# Free source: FRED's public CSV download (no key). ISM, Chicago PMI and Conference
+# Board confidence are licensed and not on FRED, so they can't be scored here.
+_FRED: dict = {}
+
+
+def fred(series):
+    """[(date, value)] oldest → newest from FRED's public CSV. Cached per run."""
+    if series in _FRED:
+        return _FRED[series]
+    out = []
+    if not FIXTURES:
+        try:
+            r = requests.get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}",
+                             headers=UA, timeout=30)
+            r.raise_for_status()
+            for line in r.text.strip().splitlines()[1:]:
+                d, _, v = line.partition(",")
+                try:
+                    out.append((date.fromisoformat(d.strip()), float(v)))
+                except ValueError:
+                    continue          # "." marks a missing value
+        except Exception as e:  # noqa: BLE001
+            print(f"fred {series}: {type(e).__name__} {e}", file=sys.stderr)
+    _FRED[series] = out
+    return out
+
+
+def _yoy(rows, i=-1):
+    return pct(rows[i][1], rows[i - 12][1]) if len(rows) >= 13 - i - 1 else None
+
+
+def _mom(rows, i=-1):
+    return pct(rows[i][1], rows[i - 1][1]) if len(rows) >= 2 - i else None
+
+
+def _upto(rows, as_of, lag_days):
+    """Observations already published by as_of (a reference period is public ~lag_days after it starts)."""
+    return [r for r in rows if r[0] + timedelta(days=lag_days) <= as_of.date()]
+
+
+# name: (series, how to read it, hot test, cool test, unit, publication lag in days)
+# hot  → Fed leans contractionary → -1 for stocks; cool → expansionary → +1
+FED_GAUGES = {
+    "Unemployment rate": ("UNRATE", lambda r: r[-1][1], lambda x: x < 4.0, lambda x: x > 5.5, "%", 36),
+    "Initial jobless claims (4-wk avg)": ("ICSA", lambda r: sum(v for _, v in r[-4:]) / 4 / 1000,
+                                          lambda x: x < 250, lambda x: x > 350, "K", 5),
+    "Payrolls (3-mo avg change)": ("PAYEMS", lambda r: (r[-1][1] - r[-4][1]) / 3,
+                                   lambda x: x > 200, lambda x: x < 75, "K", 36),
+    "CPI y/y": ("CPIAUCNS", _yoy, lambda x: x > 2.2, lambda x: x < 1.8, "%", 45),
+    "Core CPI y/y": ("CPILFENS", _yoy, lambda x: x > 2.2, lambda x: x < 1.8, "%", 45),
+    "PPI m/m": ("PPIFIS", _mom, lambda x: x > 0.2, lambda x: x < 0.0, "%", 45),
+}
+
+
+def fed_pressure_signal(as_of):
+    """Where the official data sits vs the Fed's comfort zones: net hawkish or dovish."""
+    votes, parts = [], []
+    for name, (sid, read, hot, cool, unit, lag) in FED_GAUGES.items():
+        rows = _upto(fred(sid), as_of, lag)
+        try:
+            x = read(rows) if rows else None
+        except (IndexError, ZeroDivisionError):
+            x = None
+        if x is None:
+            continue
+        v = -1 if hot(x) else 1 if cool(x) else 0
+        votes.append(v)
+        parts.append(f"{name} {x:,.1f}{unit} ({'hot' if v < 0 else 'cool' if v > 0 else 'in range'})")
+    if len(votes) < 3:
+        note("Official macro data (FRED) unavailable, Fed-pressure gauge skipped")
+        return None
+    net = sum(votes) / len(votes)
+    sc = 1 if net >= 0.34 else -1 if net <= -0.34 else 0
+    return sig("fedpressure", "Fed pressure (official data)", sc, 0.75,
+               "; ".join(parts) + ". " +
+               ("Most of the data is cool, which pushes the Fed toward easing: a tailwind." if sc > 0 else
+                "Most of the data runs hot, which keeps the Fed leaning tight: a headwind." if sc < 0 else
+                "The data is mixed, so the Fed has no strong push either way."), "Macro")
+
+
+# ForexFactory release title → how to compute the official actual from FRED, and
+# whether a higher-than-forecast print is hawkish (+1) or dovish (-1).
+# last field: how far from forecast counts as a real miss (one tick for rates, ~noise for counts)
+RELEASES = {
+    "CPI m/m": ("CPIAUCSL", _mom, 1, "month", 0.1),
+    "CPI y/y": ("CPIAUCNS", _yoy, 1, "month", 0.1),
+    "Core CPI m/m": ("CPILFESL", _mom, 1, "month", 0.1),
+    "Core CPI y/y": ("CPILFENS", _yoy, 1, "month", 0.1),
+    "PPI m/m": ("PPIFIS", _mom, 1, "month", 0.1),
+    "Core PPI m/m": ("PPIFES", _mom, 1, "month", 0.1),
+    "Unemployment Rate": ("UNRATE", lambda r: r[-1][1], -1, "month", 0.1),
+    "Non-Farm Employment Change": ("PAYEMS", lambda r: r[-1][1] - r[-2][1], 1, "month", 25),
+    "Unemployment Claims": ("ICSA", lambda r: r[-1][1] / 1000, -1, "week", 7),
+}
+
+
+def _fresh_for(rows, released: date, kind):
+    """The newest observation must be the period this release reports, or FRED hasn't updated yet."""
+    if not rows:
+        return False
+    obs = rows[-1][0]
+    if kind == "week":
+        return 0 <= (released - obs).days <= 8
+    prev_month = (released.replace(day=1) - timedelta(days=1)).replace(day=1)
+    return obs == prev_month
+
+
+def surprise_signal(events, as_of):
+    """Releases already out by the cutoff: official actual vs the consensus forecast."""
+    hits, parts = [], []
+    for e in events:
+        spec = RELEASES.get(e["title"])
+        if not spec or not e.get("forecast") or e["ts"] > as_of.isoformat():
+            continue
+        sid, read, hawk, kind, tol = spec
+        released = datetime.fromisoformat(e["ts"]).date()
+        rows = [r for r in fred(sid) if r[0] <= released]
+        if not _fresh_for(rows, released, kind):
+            continue
+        try:
+            actual = read(rows)
+        except (IndexError, ZeroDivisionError):
+            continue
+        fc = _num(e["forecast"].replace("K", "").replace("M", ""))
+        if fc is None:
+            continue
+        diff = round(actual, 1) - fc
+        if abs(diff) < tol - 1e-9:
+            v = 0
+        else:
+            v = -1 if diff * hawk > 0 else 1          # hotter than expected → hawkish → bearish
+        hits.append(v)
+        unit = "%" if "%" in e["forecast"] else "K"
+        parts.append(f"{e['title']} {actual:,.1f}{unit} vs {fc:,.1f}{unit} forecast "
+                     f"({'hot' if v < 0 else 'cool' if v > 0 else 'in line'})")
+    if not hits:
+        return None
+    net = sum(hits)
+    sc = 1 if net > 0 else -1 if net < 0 else 0
+    return sig("surprise", "Data surprise", sc, 1.5,
+               "; ".join(parts) + ". " +
+               ("Cooler than expected: the market prices an easier Fed." if sc > 0 else
+                "Hotter than expected: the market prices a tighter Fed." if sc < 0 else
+                ("Hot and cool surprises cancel out." if any(hits) else
+                 "In line with expectations, so no repricing of the Fed.")), "Macro")
+
+
 NEWS_FEEDS = {
     "CNBC": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258",
     "CNBC Top": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114",
@@ -980,8 +1131,8 @@ def dealer_signals(cfg, pos, q):
     return S
 
 
-NEUTRAL_BAND = 0.08   # session bias, not a trade signal: pick a side whenever the evidence leans.
-                      # Strength lives in conviction (Low < 0.30 ≤ Medium < 0.50 ≤ High).
+NEUTRAL_BAND = 0.08   # every call picks a side; under this the evidence is close to balanced,
+                      # so conviction reads "Very low" (then Low < 0.30 ≤ Medium < 0.50 ≤ High).
 EVENT_DAMP = 0.6      # FOMC / CPI / NFP etc. later the same day: positioning, not overnight data, drives the tape
 EARNINGS_DAMP = 0.85  # mega-cap reporting after the close tonight (or last night): pre-report de-risking
 LEARN_MIN_N = 20      # graded samples a signal needs before the Record starts retuning its weight
@@ -995,7 +1146,8 @@ def own_score(signals):
 
 
 def label_of(x):
-    return "Bullish" if x > NEUTRAL_BAND else "Bearish" if x < -NEUTRAL_BAND else "Neutral"
+    """Always a side: price ends a session up or down. A tie goes to the long-run upward drift."""
+    return "Bearish" if x < 0 else "Bullish"
 
 
 def learned_multipliers(hist_dir: Path, sym: str, before: str, limit: int = 120) -> dict:
@@ -1046,10 +1198,10 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
         damp.append("mega-cap earnings")
     bias = label_of(score)
     a = abs(score)
-    lvl = 0 if a < 0.30 else 1 if a < 0.50 else 2
+    lvl = 0 if a < NEUTRAL_BAND else 1 if a < 0.30 else 2 if a < 0.50 else 3
     if upcoming:
-        lvl = 0                      # never better than Low into a binary print
-    conviction = ["Low", "Medium", "High"][lvl]
+        lvl = min(lvl, 1)            # never better than Low into a binary print
+    conviction = ["Very low", "Low", "Medium", "High"][lvl]
     directional = [s for s in signals if s.get("directional", True)]
     ups = [s for s in directional if s["score"] > 0]
     downs = [s for s in directional if s["score"] < 0]
@@ -1067,7 +1219,12 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
         parts = [f"{bias}, {conviction.lower()}-conviction read on {sym} for the New York open (09:30–10:00 ET)."]
     if bias != "Neutral":
         lead, against = (ups, downs) if bias == "Bullish" else (downs, ups)
-        parts.append("The case rests on " + ", ".join(s["label"] for s in top(lead)[:3]) + ".")
+        if lead:
+            parts.append("The case rests on " + ", ".join(s["label"] for s in top(lead)[:3]) + ".")
+        else:
+            parts.append("The signals are dead even, so the call follows the market's long-run upward drift.")
+        if abs(score) < NEUTRAL_BAND:
+            parts.append("The two sides nearly cancel out, so wait for price to confirm before leaning on it.")
         if against:
             parts.append("Working against it: " + ", ".join(s["label"] for s in top(against)[:2]) + ".")
     else:
@@ -1232,7 +1389,7 @@ def record_stats(hist_dir, sym, before: str | None = None, limit: int = 120):
     return {
         **rate(rows),
         "by_bias": {b: rate([r for r in rows if r["bias"] == b]) for b in ("Bullish", "Bearish")},
-        "by_conviction": {c: rate([r for r in rows if r["conviction"] == c]) for c in ("Low", "Medium", "High")},
+        "by_conviction": {c: rate([r for r in rows if r["conviction"] == c]) for c in ("Very low", "Low", "Medium", "High")},
         "streak": {"n": streak, "kind": kind},
         "signals": sig_rows,
         "recent": rows[-40:],
@@ -1277,7 +1434,8 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
             base = [x for x in macro_signals(cfg, quotes) if x["key"] != "overnight"] + session_signals(cfg, sess, as_of)
         else:
             base = macro_signals(cfg, quotes)
-        extra = [x for x in (earnings_signal(cfg, earnings, as_of), news_signal(as_of)) if x]
+        extra = [x for x in (earnings_signal(cfg, earnings, as_of), news_signal(as_of),
+                             fed_pressure_signal(as_of), surprise_signal(events, as_of)) if x]
         base = base + extra
         # learn only from sessions graded before this one, so every read stays point-in-time
         key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
