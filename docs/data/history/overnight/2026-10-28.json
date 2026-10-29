@@ -2,9 +2,14 @@
  "view": "overnight",
  "session": "overnight",
  "date": "2026-10-28",
+ "window": {
+  "name": "Asia + London",
+  "start": "2026-10-28T18:00:00-04:00",
+  "end": "2026-10-29T09:30:00-04:00"
+ },
  "mode": "point-in-time",
  "as_of": "2026-10-28T18:00:00-04:00",
- "generated": "2026-10-28T20:07:07-04:00",
+ "generated": "2026-10-28T20:38:22-04:00",
  "events": [],
  "macro": {
   "NQ=F": {
@@ -53,9 +58,9 @@
    "ts": "2026-10-28T17:58:00-04:00"
   },
   "^N225": {
-   "last": 63954.1914,
-   "chg_pct": 1.11,
-   "ts": "2026-10-28T02:30:00-04:00"
+   "last": 64042.0586,
+   "chg_pct": 1.25,
+   "ts": "2026-10-28T02:29:00-04:00"
   },
   "^GDAXI": {
    "last": 25704.0195,
@@ -92,14 +97,18 @@
   "NQ": {
    "name": "Nasdaq-100 futures",
    "bias": {
-    "bias": "Bullish",
-    "score": 0.24,
+    "bias": "Neutral",
+    "score": 0.204,
+    "raw_score": 0.24,
+    "dampened": [
+     "mega-cap earnings"
+    ],
     "own_score": 0.237,
     "conviction": "Low",
     "ups": 4,
     "downs": 1,
     "total": 11,
-    "overall": "Bullish, low-conviction read on NQ for the overnight session (6 PM\u20138:30 AM ET), from data up to the 6 PM cutoff. The case rests on Day session, VIX today, 2-year / Fed path. Working against it: After-hours reaction. ES agrees (+0.24). Mega-cap earnings: MSFT (after close), GOOGL (after close).",
+    "overall": "Neutral, low-conviction read on NQ for the whole Asia and London move (6 PM\u20139:30 AM ET), from macro data up to the 6 PM cutoff. 4 signals lean up and 1 lean down, a slight tilt up (+0.24) that isn't strong enough to call. No edge, so trade the levels and not a story. Score shrunk +0.24 \u2192 +0.20 for mega-cap earnings: event days are driven by positioning into the release more than by the data before it. ES agrees (+0.24). Mega-cap earnings: MSFT (after close), GOOGL (after close).",
     "invalidation": "Futures reversing through today's 4 PM close during the Asia session",
     "macro_share": 100
    },
@@ -232,14 +241,18 @@
   "ES": {
    "name": "S&P 500 futures",
    "bias": {
-    "bias": "Bullish",
-    "score": 0.242,
+    "bias": "Neutral",
+    "score": 0.206,
+    "raw_score": 0.242,
+    "dampened": [
+     "mega-cap earnings"
+    ],
     "own_score": 0.245,
     "conviction": "Low",
     "ups": 4,
     "downs": 1,
     "total": 11,
-    "overall": "Bullish, low-conviction read on ES for the overnight session (6 PM\u20138:30 AM ET), from data up to the 6 PM cutoff. The case rests on Day session, VIX today, 2-year / Fed path. Working against it: After-hours reaction. NQ agrees (+0.24). Mega-cap earnings: MSFT (after close), GOOGL (after close), LLY (tomorrow before open).",
+    "overall": "Neutral, low-conviction read on ES for the whole Asia and London move (6 PM\u20139:30 AM ET), from macro data up to the 6 PM cutoff. 4 signals lean up and 1 lean down, a slight tilt up (+0.24) that isn't strong enough to call. No edge, so trade the levels and not a story. Score shrunk +0.24 \u2192 +0.21 for mega-cap earnings: event days are driven by positioning into the release more than by the data before it. NQ agrees (+0.24). Mega-cap earnings: MSFT (after close), GOOGL (after close), LLY (tomorrow before open).",
     "invalidation": "Futures reversing through today's 4 PM close during the Asia session",
     "macro_share": 100
    },
@@ -383,38 +396,38 @@
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:27-04:00",
+   "fetched": "2026-10-28T20:38:49-04:00",
    "data_time": "2026-10-28T18:00:00-04:00",
    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 6:00 PM ET"
   },
   "Economic calendar": {
    "ok": false,
-   "fetched": "2026-10-28T20:07:27-04:00",
+   "fetched": "2026-10-28T20:38:49-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 28": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:30-04:00",
+   "fetched": "2026-10-28T20:38:52-04:00",
    "data_time": null,
    "detail": "222 companies"
   },
   "Earnings Oct 29": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:31-04:00",
+   "fetched": "2026-10-28T20:38:55-04:00",
    "data_time": null,
    "detail": "317 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:32-04:00",
+   "fetched": "2026-10-28T20:38:56-04:00",
    "data_time": "2026-10-29T00:05:32-04:00",
    "detail": "15,384 contracts"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:34-04:00",
-   "data_time": "2026-10-29T00:04:49-04:00",
+   "fetched": "2026-10-28T20:38:57-04:00",
+   "data_time": "2026-10-29T00:33:44-04:00",
    "detail": "28,948 contracts"
   }
  }

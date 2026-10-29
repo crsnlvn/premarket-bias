@@ -2,9 +2,14 @@
  "view": "preopen",
  "session": "ny",
  "date": "2026-10-28",
+ "window": {
+  "name": "NY open",
+  "start": "2026-10-28T09:30:00-04:00",
+  "end": "2026-10-28T10:00:00-04:00"
+ },
  "mode": "point-in-time",
  "as_of": "2026-10-28T09:25:00-04:00",
- "generated": "2026-10-28T20:07:07-04:00",
+ "generated": "2026-10-28T20:38:22-04:00",
  "events": [
   {
    "time": "2:00 PM",
@@ -78,9 +83,9 @@
    "ts": "2026-10-28T09:10:00-04:00"
   },
   "^N225": {
-   "last": 63954.1914,
-   "chg_pct": 1.11,
-   "ts": "2026-10-28T02:30:00-04:00"
+   "last": 64042.0586,
+   "chg_pct": 1.25,
+   "ts": "2026-10-28T02:29:00-04:00"
   },
   "^GDAXI": {
    "last": 25706.0,
@@ -107,14 +112,19 @@
   "NQ": {
    "name": "Nasdaq-100 futures",
    "bias": {
-    "bias": "Bullish",
-    "score": 0.215,
+    "bias": "Neutral",
+    "score": 0.11,
+    "raw_score": 0.215,
+    "dampened": [
+     "high-impact release later today",
+     "mega-cap earnings"
+    ],
     "own_score": 0.27,
     "conviction": "Low",
     "ups": 2,
     "downs": 0,
     "total": 10,
-    "overall": "Bullish, low-conviction read on NQ for the New York morning (09:30\u201312:00 ET). The case rests on Overnight futures, Global equities. On its own NQ reads bullish (+0.27) and ES neutral (+0.11). They move together, so the split pulls this toward neutral. Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
+    "overall": "Neutral, low-conviction read on NQ for the New York open (09:30\u201310:00 ET). 2 signals lean up and 0 lean down, a slight tilt up (+0.21) that isn't strong enough to call. No edge, so trade the levels and not a story. Score shrunk +0.21 \u2192 +0.11 for high-impact release later today and mega-cap earnings: event days are driven by positioning into the release more than by the data before it. ES agrees (+0.11). Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
     "invalidation": "Overnight futures reversing through yesterday's 4 PM level after the open",
     "macro_share": 100
    },
@@ -134,7 +144,7 @@
      "score": 1,
      "raw": 1,
      "weight": 1.0,
-     "text": "Nikkei +1.1% \u00b7 DAX +0.4% \u00b7 Hang Seng +0.2%. Asia and Europe are risk-on, which hands New York a tailwind.",
+     "text": "Nikkei +1.2% \u00b7 DAX +0.4% \u00b7 Hang Seng +0.2%. Asia and Europe are risk-on, which hands New York a tailwind.",
      "group": "Macro"
     },
     {
@@ -212,9 +222,9 @@
    ],
    "changed": null,
    "expected_range": {
-    "move": 471.09,
-    "low": 29441.91,
-    "high": 30384.09
+    "move": 130.66,
+    "low": 29782.34,
+    "high": 30043.66
    },
    "levels": {
     "price": 29913.0
@@ -234,23 +244,31 @@
    ],
    "scorecard": null,
    "outcome": {
-    "open": 29930.0,
-    "noon": 29856.75,
-    "move": -73.25,
+    "open": 29929.25,
+    "noon": 29831.25,
+    "close": 29831.25,
+    "move": -98.0,
+    "start": "2026-10-28T09:30:00-04:00",
+    "end": "2026-10-28T10:00:00-04:00",
     "result": "miss"
    }
   },
   "ES": {
    "name": "S&P 500 futures",
    "bias": {
-    "bias": "Bullish",
-    "score": 0.167,
+    "bias": "Neutral",
+    "score": 0.085,
+    "raw_score": 0.167,
+    "dampened": [
+     "high-impact release later today",
+     "mega-cap earnings"
+    ],
     "own_score": 0.112,
     "conviction": "Low",
     "ups": 1,
     "downs": 0,
     "total": 10,
-    "overall": "Bullish, low-conviction read on ES for the New York morning (09:30\u201312:00 ET). The case rests on Global equities. On its own ES reads neutral (+0.11) and NQ bullish (+0.27). They move together, so the split pulls this toward neutral. Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
+    "overall": "Neutral, low-conviction read on ES for the New York open (09:30\u201310:00 ET). 1 signal leans up and 0 lean down, a slight tilt up (+0.17) that isn't strong enough to call. No edge, so trade the levels and not a story. Score shrunk +0.17 \u2192 +0.09 for high-impact release later today and mega-cap earnings: event days are driven by positioning into the release more than by the data before it. NQ agrees (+0.27). Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
     "invalidation": "Overnight futures reversing through yesterday's 4 PM level after the open",
     "macro_share": 100
    },
@@ -270,7 +288,7 @@
      "score": 1,
      "raw": 1,
      "weight": 1.0,
-     "text": "Nikkei +1.1% \u00b7 DAX +0.4% \u00b7 Hang Seng +0.2%. Asia and Europe are risk-on, which hands New York a tailwind.",
+     "text": "Nikkei +1.2% \u00b7 DAX +0.4% \u00b7 Hang Seng +0.2%. Asia and Europe are risk-on, which hands New York a tailwind.",
      "group": "Macro"
     },
     {
@@ -348,9 +366,9 @@
    ],
    "changed": null,
    "expected_range": {
-    "move": 86.5,
-    "low": 7689.0,
-    "high": 7862.0
+    "move": 23.99,
+    "low": 7751.51,
+    "high": 7799.49
    },
    "levels": {
     "price": 7775.5
@@ -371,13 +389,16 @@
    "scorecard": null,
    "outcome": {
     "open": 7774.75,
-    "noon": 7774.25,
-    "move": -0.5,
+    "noon": 7762.0,
+    "close": 7762.0,
+    "move": -12.75,
+    "start": "2026-10-28T09:30:00-04:00",
+    "end": "2026-10-28T10:00:00-04:00",
     "result": "miss"
    }
   }
  },
- "divergence": "NQ reads Bullish (+0.27) and ES reads Neutral (+0.11) on their own evidence. They are highly correlated, so both final reads are blended toward each other. The split says tech is leading the broad market. Treat it as a lower-conviction day, size down, or wait for them to line up after the open.",
+ "divergence": null,
  "notes": [
   "NQ: dealer positioning skipped, option snapshot is from Oct 29, after this session. The read is macro only.",
   "ES: dealer positioning skipped, option snapshot is from Oct 29, after this session. The read is macro only."
@@ -385,38 +406,38 @@
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:12-04:00",
+   "fetched": "2026-10-28T20:38:28-04:00",
    "data_time": "2026-10-28T09:25:00-04:00",
    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 9:25 AM ET"
   },
   "Economic calendar": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:12-04:00",
+   "fetched": "2026-10-28T20:38:28-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 28": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:15-04:00",
+   "fetched": "2026-10-28T20:38:31-04:00",
    "data_time": null,
    "detail": "222 companies"
   },
   "Earnings Oct 27": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:18-04:00",
+   "fetched": "2026-10-28T20:38:33-04:00",
    "data_time": null,
    "detail": "185 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:19-04:00",
+   "fetched": "2026-10-28T20:38:34-04:00",
    "data_time": "2026-10-29T00:05:32-04:00",
    "detail": "15,384 contracts"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-28T20:07:20-04:00",
-   "data_time": "2026-10-29T00:04:49-04:00",
+   "fetched": "2026-10-28T20:38:35-04:00",
+   "data_time": "2026-10-29T00:33:44-04:00",
    "detail": "28,948 contracts"
   }
  }
