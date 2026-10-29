@@ -1,0 +1,1260 @@
+{
+ "view": "preopen",
+ "session": "ny",
+ "date": "2026-10-29",
+ "window": {
+  "name": "NY open",
+  "start": "2026-10-29T09:30:00-04:00",
+  "end": "2026-10-29T10:00:00-04:00"
+ },
+ "mode": "live",
+ "as_of": "2026-10-29T00:21:40-04:00",
+ "generated": "2026-10-29T00:21:40-04:00",
+ "events": [
+  {
+   "time": "8:30 AM",
+   "ts": "2026-10-29T08:30:00-04:00",
+   "title": "Advance GDP q/q",
+   "impact": "High",
+   "forecast": "3.2%",
+   "previous": "1.5%"
+  },
+  {
+   "time": "8:30 AM",
+   "ts": "2026-10-29T08:30:00-04:00",
+   "title": "Core PCE Price Index m/m",
+   "impact": "High",
+   "forecast": "0.3%",
+   "previous": "0.2%"
+  },
+  {
+   "time": "8:30 AM",
+   "ts": "2026-10-29T08:30:00-04:00",
+   "title": "Advance GDP Price Index q/q",
+   "impact": "Medium",
+   "forecast": "3.2%",
+   "previous": "6.2%"
+  },
+  {
+   "time": "8:30 AM",
+   "ts": "2026-10-29T08:30:00-04:00",
+   "title": "Unemployment Claims",
+   "impact": "Medium",
+   "forecast": "198K",
+   "previous": "194K"
+  }
+ ],
+ "macro": {
+  "NQ=F": {
+   "last": 29556.75,
+   "chg_pct": -1.74,
+   "ts": "2026-10-29T00:11:00-04:00"
+  },
+  "ES=F": {
+   "last": 7744.75,
+   "chg_pct": -0.72,
+   "ts": "2026-10-29T00:11:00-04:00"
+  },
+  "ZN=F": {
+   "last": 106.0781,
+   "chg_pct": 0.18,
+   "ts": "2026-10-29T00:11:00-04:00"
+  },
+  "ZT=F": {
+   "last": 102.082,
+   "chg_pct": 0.05,
+   "ts": "2026-10-29T00:11:00-04:00"
+  },
+  "DX-Y.NYB": {
+   "last": 102.151,
+   "chg_pct": 0.07,
+   "ts": "2026-10-29T00:11:00-04:00"
+  },
+  "CL=F": {
+   "last": 101.45,
+   "chg_pct": -0.09,
+   "ts": "2026-10-29T00:11:00-04:00"
+  },
+  "HYG": {
+   "last": 77.65,
+   "chg_pct": 0.08,
+   "ts": "2026-10-28T17:28:00-04:00"
+  },
+  "BTC-USD": {
+   "last": 79747.0625,
+   "chg_pct": -2.29,
+   "ts": "2026-10-29T00:21:00-04:00"
+  },
+  "VXX": {
+   "last": 18.06,
+   "chg_pct": 1.98,
+   "ts": "2026-10-28T19:58:00-04:00"
+  },
+  "^N225": {
+   "last": 64139.3906,
+   "chg_pct": 0.15,
+   "ts": "2026-10-29T00:06:00-04:00"
+  },
+  "^HSI": {
+   "last": 23106.7109,
+   "chg_pct": 0.05,
+   "ts": "2026-10-29T00:04:00-04:00"
+  },
+  "^VIX": {
+   "last": 16.91,
+   "chg_pct": 1.93,
+   "ts": "2026-10-28T16:15:00-04:00"
+  }
+ },
+ "markets": {
+  "NQ": {
+   "name": "Nasdaq-100 futures",
+   "bias": {
+    "bias": "Bearish",
+    "score": -0.114,
+    "raw_score": -0.224,
+    "dampened": [
+     "high-impact release later today",
+     "mega-cap earnings"
+    ],
+    "own_score": -0.236,
+    "conviction": "Low",
+    "ups": 2,
+    "downs": 6,
+    "total": 18,
+    "overall": "For: Overnight futures, Mega-cap earnings, Gamma flip. Against: VIX term structure, Charm into close. Dealers short gamma: moves can run. ES agrees. On deck: Advance GDP q/q 8:30 AM, Core PCE Price Index m/m 8:30 AM. Reassess after.",
+    "invalidation": "A reclaim and hold of the gamma flip at 30,038",
+    "macro_share": 82
+   },
+   "signals": [
+    {
+     "key": "overnight",
+     "label": "Overnight futures",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.5,
+     "text": "NQ -1.74% vs yesterday's 4 PM (29,556.75). Selling came in overnight, so the open starts on the back foot.",
+     "group": "Macro"
+    },
+    {
+     "key": "global",
+     "label": "Global equities",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.0,
+     "text": "Nikkei +0.2% \u00b7 Hang Seng +0.1%. Mixed overseas, so no handoff.",
+     "group": "Macro"
+    },
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.25,
+     "text": "10Y futures +0.18% \u2248 -2.7 bp in yield (from 5.05%). Rates are not in play.",
+     "group": "Macro"
+    },
+    {
+     "key": "fed",
+     "label": "2-year / Fed path",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "2Y futures +0.046% \u2248 -2.4 bp. Fed expectations are steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "DXY 102.15 (+0.07%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 101.45 (-0.1%). No energy shock.",
+     "group": "Macro"
+    },
+    {
+     "key": "credit",
+     "label": "Credit (HYG)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "High-yield bonds +0.08%. Credit is calm.",
+     "group": "Macro"
+    },
+    {
+     "key": "crypto",
+     "label": "Crypto risk appetite",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.5,
+     "text": "Bitcoin -2.3% since yesterday's 4 PM. Speculative de-risking overnight.",
+     "group": "Macro"
+    },
+    {
+     "key": "volpre",
+     "label": "Pre-market volatility",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.25,
+     "text": "VXX +2.0% pre-market. Vol is steady.",
+     "group": "Volatility"
+    },
+    {
+     "key": "term",
+     "label": "VIX term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX \u00f7 VIX3M at yesterday's close = 0.86. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "earnings",
+     "label": "Mega-cap earnings",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.25,
+     "text": "MSFT: EPS 4.89 vs 4.72 est (beat +4%), stock +3.1%; GOOGL: EPS 2.12 vs 3.01 est (miss -30%), stock -10.5%. The market is selling the results, and mega-caps drag the index.",
+     "group": "News"
+    },
+    {
+     "key": "news",
+     "label": "Headline tone",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "6 risk-on vs 7 risk-off of 44 market headlines in the 16h before the cutoff (net -0.08). Latest: \"China\u2019s tech darlings are losing their shine. Here\u2019s what\u2019s behind the sell-off\" (CNBC Top) \u00b7 \"Microsoft\u2019s strong quarter backs up its stock rebound. Here's our new price target\" (CNBC Top). The news flow is mixed.",
+     "group": "News"
+    },
+    {
+     "key": "flip",
+     "label": "Gamma flip",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Price is 482 pts below the gamma flip (30,038). Dealers are short gamma, so their hedging extends moves.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "tilt",
+     "label": "Gamma tilt",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.25,
+     "text": "Call \u00f7 put gamma 0.64. Put-heavy, so hedges sit below.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "walls",
+     "label": "Wall range",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "Put wall 29,025 / call wall 29,950: 393 pts up vs 532 down. Mid-range.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "charm",
+     "label": "Charm into close",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Time decay shifts dealer hedges by $2.33B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "vanna",
+     "label": "Vanna",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.4,
+     "text": "Implied vol \u2248 +0.23 pts pre-market, worth about $0.60B of dealer selling.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "flow",
+     "label": "Options flow (prior session)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.25,
+     "text": "Short-dated premium put/call 0.86.",
+     "group": "Dealer positioning"
+    }
+   ],
+   "changed": {
+    "prev_date": "2026-10-28",
+    "prev_bias": "Bullish",
+    "prev_score": 0.133,
+    "delta": -0.247
+   },
+   "expected_range": {
+    "move": 141.22,
+    "low": 29415.53,
+    "high": 29697.97
+   },
+   "levels": {
+    "price": 29556.75,
+    "flip": 30038.31,
+    "flip_close": 30059.15,
+    "call_wall": 29950,
+    "put_wall": 29025,
+    "majors": [
+     {
+      "level": 28200,
+      "net_gex": -636435345.1657239
+     },
+     {
+      "level": 28600,
+      "net_gex": -857185582.2208093
+     },
+     {
+      "level": 29025,
+      "net_gex": -1028182199.6053239
+     },
+     {
+      "level": 29425,
+      "net_gex": -491037814.6322104
+     },
+     {
+      "level": 29950,
+      "net_gex": 772821684.23744
+     }
+    ]
+   },
+   "dealer": {
+    "net_gex_bn": -6.477,
+    "call_put_gamma": 0.64,
+    "dealer_delta_bn": 185.49,
+    "charm_bn": 2.333,
+    "vanna_bn_per_pt": 2.553,
+    "chains": [
+     "NDX",
+     "QQQ"
+    ]
+   },
+   "flow": {
+    "calls_m": 190.8,
+    "puts_m": 164.2,
+    "top": [
+     {
+      "level": 29925,
+      "side": "call",
+      "premium": 22438118.0
+     },
+     {
+      "level": 29975,
+      "side": "call",
+      "premium": 21177678.5
+     },
+     {
+      "level": 30050,
+      "side": "call",
+      "premium": 20703670.0
+     },
+     {
+      "level": 29850,
+      "side": "put",
+      "premium": 15823845.5
+     },
+     {
+      "level": 29925,
+      "side": "put",
+      "premium": 14993548.5
+     }
+    ]
+   },
+   "profile": [
+    {
+     "px": 27783.34,
+     "gex": -11257488372.84668
+    },
+    {
+     "px": 27842.46,
+     "gex": -11390408012.958105
+    },
+    {
+     "px": 27901.57,
+     "gex": -11518214607.21315
+    },
+    {
+     "px": 27960.69,
+     "gex": -11639658073.844845
+    },
+    {
+     "px": 28019.8,
+     "gex": -11753346886.626429
+    },
+    {
+     "px": 28078.91,
+     "gex": -11857755693.859852
+    },
+    {
+     "px": 28138.03,
+     "gex": -11951237672.841883
+    },
+    {
+     "px": 28197.14,
+     "gex": -12032041283.546978
+    },
+    {
+     "px": 28256.25,
+     "gex": -12098330734.024706
+    },
+    {
+     "px": 28315.37,
+     "gex": -12148209237.647408
+    },
+    {
+     "px": 28374.48,
+     "gex": -12179744106.23138
+    },
+    {
+     "px": 28433.59,
+     "gex": -12190992901.675714
+    },
+    {
+     "px": 28492.71,
+     "gex": -12180030184.61838
+    },
+    {
+     "px": 28551.82,
+     "gex": -12144974665.689625
+    },
+    {
+     "px": 28610.93,
+     "gex": -12084016519.279472
+    },
+    {
+     "px": 28670.05,
+     "gex": -11995444005.07069
+    },
+    {
+     "px": 28729.16,
+     "gex": -11877667249.361671
+    },
+    {
+     "px": 28788.27,
+     "gex": -11729235270.239641
+    },
+    {
+     "px": 28847.39,
+     "gex": -11548840737.569063
+    },
+    {
+     "px": 28906.5,
+     "gex": -11335306627.935938
+    },
+    {
+     "px": 28965.61,
+     "gex": -11087551109.306307
+    },
+    {
+     "px": 29024.73,
+     "gex": -10804532425.774813
+    },
+    {
+     "px": 29083.84,
+     "gex": -10485183628.022327
+    },
+    {
+     "px": 29142.96,
+     "gex": -10128355077.727497
+    },
+    {
+     "px": 29202.07,
+     "gex": -9732786583.631536
+    },
+    {
+     "px": 29261.18,
+     "gex": -9297127341.704063
+    },
+    {
+     "px": 29320.3,
+     "gex": -8820011017.322138
+    },
+    {
+     "px": 29379.41,
+     "gex": -8300181228.885113
+    },
+    {
+     "px": 29438.52,
+     "gex": -7736657510.96806
+    },
+    {
+     "px": 29497.64,
+     "gex": -7128936592.346449
+    },
+    {
+     "px": 29556.75,
+     "gex": -6477231183.336723
+    },
+    {
+     "px": 29615.86,
+     "gex": -5782744698.932775
+    },
+    {
+     "px": 29674.98,
+     "gex": -5047957937.853033
+    },
+    {
+     "px": 29734.09,
+     "gex": -4276871550.1966076
+    },
+    {
+     "px": 29793.2,
+     "gex": -3475127638.0638514
+    },
+    {
+     "px": 29852.32,
+     "gex": -2649942984.9636755
+    },
+    {
+     "px": 29911.43,
+     "gex": -1809825438.6331258
+    },
+    {
+     "px": 29970.54,
+     "gex": -964096803.8012476
+    },
+    {
+     "px": 30029.66,
+     "gex": -122288952.19949079
+    },
+    {
+     "px": 30088.77,
+     "gex": 706497603.9821897
+    },
+    {
+     "px": 30147.89,
+     "gex": 1514181697.771245
+    },
+    {
+     "px": 30207.0,
+     "gex": 2294157516.4815364
+    },
+    {
+     "px": 30266.11,
+     "gex": 3041560850.470684
+    },
+    {
+     "px": 30325.23,
+     "gex": 3753314824.7655754
+    },
+    {
+     "px": 30384.34,
+     "gex": 4427957375.940575
+    },
+    {
+     "px": 30443.45,
+     "gex": 5065289185.924536
+    },
+    {
+     "px": 30502.57,
+     "gex": 5665913686.583357
+    },
+    {
+     "px": 30561.68,
+     "gex": 6230760437.064136
+    },
+    {
+     "px": 30620.79,
+     "gex": 6760681962.307444
+    },
+    {
+     "px": 30679.91,
+     "gex": 7256190903.8903
+    },
+    {
+     "px": 30739.02,
+     "gex": 7717365963.671066
+    },
+    {
+     "px": 30798.13,
+     "gex": 8143913802.17574
+    },
+    {
+     "px": 30857.25,
+     "gex": 8535342000.860584
+    },
+    {
+     "px": 30916.36,
+     "gex": 8891182844.77806
+    },
+    {
+     "px": 30975.47,
+     "gex": 9211209712.649925
+    },
+    {
+     "px": 31034.59,
+     "gex": 9495602486.933922
+    },
+    {
+     "px": 31093.7,
+     "gex": 9745038516.215206
+    },
+    {
+     "px": 31152.81,
+     "gex": 9960704942.962769
+    },
+    {
+     "px": 31211.93,
+     "gex": 10144242785.618076
+    },
+    {
+     "px": 31271.04,
+     "gex": 10297641774.589573
+    },
+    {
+     "px": 31330.16,
+     "gex": 10423108122.637932
+    }
+   ],
+   "earnings": [
+    {
+     "symbol": "AMZN",
+     "when": "after close",
+     "date": "2026-10-29",
+     "eps_est": 2.01,
+     "eps": null,
+     "surprise": null
+    },
+    {
+     "symbol": "MSFT",
+     "when": "last night",
+     "date": "2026-10-28",
+     "eps_est": 4.71,
+     "eps": null,
+     "surprise": null
+    },
+    {
+     "symbol": "GOOGL",
+     "when": "last night",
+     "date": "2026-10-28",
+     "eps_est": 2.94,
+     "eps": null,
+     "surprise": null
+    }
+   ],
+   "scorecard": null,
+   "outcome": null
+  },
+  "ES": {
+   "name": "S&P 500 futures",
+   "bias": {
+    "bias": "Bearish",
+    "score": -0.11,
+    "raw_score": -0.215,
+    "dampened": [
+     "high-impact release later today",
+     "mega-cap earnings"
+    ],
+    "own_score": -0.204,
+    "conviction": "Low",
+    "ups": 3,
+    "downs": 6,
+    "total": 18,
+    "overall": "For: Overnight futures, Mega-cap earnings, Gamma flip. Against: VIX term structure, Wall range. Dealers short gamma: moves can run. NQ agrees. On deck: Advance GDP q/q 8:30 AM, Core PCE Price Index m/m 8:30 AM. Reassess after.",
+    "invalidation": "A reclaim and hold of the gamma flip at 7,790",
+    "macro_share": 81
+   },
+   "signals": [
+    {
+     "key": "overnight",
+     "label": "Overnight futures",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.5,
+     "text": "ES -0.72% vs yesterday's 4 PM (7,744.75). Selling came in overnight, so the open starts on the back foot.",
+     "group": "Macro"
+    },
+    {
+     "key": "global",
+     "label": "Global equities",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.0,
+     "text": "Nikkei +0.2% \u00b7 Hang Seng +0.1%. Mixed overseas, so no handoff.",
+     "group": "Macro"
+    },
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.9375,
+     "text": "10Y futures +0.18% \u2248 -2.7 bp in yield (from 5.05%). Rates are not in play.",
+     "group": "Macro"
+    },
+    {
+     "key": "fed",
+     "label": "2-year / Fed path",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "2Y futures +0.046% \u2248 -2.4 bp. Fed expectations are steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "DXY 102.15 (+0.07%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 101.45 (-0.1%). No energy shock.",
+     "group": "Macro"
+    },
+    {
+     "key": "credit",
+     "label": "Credit (HYG)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "High-yield bonds +0.08%. Credit is calm.",
+     "group": "Macro"
+    },
+    {
+     "key": "crypto",
+     "label": "Crypto risk appetite",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.5,
+     "text": "Bitcoin -2.3% since yesterday's 4 PM. Speculative de-risking overnight.",
+     "group": "Macro"
+    },
+    {
+     "key": "volpre",
+     "label": "Pre-market volatility",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.25,
+     "text": "VXX +2.0% pre-market. Vol is steady.",
+     "group": "Volatility"
+    },
+    {
+     "key": "term",
+     "label": "VIX term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX \u00f7 VIX3M at yesterday's close = 0.86. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "earnings",
+     "label": "Mega-cap earnings",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.25,
+     "text": "MSFT: EPS 4.89 vs 4.72 est (beat +4%), stock +3.1%; GOOGL: EPS 2.12 vs 3.01 est (miss -30%), stock -10.5%. The market is selling the results, and mega-caps drag the index.",
+     "group": "News"
+    },
+    {
+     "key": "news",
+     "label": "Headline tone",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "6 risk-on vs 7 risk-off of 44 market headlines in the 16h before the cutoff (net -0.08). Latest: \"China\u2019s tech darlings are losing their shine. Here\u2019s what\u2019s behind the sell-off\" (CNBC Top) \u00b7 \"Microsoft\u2019s strong quarter backs up its stock rebound. Here's our new price target\" (CNBC Top). The news flow is mixed.",
+     "group": "News"
+    },
+    {
+     "key": "flip",
+     "label": "Gamma flip",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Price is 46 pts below the gamma flip (7,790). Dealers are short gamma, so their hedging extends moves.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "tilt",
+     "label": "Gamma tilt",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.25,
+     "text": "Call \u00f7 put gamma 0.81. Balanced.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "walls",
+     "label": "Wall range",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.5,
+     "text": "Put wall 7,705 / call wall 8,060: 315 pts up vs 40 down. Near support.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "charm",
+     "label": "Charm into close",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Time decay shifts dealer hedges by $16.16B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "vanna",
+     "label": "Vanna",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.4,
+     "text": "Implied vol \u2248 +0.16 pts pre-market, worth about $4.86B of dealer selling.",
+     "group": "Dealer positioning"
+    },
+    {
+     "key": "flow",
+     "label": "Options flow (prior session)",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.25,
+     "text": "Short-dated premium put/call 1.26.",
+     "group": "Dealer positioning"
+    }
+   ],
+   "changed": {
+    "prev_date": "2026-10-28",
+    "prev_bias": "Bullish",
+    "prev_score": 0.127,
+    "delta": -0.237
+   },
+   "expected_range": {
+    "move": 25.82,
+    "low": 7718.93,
+    "high": 7770.57
+   },
+   "levels": {
+    "price": 7744.75,
+    "flip": 7790.32,
+    "flip_close": 7793.93,
+    "call_wall": 8060,
+    "put_wall": 7705,
+    "majors": [
+     {
+      "level": 7555,
+      "net_gex": -5270722688.33767
+     },
+     {
+      "level": 7655,
+      "net_gex": -6172694405.322725
+     },
+     {
+      "level": 7705,
+      "net_gex": -5491480256.871604
+     },
+     {
+      "level": 7755,
+      "net_gex": -3924489231.5191536
+     },
+     {
+      "level": 7960,
+      "net_gex": 3462849954.8137884
+     }
+    ]
+   },
+   "dealer": {
+    "net_gex_bn": -41.1,
+    "call_put_gamma": 0.81,
+    "dealer_delta_bn": 2491.48,
+    "charm_bn": 16.16,
+    "vanna_bn_per_pt": 29.669,
+    "chains": [
+     "SPX",
+     "SPY"
+    ]
+   },
+   "flow": {
+    "calls_m": 526.3,
+    "puts_m": 662.5,
+    "top": [
+     {
+      "level": 7790,
+      "side": "put",
+      "premium": 47444924.0
+     },
+     {
+      "level": 7790,
+      "side": "call",
+      "premium": 46350953.5
+     },
+     {
+      "level": 7805,
+      "side": "put",
+      "premium": 45306690.0
+     },
+     {
+      "level": 7780,
+      "side": "put",
+      "premium": 42428145.0
+     },
+     {
+      "level": 7755,
+      "side": "put",
+      "premium": 41365856.0
+     }
+    ]
+   },
+   "profile": [
+    {
+     "px": 7280.06,
+     "gex": -109990162747.34924
+    },
+    {
+     "px": 7295.55,
+     "gex": -111061061569.48781
+    },
+    {
+     "px": 7311.04,
+     "gex": -112151199531.06274
+    },
+    {
+     "px": 7326.53,
+     "gex": -113254234866.73795
+    },
+    {
+     "px": 7342.02,
+     "gex": -114361282704.19762
+    },
+    {
+     "px": 7357.51,
+     "gex": -115460551269.58917
+    },
+    {
+     "px": 7373.0,
+     "gex": -116537022912.84814
+    },
+    {
+     "px": 7388.49,
+     "gex": -117572191566.75009
+    },
+    {
+     "px": 7403.98,
+     "gex": -118543875530.31023
+    },
+    {
+     "px": 7419.47,
+     "gex": -119426143469.85751
+    },
+    {
+     "px": 7434.96,
+     "gex": -120189413145.87799
+    },
+    {
+     "px": 7450.45,
+     "gex": -120800785703.35365
+    },
+    {
+     "px": 7465.94,
+     "gex": -121224640053.20937
+    },
+    {
+     "px": 7481.43,
+     "gex": -121423422365.95023
+    },
+    {
+     "px": 7496.92,
+     "gex": -121358442360.78427
+    },
+    {
+     "px": 7512.41,
+     "gex": -120990375893.50711
+    },
+    {
+     "px": 7527.9,
+     "gex": -120279132783.95596
+    },
+    {
+     "px": 7543.39,
+     "gex": -119182836909.9504
+    },
+    {
+     "px": 7558.88,
+     "gex": -117655912272.42165
+    },
+    {
+     "px": 7574.37,
+     "gex": -115646644967.80424
+    },
+    {
+     "px": 7589.86,
+     "gex": -113094977423.72408
+    },
+    {
+     "px": 7605.34,
+     "gex": -109931483707.28226
+    },
+    {
+     "px": 7620.83,
+     "gex": -106078269129.4502
+    },
+    {
+     "px": 7636.32,
+     "gex": -101451887123.7792
+    },
+    {
+     "px": 7651.81,
+     "gex": -95967520874.48778
+    },
+    {
+     "px": 7667.3,
+     "gex": -89543162731.34851
+    },
+    {
+     "px": 7682.79,
+     "gex": -82102880977.81425
+    },
+    {
+     "px": 7698.28,
+     "gex": -73579606749.29893
+    },
+    {
+     "px": 7713.77,
+     "gex": -63919552224.75602
+    },
+    {
+     "px": 7729.26,
+     "gex": -53091091755.3268
+    },
+    {
+     "px": 7744.75,
+     "gex": -41099551671.32549
+    },
+    {
+     "px": 7760.24,
+     "gex": -28005944570.572666
+    },
+    {
+     "px": 7775.73,
+     "gex": -13944033567.854723
+    },
+    {
+     "px": 7791.22,
+     "gex": 871220896.5478706
+    },
+    {
+     "px": 7806.71,
+     "gex": 16148428265.781338
+    },
+    {
+     "px": 7822.2,
+     "gex": 31537515417.77162
+    },
+    {
+     "px": 7837.69,
+     "gex": 46655969857.5019
+    },
+    {
+     "px": 7853.18,
+     "gex": 61117878921.92404
+    },
+    {
+     "px": 7868.67,
+     "gex": 74561769582.28563
+    },
+    {
+     "px": 7884.16,
+     "gex": 86675603252.10753
+    },
+    {
+     "px": 7899.65,
+     "gex": 97218148498.1636
+    },
+    {
+     "px": 7915.13,
+     "gex": 106035175215.04489
+    },
+    {
+     "px": 7930.62,
+     "gex": 113067978356.99394
+    },
+    {
+     "px": 7946.11,
+     "gex": 118352086412.8539
+    },
+    {
+     "px": 7961.6,
+     "gex": 122005795384.85225
+    },
+    {
+     "px": 7977.09,
+     "gex": 124210444592.34721
+    },
+    {
+     "px": 7992.58,
+     "gex": 125186027256.71854
+    },
+    {
+     "px": 8008.07,
+     "gex": 125166279721.05582
+    },
+    {
+     "px": 8023.56,
+     "gex": 124376905431.65479
+    },
+    {
+     "px": 8039.05,
+     "gex": 123019448861.2427
+    },
+    {
+     "px": 8054.54,
+     "gex": 121261938272.03192
+    },
+    {
+     "px": 8070.03,
+     "gex": 119236074339.70483
+    },
+    {
+     "px": 8085.52,
+     "gex": 117039688620.23221
+    },
+    {
+     "px": 8101.01,
+     "gex": 114742594637.54045
+    },
+    {
+     "px": 8116.5,
+     "gex": 112393856670.31985
+    },
+    {
+     "px": 8131.99,
+     "gex": 110028821345.61067
+    },
+    {
+     "px": 8147.48,
+     "gex": 107674812305.32079
+    },
+    {
+     "px": 8162.97,
+     "gex": 105354985072.64095
+    },
+    {
+     "px": 8178.46,
+     "gex": 103090341241.96419
+    },
+    {
+     "px": 8193.95,
+     "gex": 100900244213.00722
+    },
+    {
+     "px": 8209.44,
+     "gex": 98801952005.19797
+    }
+   ],
+   "earnings": [
+    {
+     "symbol": "AMZN",
+     "when": "after close",
+     "date": "2026-10-29",
+     "eps_est": 2.01,
+     "eps": null,
+     "surprise": null
+    },
+    {
+     "symbol": "LLY",
+     "when": "before open",
+     "date": "2026-10-29",
+     "eps_est": 5.38,
+     "eps": null,
+     "surprise": null
+    },
+    {
+     "symbol": "MSFT",
+     "when": "last night",
+     "date": "2026-10-28",
+     "eps_est": 4.71,
+     "eps": null,
+     "surprise": null
+    },
+    {
+     "symbol": "GOOGL",
+     "when": "last night",
+     "date": "2026-10-28",
+     "eps_est": 2.94,
+     "eps": null,
+     "surprise": null
+    }
+   ],
+   "scorecard": null,
+   "outcome": null
+  }
+ },
+ "divergence": null,
+ "notes": [
+  "Official macro data (FRED) unavailable, Fed-pressure gauge skipped",
+  "Official macro data (FRED) unavailable, Fed-pressure gauge skipped"
+ ],
+ "sources": {
+  "Yahoo prices": {
+   "ok": true,
+   "fetched": "2026-10-29T00:21:43-04:00",
+   "data_time": "2026-10-29T00:21:40.655391-04:00",
+   "detail": "16 of 16 tickers \u00b7 1m bars, cut at 12:21 AM ET"
+  },
+  "Economic calendar": {
+   "ok": true,
+   "fetched": "2026-10-29T00:21:43-04:00",
+   "data_time": null,
+   "detail": ""
+  },
+  "Earnings Oct 29": {
+   "ok": true,
+   "fetched": "2026-10-29T00:21:45-04:00",
+   "data_time": null,
+   "detail": "317 companies"
+  },
+  "Earnings Oct 28": {
+   "ok": true,
+   "fetched": "2026-10-29T00:21:49-04:00",
+   "data_time": null,
+   "detail": "222 companies"
+  },
+  "CBOE NDX options": {
+   "ok": true,
+   "fetched": "2026-10-29T00:21:49-04:00",
+   "data_time": "2026-10-29T00:08:09-04:00",
+   "detail": "15,384 contracts"
+  },
+  "CBOE QQQ options": {
+   "ok": true,
+   "fetched": "2026-10-29T00:21:50-04:00",
+   "data_time": "2026-10-28T21:06:16-04:00",
+   "detail": "10,092 contracts"
+  },
+  "News headlines": {
+   "ok": true,
+   "fetched": "2026-10-29T00:24:56-04:00",
+   "data_time": null,
+   "detail": "5 of 6 feeds live \u00b7 100 headlines"
+  },
+  "CBOE SPX options": {
+   "ok": true,
+   "fetched": "2026-10-29T00:24:54-04:00",
+   "data_time": "2026-10-28T22:49:46-04:00",
+   "detail": "28,948 contracts"
+  },
+  "CBOE SPY options": {
+   "ok": true,
+   "fetched": "2026-10-29T00:24:55-04:00",
+   "data_time": "2026-10-28T21:31:27-04:00",
+   "detail": "12,374 contracts"
+  }
+ }
+}
