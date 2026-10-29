@@ -2,7 +2,9 @@ name: Morning bias report
 
 on:
   schedule:
-    - cron: "10 12,13 * * 1-5"
+    # Pre-open: every 15 min from 12:07 to 14:52 UTC, which covers 8:07 to 9:22 ET in both
+    # daylight and standard time. Off-hour minutes start sooner; GitHub runs at :00 lag the most.
+    - cron: "7,22,37,52 12,13,14 * * 1-5"
     - cron: "40 * * * 0-5"   # hourly, around the clock: keeps the Now read and its grading current
   workflow_dispatch:
     inputs:
