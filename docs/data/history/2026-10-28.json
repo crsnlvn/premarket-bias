@@ -4,7 +4,7 @@
  "date": "2026-10-28",
  "mode": "point-in-time",
  "as_of": "2026-10-28T09:25:00-04:00",
- "generated": "2026-10-28T19:29:10-04:00",
+ "generated": "2026-10-28T20:07:07-04:00",
  "events": [
   {
    "time": "2:00 PM",
@@ -108,15 +108,15 @@
    "name": "Nasdaq-100 futures",
    "bias": {
     "bias": "Bullish",
-    "score": 0.246,
-    "own_score": 0.251,
+    "score": 0.215,
+    "own_score": 0.27,
     "conviction": "Low",
-    "ups": 3,
+    "ups": 2,
     "downs": 0,
-    "total": 15,
-    "overall": "Bullish, low-conviction read on NQ for the New York morning (09:30\u201312:00 ET). The case rests on Overnight futures, Global equities, Charm into close. Dealers are net long gamma, so expect contained, mean-reverting trade. ES agrees (+0.24). Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
-    "invalidation": "A 15-minute close below the gamma flip at 29,875",
-    "macro_share": 80
+    "total": 10,
+    "overall": "Bullish, low-conviction read on NQ for the New York morning (09:30\u201312:00 ET). The case rests on Overnight futures, Global equities. On its own NQ reads bullish (+0.27) and ES neutral (+0.11). They move together, so the split pulls this toward neutral. Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
+    "invalidation": "Overnight futures reversing through yesterday's 4 PM level after the open",
+    "macro_share": 100
    },
    "signals": [
     {
@@ -208,346 +208,20 @@
      "weight": 1.0,
      "text": "VIX \u00f7 VIX3M at yesterday's close = 0.90. A flat-ish curve. Mild caution.",
      "group": "Volatility"
-    },
-    {
-     "key": "flip",
-     "label": "Gamma flip",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.75,
-     "text": "Price is 38 pts above the gamma flip (29,875). Dealers are long gamma, so they buy dips and sell rips.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "tilt",
-     "label": "Gamma tilt",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.25,
-     "text": "Call \u00f7 put gamma 1.04. Balanced.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "walls",
-     "label": "Wall range",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.5,
-     "text": "Put wall 29,750 / call wall 30,175: 262 pts up vs 163 down. Mid-range.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "charm",
-     "label": "Charm into close",
-     "score": 1,
-     "raw": 1,
-     "weight": 0.4,
-     "text": "Time decay shifts dealer hedges by $4.60B by 4 PM. Dealers buy back hedges, an afternoon bid.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "vanna",
-     "label": "Vanna",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.4,
-     "text": "Implied vol \u2248 -0.07 pts pre-market, worth about $0.21B of dealer buying.",
-     "group": "Dealer positioning"
     }
    ],
    "changed": null,
    "expected_range": {
-    "move": 400.42,
-    "low": 29512.58,
-    "high": 30313.42
+    "move": 471.09,
+    "low": 29441.91,
+    "high": 30384.09
    },
    "levels": {
-    "price": 29913.0,
-    "flip": 29875.2,
-    "flip_close": 29956.73,
-    "call_wall": 30175,
-    "put_wall": 29750,
-    "majors": [
-     {
-      "level": 28525,
-      "net_gex": -599409534.8217449
-     },
-     {
-      "level": 28925,
-      "net_gex": -758409629.8380003
-     },
-     {
-      "level": 29350,
-      "net_gex": -569237582.144733
-     },
-     {
-      "level": 29825,
-      "net_gex": 814372093.6449882
-     },
-     {
-      "level": 30575,
-      "net_gex": 493459858.1914017
-     }
-    ]
+    "price": 29913.0
    },
-   "dealer": {
-    "net_gex_bn": 0.627,
-    "call_put_gamma": 1.04,
-    "dealer_delta_bn": 194.66,
-    "charm_bn": 4.603,
-    "vanna_bn_per_pt": 3.01,
-    "chains": [
-     "NDX",
-     "QQQ"
-    ]
-   },
+   "dealer": null,
    "flow": null,
-   "profile": [
-    {
-     "px": 28118.22,
-     "gex": -13285462153.923473
-    },
-    {
-     "px": 28178.05,
-     "gex": -13295711911.39692
-    },
-    {
-     "px": 28237.87,
-     "gex": -13290419797.80661
-    },
-    {
-     "px": 28297.7,
-     "gex": -13270128867.90204
-    },
-    {
-     "px": 28357.52,
-     "gex": -13236143798.384998
-    },
-    {
-     "px": 28417.35,
-     "gex": -13190081350.574543
-    },
-    {
-     "px": 28477.18,
-     "gex": -13132600464.797813
-    },
-    {
-     "px": 28537.0,
-     "gex": -13061789550.74375
-    },
-    {
-     "px": 28596.83,
-     "gex": -12971910369.314602
-    },
-    {
-     "px": 28656.65,
-     "gex": -12853233931.39863
-    },
-    {
-     "px": 28716.48,
-     "gex": -12693432330.270617
-    },
-    {
-     "px": 28776.31,
-     "gex": -12480312395.95375
-    },
-    {
-     "px": 28836.13,
-     "gex": -12204866910.581577
-    },
-    {
-     "px": 28895.96,
-     "gex": -11863264906.756163
-    },
-    {
-     "px": 28955.78,
-     "gex": -11456862206.618773
-    },
-    {
-     "px": 29015.61,
-     "gex": -10990340865.448639
-    },
-    {
-     "px": 29075.44,
-     "gex": -10469060257.338467
-    },
-    {
-     "px": 29135.26,
-     "gex": -9897098791.415104
-    },
-    {
-     "px": 29195.09,
-     "gex": -9277065033.939468
-    },
-    {
-     "px": 29254.91,
-     "gex": -8611661606.774488
-    },
-    {
-     "px": 29314.74,
-     "gex": -7905714533.634899
-    },
-    {
-     "px": 29374.57,
-     "gex": -7166824819.261065
-    },
-    {
-     "px": 29434.39,
-     "gex": -6403607042.117159
-    },
-    {
-     "px": 29494.22,
-     "gex": -5622263998.009799
-    },
-    {
-     "px": 29554.04,
-     "gex": -4823640732.344217
-    },
-    {
-     "px": 29613.87,
-     "gex": -4002740741.809266
-    },
-    {
-     "px": 29673.7,
-     "gex": -3151144098.5674834
-    },
-    {
-     "px": 29733.52,
-     "gex": -2261156960.908965
-    },
-    {
-     "px": 29793.35,
-     "gex": -1329982005.778144
-    },
-    {
-     "px": 29853.17,
-     "gex": -362690588.11946964
-    },
-    {
-     "px": 29913.0,
-     "gex": 626597587.2703991
-    },
-    {
-     "px": 29972.83,
-     "gex": 1615759687.884966
-    },
-    {
-     "px": 30032.65,
-     "gex": 2578302321.9747057
-    },
-    {
-     "px": 30092.48,
-     "gex": 3489206283.819176
-    },
-    {
-     "px": 30152.3,
-     "gex": 4331216877.793831
-    },
-    {
-     "px": 30212.13,
-     "gex": 5098861211.82144
-    },
-    {
-     "px": 30271.96,
-     "gex": 5798073764.657132
-    },
-    {
-     "px": 30331.78,
-     "gex": 6441357472.667582
-    },
-    {
-     "px": 30391.61,
-     "gex": 7040623221.108067
-    },
-    {
-     "px": 30451.43,
-     "gex": 7600963446.933275
-    },
-    {
-     "px": 30511.26,
-     "gex": 8118202935.003691
-    },
-    {
-     "px": 30571.09,
-     "gex": 8581400662.198081
-    },
-    {
-     "px": 30630.91,
-     "gex": 8979136946.541105
-    },
-    {
-     "px": 30690.74,
-     "gex": 9306385140.450626
-    },
-    {
-     "px": 30750.56,
-     "gex": 9568308869.227642
-    },
-    {
-     "px": 30810.39,
-     "gex": 9779083240.093636
-    },
-    {
-     "px": 30870.22,
-     "gex": 9956839596.307903
-    },
-    {
-     "px": 30930.04,
-     "gex": 10117935839.14064
-    },
-    {
-     "px": 30989.87,
-     "gex": 10273472153.012957
-    },
-    {
-     "px": 31049.69,
-     "gex": 10428835395.967285
-    },
-    {
-     "px": 31109.52,
-     "gex": 10585008105.688435
-    },
-    {
-     "px": 31169.35,
-     "gex": 10739899854.16843
-    },
-    {
-     "px": 31229.17,
-     "gex": 10888909332.008251
-    },
-    {
-     "px": 31289.0,
-     "gex": 11025088123.573124
-    },
-    {
-     "px": 31348.82,
-     "gex": 11139691780.898445
-    },
-    {
-     "px": 31408.65,
-     "gex": 11223538528.856937
-    },
-    {
-     "px": 31468.48,
-     "gex": 11268979874.927128
-    },
-    {
-     "px": 31528.3,
-     "gex": 11271861221.606464
-    },
-    {
-     "px": 31588.13,
-     "gex": 11232750510.09774
-    },
-    {
-     "px": 31647.95,
-     "gex": 11156927737.378876
-    },
-    {
-     "px": 31707.78,
-     "gex": 11053093991.451298
-    }
-   ],
+   "profile": [],
    "earnings": [
     {
      "symbol": "MSFT",
@@ -570,15 +244,15 @@
    "name": "S&P 500 futures",
    "bias": {
     "bias": "Bullish",
-    "score": 0.241,
-    "own_score": 0.236,
+    "score": 0.167,
+    "own_score": 0.112,
     "conviction": "Low",
-    "ups": 4,
+    "ups": 1,
     "downs": 0,
-    "total": 15,
-    "overall": "Bullish, low-conviction read on ES for the New York morning (09:30\u201312:00 ET). The case rests on Global equities, Gamma flip, Wall range. Dealers are net long gamma, so expect contained, mean-reverting trade. NQ agrees (+0.25). Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
-    "invalidation": "A 15-minute close below the gamma flip at 7,762",
-    "macro_share": 80
+    "total": 10,
+    "overall": "Bullish, low-conviction read on ES for the New York morning (09:30\u201312:00 ET). The case rests on Global equities. On its own ES reads neutral (+0.11) and NQ bullish (+0.27). They move together, so the split pulls this toward neutral. Scheduled risk: Federal Funds Rate at 2:00 PM; FOMC Statement at 2:00 PM; FOMC Press Conference at 2:30 PM. A binary print can override all of this, so reassess after the release. Mega-cap earnings: MSFT (after close), GOOGL (after close).",
+    "invalidation": "Overnight futures reversing through yesterday's 4 PM level after the open",
+    "macro_share": 100
    },
    "signals": [
     {
@@ -670,346 +344,20 @@
      "weight": 1.0,
      "text": "VIX \u00f7 VIX3M at yesterday's close = 0.90. A flat-ish curve. Mild caution.",
      "group": "Volatility"
-    },
-    {
-     "key": "flip",
-     "label": "Gamma flip",
-     "score": 1,
-     "raw": 1,
-     "weight": 0.75,
-     "text": "Price is 14 pts above the gamma flip (7,762). Dealers are long gamma, so they buy dips and sell rips.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "tilt",
-     "label": "Gamma tilt",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.25,
-     "text": "Call \u00f7 put gamma 1.09. Balanced.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "walls",
-     "label": "Wall range",
-     "score": 1,
-     "raw": 1,
-     "weight": 0.5,
-     "text": "Put wall 7,735 / call wall 8,035: 260 pts up vs 40 down. Near support.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "charm",
-     "label": "Charm into close",
-     "score": 1,
-     "raw": 1,
-     "weight": 0.4,
-     "text": "Time decay shifts dealer hedges by $16.17B by 4 PM. Dealers buy back hedges, an afternoon bid.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "vanna",
-     "label": "Vanna",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.4,
-     "text": "Implied vol \u2248 -0.05 pts pre-market, worth about $1.60B of dealer buying.",
-     "group": "Dealer positioning"
     }
    ],
    "changed": null,
    "expected_range": {
-    "move": 73.53,
-    "low": 7701.97,
-    "high": 7849.03
+    "move": 86.5,
+    "low": 7689.0,
+    "high": 7862.0
    },
    "levels": {
-    "price": 7775.5,
-    "flip": 7761.62,
-    "flip_close": 7770.69,
-    "call_wall": 8035,
-    "put_wall": 7735,
-    "majors": [
-     {
-      "level": 7535,
-      "net_gex": -4279030293.285614
-     },
-     {
-      "level": 7635,
-      "net_gex": -4485301589.444485
-     },
-     {
-      "level": 7835,
-      "net_gex": 4897731404.020681
-     },
-     {
-      "level": 7885,
-      "net_gex": 4344565057.836716
-     },
-     {
-      "level": 7935,
-      "net_gex": 5318636817.173594
-     }
-    ]
+    "price": 7775.5
    },
-   "dealer": {
-    "net_gex_bn": 17.939,
-    "call_put_gamma": 1.09,
-    "dealer_delta_bn": 2547.87,
-    "charm_bn": 16.167,
-    "vanna_bn_per_pt": 32.887,
-    "chains": [
-     "SPX",
-     "SPY"
-    ]
-   },
+   "dealer": null,
    "flow": null,
-   "profile": [
-    {
-     "px": 7308.97,
-     "gex": -119142799856.65057
-    },
-    {
-     "px": 7324.52,
-     "gex": -120666120514.17676
-    },
-    {
-     "px": 7340.07,
-     "gex": -122546384779.11801
-    },
-    {
-     "px": 7355.62,
-     "gex": -124802165189.94391
-    },
-    {
-     "px": 7371.17,
-     "gex": -127516813161.25159
-    },
-    {
-     "px": 7386.72,
-     "gex": -130824561167.55449
-    },
-    {
-     "px": 7402.28,
-     "gex": -134715501697.2735
-    },
-    {
-     "px": 7417.83,
-     "gex": -138764059339.29965
-    },
-    {
-     "px": 7433.38,
-     "gex": -142127200729.3063
-    },
-    {
-     "px": 7448.93,
-     "gex": -144040247640.19073
-    },
-    {
-     "px": 7464.48,
-     "gex": -144483198528.4607
-    },
-    {
-     "px": 7480.03,
-     "gex": -144326932692.4367
-    },
-    {
-     "px": 7495.58,
-     "gex": -144662344393.80865
-    },
-    {
-     "px": 7511.13,
-     "gex": -145831159844.18973
-    },
-    {
-     "px": 7526.68,
-     "gex": -147043373810.68353
-    },
-    {
-     "px": 7542.23,
-     "gex": -146958698260.3343
-    },
-    {
-     "px": 7557.79,
-     "gex": -144704340008.14554
-    },
-    {
-     "px": 7573.34,
-     "gex": -140417662049.87064
-    },
-    {
-     "px": 7588.89,
-     "gex": -134917695832.22148
-    },
-    {
-     "px": 7604.44,
-     "gex": -128928928986.77611
-    },
-    {
-     "px": 7619.99,
-     "gex": -122568115894.56453
-    },
-    {
-     "px": 7635.54,
-     "gex": -115411974953.23251
-    },
-    {
-     "px": 7651.09,
-     "gex": -106913835131.36911
-    },
-    {
-     "px": 7666.64,
-     "gex": -96743208256.976
-    },
-    {
-     "px": 7682.19,
-     "gex": -84838577663.57794
-    },
-    {
-     "px": 7697.74,
-     "gex": -71273147151.0106
-    },
-    {
-     "px": 7713.3,
-     "gex": -56131237949.809364
-    },
-    {
-     "px": 7728.85,
-     "gex": -39480052235.81275
-    },
-    {
-     "px": 7744.4,
-     "gex": -21411964017.221302
-    },
-    {
-     "px": 7759.95,
-     "gex": -2131240795.9067173
-    },
-    {
-     "px": 7775.5,
-     "gex": 17938878025.014854
-    },
-    {
-     "px": 7791.05,
-     "gex": 38123359447.28509
-    },
-    {
-     "px": 7806.6,
-     "gex": 57639278797.71751
-    },
-    {
-     "px": 7822.15,
-     "gex": 75838802805.32437
-    },
-    {
-     "px": 7837.7,
-     "gex": 92305338552.83987
-    },
-    {
-     "px": 7853.26,
-     "gex": 106706788737.48277
-    },
-    {
-     "px": 7868.81,
-     "gex": 118645739047.96501
-    },
-    {
-     "px": 7884.36,
-     "gex": 127787733384.1387
-    },
-    {
-     "px": 7899.91,
-     "gex": 134189185627.28845
-    },
-    {
-     "px": 7915.46,
-     "gex": 138446918913.02686
-    },
-    {
-     "px": 7931.01,
-     "gex": 141428147388.4105
-    },
-    {
-     "px": 7946.56,
-     "gex": 143742327149.13083
-    },
-    {
-     "px": 7962.11,
-     "gex": 145367421066.601
-    },
-    {
-     "px": 7977.66,
-     "gex": 145739617871.92807
-    },
-    {
-     "px": 7993.21,
-     "gex": 144257909300.26276
-    },
-    {
-     "px": 8008.77,
-     "gex": 140821711019.56342
-    },
-    {
-     "px": 8024.32,
-     "gex": 135992808883.04948
-    },
-    {
-     "px": 8039.87,
-     "gex": 130691451847.27292
-    },
-    {
-     "px": 8055.42,
-     "gex": 125708271156.34843
-    },
-    {
-     "px": 8070.97,
-     "gex": 121402549042.79579
-    },
-    {
-     "px": 8086.52,
-     "gex": 117732849388.76144
-    },
-    {
-     "px": 8102.07,
-     "gex": 114487213770.92754
-    },
-    {
-     "px": 8117.62,
-     "gex": 111489671586.135
-    },
-    {
-     "px": 8133.17,
-     "gex": 108669544495.50607
-    },
-    {
-     "px": 8148.72,
-     "gex": 106026712538.88556
-    },
-    {
-     "px": 8164.28,
-     "gex": 103575130893.18982
-    },
-    {
-     "px": 8179.83,
-     "gex": 101309406602.23228
-    },
-    {
-     "px": 8195.38,
-     "gex": 99198979820.91678
-    },
-    {
-     "px": 8210.93,
-     "gex": 97204316922.1746
-    },
-    {
-     "px": 8226.48,
-     "gex": 95305019440.9982
-    },
-    {
-     "px": 8242.03,
-     "gex": 93519887498.91483
-    }
-   ],
+   "profile": [],
    "earnings": [
     {
      "symbol": "MSFT",
@@ -1029,56 +377,47 @@
    }
   }
  },
- "divergence": null,
- "notes": [],
+ "divergence": "NQ reads Bullish (+0.27) and ES reads Neutral (+0.11) on their own evidence. They are highly correlated, so both final reads are blended toward each other. The split says tech is leading the broad market. Treat it as a lower-conviction day, size down, or wait for them to line up after the open.",
+ "notes": [
+  "NQ: dealer positioning skipped, option snapshot is from Oct 29, after this session. The read is macro only.",
+  "ES: dealer positioning skipped, option snapshot is from Oct 29, after this session. The read is macro only."
+ ],
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-28T19:29:14-04:00",
+   "fetched": "2026-10-28T20:07:12-04:00",
    "data_time": "2026-10-28T09:25:00-04:00",
    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 9:25 AM ET"
   },
   "Economic calendar": {
    "ok": true,
-   "fetched": "2026-10-28T19:29:14-04:00",
+   "fetched": "2026-10-28T20:07:12-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 28": {
    "ok": true,
-   "fetched": "2026-10-28T19:29:17-04:00",
+   "fetched": "2026-10-28T20:07:15-04:00",
    "data_time": null,
    "detail": "222 companies"
   },
   "Earnings Oct 27": {
    "ok": true,
-   "fetched": "2026-10-28T19:29:18-04:00",
+   "fetched": "2026-10-28T20:07:18-04:00",
    "data_time": null,
    "detail": "185 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-28T19:29:19-04:00",
-   "data_time": "2026-10-28T23:28:31-04:00",
+   "fetched": "2026-10-28T20:07:19-04:00",
+   "data_time": "2026-10-29T00:05:32-04:00",
    "detail": "15,384 contracts"
-  },
-  "CBOE QQQ options": {
-   "ok": true,
-   "fetched": "2026-10-28T19:29:20-04:00",
-   "data_time": "2026-10-28T23:28:43-04:00",
-   "detail": "10,092 contracts"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-28T19:29:21-04:00",
-   "data_time": "2026-10-28T23:28:47-04:00",
+   "fetched": "2026-10-28T20:07:20-04:00",
+   "data_time": "2026-10-29T00:04:49-04:00",
    "detail": "28,948 contracts"
-  },
-  "CBOE SPY options": {
-   "ok": true,
-   "fetched": "2026-10-28T19:29:22-04:00",
-   "data_time": "2026-10-28T23:28:35-04:00",
-   "detail": "12,374 contracts"
   }
  }
 }
