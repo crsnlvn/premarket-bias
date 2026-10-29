@@ -3,7 +3,7 @@ name: Morning bias report
 on:
   schedule:
     - cron: "10 12,13 * * 1-5"
-    - cron: "40 14-23 * * 1-5"
+    - cron: "40 * * * 0-5"   # hourly, around the clock: keeps the Now read and its grading current
   workflow_dispatch:
     inputs:
       date:
