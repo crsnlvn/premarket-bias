@@ -18,7 +18,7 @@
   --glass:rgba(255,255,255,.07); --edge:rgba(255,255,255,.15); --hi:rgba(255,255,255,.22); --sel:rgba(255,255,255,.15);
   --row:rgba(255,255,255,.07); --track:rgba(0,0,0,.28); --bar:rgba(255,255,255,.09); --shadow:rgba(0,0,0,.35); --solid:rgba(16,19,28,.9);
   --up:#5ef2b0; --down:#ff6b8b; --flat:#a7b0c0; --amber:#ffc35a; --accent:#ffffff;
-  --blob1:rgba(255,107,139,.5); --blob2:rgba(60,110,255,.42); --blob3:rgba(0,200,170,.2);
+  --blob1:rgba(255,107,139,.5); --blob2:rgba(60,110,255,.42); --blob3:rgba(0,200,170,.2); --blob4:transparent;
   --sans:-apple-system,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif; --mono:var(--sans);
   --pad:16px; --gap:26px;
 }
@@ -29,7 +29,15 @@ body{padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 100px
 body{position:relative;isolation:isolate}
 body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;transition:background 1.2s ease;
   background:radial-gradient(42% 32% at 12% 30%,var(--blob1),transparent 70%),radial-gradient(48% 36% at 95% 4%,var(--blob2),transparent 70%),
-             radial-gradient(40% 30% at 90% 78%,var(--blob3),transparent 70%)}
+             radial-gradient(40% 30% at 90% 78%,var(--blob3),transparent 70%),radial-gradient(34% 26% at 32% 46%,var(--blob4),transparent 70%)}
+:root[data-mode="vivid"] body::before{display:none}
+.mesh{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none;display:none}
+:root[data-mode="vivid"] .mesh{display:block}
+.mesh i{position:absolute;border-radius:50%;filter:blur(70px);transform:translateZ(0)}
+.mesh i:nth-child(1){width:520px;height:520px;left:-210px;top:150px;background:#ff1f5a;opacity:.95}
+.mesh i:nth-child(2){width:560px;height:560px;right:-240px;top:-120px;background:#2a4bff;opacity:.95}
+.mesh i:nth-child(3){width:420px;height:420px;left:40px;top:330px;background:#c21bd6;opacity:.55}
+.mesh i:nth-child(4){width:460px;height:460px;right:-200px;top:780px;background:#00c49a;opacity:.55}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px}
 #fx{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;display:block}
 #fx[hidden]{display:none}
@@ -89,6 +97,26 @@ header{padding:12px 0 2px}
 .stamps .warn{grid-column:1/-1;color:var(--amber)}
 .flash{animation:fl 1.2s ease}
 @keyframes fl{0%{opacity:.35}100%{opacity:1}}
+
+/* widget grid */
+.bento{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.t{border-radius:28px;padding:16px;min-width:0;text-align:left}
+.t.wide{grid-column:1/-1}
+.lbl{font-size:12.5px;font-weight:600;color:var(--dim)}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:10px 0 16px}
+.tc{font-size:16px;font-weight:650}
+.callword{font-size:52px;font-weight:700;letter-spacing:-.04em;line-height:1}
+.conv-pill{margin-bottom:6px}
+.hero-t .tug{margin-top:0}
+.tv{font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:8px}
+.ts{font-size:12.5px;color:var(--dim);margin-top:2px}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px;border-top:1px solid var(--row)}
+.mrow:nth-child(2){border-top:0}
+.mrow span:last-child{font-weight:650}
+.mini-call{cursor:pointer;font:inherit;color:inherit}
+.mini-call .tc{font-size:20px;font-weight:700;margin-top:8px}
+.t .stamps{border-top:1px solid var(--row)}
+body.compact .callword{font-size:42px}
 
 /* blocks */
 section{margin-top:var(--gap)}
@@ -214,7 +242,7 @@ body.compact .note{font-size:14.5px}
   transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);z-index:25;padding:0 0 calc(env(safe-area-inset-bottom) + 20px)}
 .sheet.on{transform:none}
 .sheet .in{max-width:560px;margin:0 auto;padding:0 18px}
-.sh-top{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:18px 0 10px;z-index:1;background:linear-gradient(var(--solid) 80%,transparent)}
+.sh-top{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:18px 0 10px;z-index:1;background:transparent;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 .sh-top h3{font-size:24px;font-weight:700;letter-spacing:-.03em}
 .hbtn{font-size:15px;font-weight:600;padding:7px 14px;border-radius:999px;background:var(--sel);border:1px solid var(--edge)}
 .st{margin-top:20px}
@@ -243,6 +271,7 @@ body.compact .note{font-size:14.5px}
 </style>
 </head>
 <body>
+<div class="mesh" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <canvas id="fx" aria-hidden="true" hidden></canvas>
 <div class="wrap" id="wrap">
   <header>
@@ -302,6 +331,7 @@ const THEMES = {
 };
 // glass backgrounds: a base color plus two ambient glows (the third glow follows the call)
 const BGS = {
+  vivid:{name:'Vivid', mode:'vivid', bg:'#0a0614', blob2:'transparent', blob3:'transparent'},
   auto:{name:'Auto'},
   dark:{name:'Dark', mode:'dark', bg:'#05070d', blob2:'rgba(60,110,255,.42)', blob3:'rgba(0,200,170,.2)'},
   light:{name:'Light', mode:'light', bg:'#dfe6f2', blob2:'rgba(110,150,255,.55)', blob3:'rgba(120,230,200,.45)'},
@@ -309,6 +339,9 @@ const BGS = {
   black:{name:'Black', mode:'dark', bg:'#000000', blob2:'rgba(60,110,255,.22)', blob3:'rgba(0,200,170,.1)'},
 };
 const MODE = {
+  vivid:{text:'#ffffff', sub:'rgba(255,255,255,.80)', dim:'rgba(255,255,255,.62)', faint:'rgba(255,255,255,.42)', glass:'rgba(255,255,255,.085)',
+    edge:'rgba(255,255,255,.20)', hi:'rgba(255,255,255,.28)', sel:'rgba(255,255,255,.20)', row:'rgba(255,255,255,.12)', track:'rgba(0,0,0,.25)',
+    bar:'rgba(255,255,255,.14)', shadow:'rgba(0,0,0,.28)', solid:'rgba(30,16,52,.82)', amber:'#ffd27a'},
   dark:{text:'#f4f6fb', sub:'rgba(235,240,250,.74)', dim:'rgba(235,240,250,.52)', faint:'rgba(235,240,250,.34)', glass:'rgba(255,255,255,.07)',
     edge:'rgba(255,255,255,.15)', hi:'rgba(255,255,255,.22)', sel:'rgba(255,255,255,.15)', row:'rgba(255,255,255,.07)', track:'rgba(0,0,0,.28)',
     bar:'rgba(255,255,255,.09)', shadow:'rgba(0,0,0,.35)', solid:'rgba(16,19,28,.9)', amber:'#ffc35a'},
@@ -320,7 +353,7 @@ const SECTIONS = {
   divergence:'NQ vs ES split', changed:'What changed', outcome:'How it played out', signals:'Votes',
   calendar:'Today\'s releases', earnings:'Mega-cap earnings', freshness:'Data sources', method:'How it works'
 };
-const DEFAULTS = {theme:'classic', up:null, down:null, bg:'auto', size:'m', density:'comfortable', market:'NQ', reasons:true,
+const DEFAULTS = {theme:'classic', up:null, down:null, bg:'vivid', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
   order:Object.keys(SECTIONS), hidden:[],
   fx:'off', fxTint:'style', fxSpeed:1, fxAmount:1, fxSize:1, fxGlow:1, fxSet:false};
 const FX_STYLES = {off:'Off', blackhole:'Black hole', petals:'Petals', ravens:'Ravens', symbiote:'Symbiote', stars:'Starfall', embers:'Embers', aurora:'Aurora'};
@@ -328,7 +361,8 @@ const FX_TINTS = {style:'Its own', call:'Follows the call', '#cdbfff':'Lavender'
 // new look: carry over everything from the old settings except colors and background
 const OLD = store.get('prefs2', null) || (({theme,up,down,bg,...rest}) => rest)(store.get('prefs',{}));
 let P = {...DEFAULTS, ...OLD};
-if(!BGS[P.bg]) P.bg = 'auto';
+if(!BGS[P.bg]) P.bg = 'vivid';
+if(!P.bgSet) P.bg = 'vivid';   // the vivid glass is the default look until someone picks another background
 if(!P.fxSet) P.fx = 'off';   // default look is plain glass; an animation only runs once someone picks one
 for(const k of Object.keys(SECTIONS)) if(!P.order.includes(k)) P.order.push(k);
 P.order = P.order.filter(k=>SECTIONS[k]);
@@ -350,9 +384,10 @@ function applyPrefs(){
   r.setProperty('--bg', b.bg); r.setProperty('--blob2', b.blob2); r.setProperty('--blob3', b.blob3);
   let up = P.up||t.up, down = P.down||t.down;
   if(mode==='light'){ up = shade(up,.38); down = shade(down,.18); }
+  if(mode==='vivid' && !P.down && P.theme==='classic') down = '#ff5c8a';   // reads cleaner on the pink
   r.setProperty('--up', up); r.setProperty('--down', down); r.setProperty('--accent', up);
   const glow = CALL==='Bearish' ? down : CALL==='Bullish' ? up : null;
-  r.setProperty('--blob1', glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:50}%, transparent)` : 'transparent');
+  r.setProperty('--blob1', mode==='vivid' ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:50}%, transparent)` : 'transparent');
   document.documentElement.dataset.mode = mode;
   document.querySelector('meta[name=theme-color]').content = b.bg;
   document.body.classList.toggle('compact', P.density==='compact');
@@ -468,6 +503,7 @@ function render(){
   $('#app').innerHTML = ({today:pageToday, levels:pageLevels, macro:pageMacro, record:pageRecord, research:pageResearch, journal:pageJournal, red:pageRed}[PAGE])(D);
   if(PAGE==='journal') wireJournal();
   if(PAGE==='levels'){ const c=$('#copyLv'); if(c) c.onclick=copyLevels; }
+  $$('[data-go]').forEach(t=>t.onclick=()=>{ const [s,v]=t.dataset.go.split('|'); SESSION=s; if(s==='ny') VIEW=v; render(); window.scrollTo({top:0}); });
 }
 
 /* ───────── TODAY ───────── */
@@ -509,22 +545,46 @@ function tug(m){
   return `<div class="tug"><div class="track"><div class="side bear">${seg(dn,'var(--down)')}</div><div class="side bull">${seg(up,'var(--up)')}</div><i class="needle" style="left:${pos.toFixed(1)}%"></i></div>
     <div class="tl"><span>${dn.length} bearish, ${w(dn)}</span><span>${up.length} bullish, ${w(up)}</span></div></div>`;
 }
+const sgn = x => (x>=0?'+':'−') + Math.abs(x).toFixed(2);
+function otherCalls(){
+  if(!ROOT || !ROOT.ny) return [];
+  const all = [['Open call','ny','preopen',ROOT.ny.preopen],['Now','ny','now',ROOT.ny.now],['Overnight','overnight','preopen',ROOT.overnight]];
+  return all.filter(([,s,v,d]) => d && d.markets && d.markets[SYM] && !(s===SESSION && (s==='overnight' || v===VIEW)));
+}
+function bento(D, m, b, stale, window_){
+  const L = m.levels||{}, R = m.expected_range, sigs = m.signals.filter(s=>s.directional!==false && s.weight>0);
+  const T = sigs.reduce((a,s)=>a+s.weight,0)||1;
+  const top = sigs.filter(s=>s.score).sort((a,c)=>c.weight-a.weight).slice(0,4);
+  const bull = b.bias==='Bullish', tgt = bull ? L.call_wall : L.put_wall;
+  const tile1 = tgt!=null && L.price!=null
+    ? `<div class="lbl">Target</div><div class="tv num">${fmt(tgt,0)}</div><div class="ts">${bull?'Call wall':'Put wall'}, ${fmt(Math.abs(tgt-L.price),0)} pts ${tgt>L.price?'up':'down'}</div>`
+    : R ? `<div class="lbl">Expected range</div><div class="tv num">${fmt(R.low,0)}–${fmt(R.high,0)}</div><div class="ts">±${fmt(R.move,0)} pts, one standard move</div>`
+        : `<div class="lbl">Target</div><div class="tv">—</div><div class="ts">No dealer levels for this read</div>`;
+  const tile2 = L.flip!=null
+    ? `<div class="lbl">Flips at</div><div class="tv num">${fmt(L.flip,0)}</div><div class="ts">Gamma flip, dealers short below</div>`
+    : `<div class="lbl">Flips on</div><div class="ts" style="font-size:14px;color:var(--text);margin-top:8px">${esc(b.invalidation||'—')}</div>`;
+  const others = otherCalls().map(([name,s,v,d])=>{ const x=d.markets[SYM].bias;
+    return `<button class="g t mini-call" data-go="${s}|${v}"><div class="lbl">${name}</div><div class="tc" style="color:${C(x.bias)}">${x.bias}</div><div class="ts">${x.conviction} conviction</div></button>`; }).join('');
+  return `<div class="bento">
+    <div class="g t wide hero-t">
+      <div class="lbl" style="display:flex;align-items:center;gap:8px"><span class="live ${stale?'stale':''}" id="live"></span>${window_}</div>
+      <div class="hero-row"><div class="callword" style="color:${C(b.bias)}">${b.bias}</div>
+        <span class="chip conv-pill">${b.conviction} conviction</span></div>
+      ${tug(m)}
+    </div>
+    <div class="g t">${tile1}</div><div class="g t">${tile2}</div>
+    ${top.length?`<div class="g t wide"><div class="lbl" style="margin-bottom:4px">Biggest votes</div>${top.map(s=>`<div class="mrow"><span>${esc(s.label)}</span><span class="num" style="color:${s.score>0?'var(--up)':'var(--down)'}">${(s.score*s.weight/T>=0?'+':'−')+Math.abs(s.score*s.weight/T).toFixed(3)}</span></div>`).join('')}</div>`:''}
+    <div class="g t wide"><p class="note" style="margin:0">${esc(b.overall).replace(/(^|\. )(For:|Against:|On deck:)/g,'$1<b>$2</b>')}</p></div>
+    ${others}
+    <div class="g t wide"><div class="mode" style="margin:0">${modeLine(D)}</div>${stampsHTML(D)}</div>
+  </div>`;
+}
 function pageToday(D){
   const m = D.markets[SYM], b = m.bias;
   const stale = SESSION==='ny' && VIEW!=='now' && D.date!==todayET();
   const window_ = SESSION==='overnight' ? `Asia and London, ${dayOf(D.date)} 6 PM to 9:30 AM ET`
     : VIEW==='now' && D.window ? `${esc(D.window.name)} session, until ${tET(new Date(D.window.end))}` : `NY open, ${dayOf(D.date)}, 9:30 to 10:00 ET`;
-  let h = `
-  <div class="hero">
-    <div class="kicker"><span class="live ${stale?'stale':''}" id="live"></span>${window_}</div>
-    <div class="bias" style="--c:${C(b.bias)}">${b.bias}</div>
-    <div class="conv"><span class="chip">${b.conviction} conviction</span><span class="chip" style="color:${C(b.bias)}">${b.score>0?'+':'−'}${Math.abs(b.score).toFixed(2)}</span></div>
-    ${tug(m)}
-    <p class="note">${esc(b.overall).replace(/(^|\. )(For:|Against:|On deck:)/g,'$1<b>$2</b>')}</p>
-    ${b.invalidation?`<div class="flipv">Flips on ${esc(b.invalidation.charAt(0).toLowerCase()+b.invalidation.slice(1))}</div>`:''}
-    <div class="mode">${modeLine(D)}</div>
-    ${stampsHTML(D)}
-  </div>`;
+  let h = bento(D, m, b, stale, window_);
   const S = {};
   if(D.divergence) S.divergence = `<section><h2>NQ vs ES <span class="pill" style="color:var(--amber)">Split</span></h2>
       <div class="card pad" style="font-size:14.5px;line-height:1.55;color:var(--sub)">${esc(D.divergence)}</div></section>`;
@@ -1089,7 +1149,7 @@ $('#sheet').addEventListener('click', e=>{
   if(b.id==='done') return closeSettings();
   if(b.id==='reset'){ P={...DEFAULTS, order:[...DEFAULTS.order], hidden:[]}; SYM=P.market; return changed(); }
   if(b.dataset.k){ let v=b.dataset.v; if(v==='true'||v==='false') v=(v==='true');
-    P[b.dataset.k]=v; if(b.dataset.k==='fx') P.fxSet=true; if(b.dataset.k==='theme'){P.up=null;P.down=null;} if(b.dataset.k==='market') SYM=v; return changed(); }
+    P[b.dataset.k]=v; if(b.dataset.k==='fx') P.fxSet=true; if(b.dataset.k==='bg') P.bgSet=true; if(b.dataset.k==='theme'){P.up=null;P.down=null;} if(b.dataset.k==='market') SYM=v; return changed(); }
   if(b.dataset.mv){ const i=+b.dataset.mv, j=i+(+b.dataset.d); [P.order[i],P.order[j]]=[P.order[j],P.order[i]]; return changed(); }
   if(b.dataset.tg){ const k=b.dataset.tg; P.hidden = P.hidden.includes(k) ? P.hidden.filter(x=>x!==k) : [...P.hidden,k]; return changed(); }
 });
