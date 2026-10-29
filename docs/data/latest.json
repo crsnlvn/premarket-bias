@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T23:12:08-04:00",
+ "generated": "2026-10-28T23:21:25-04:00",
  "ny": {
   "preopen": {
    "view": "preopen",
@@ -12,7 +12,7 @@
    },
    "mode": "point-in-time",
    "as_of": "2026-10-28T09:25:00-04:00",
-   "generated": "2026-10-28T23:12:08-04:00",
+   "generated": "2026-10-28T23:21:25-04:00",
    "events": [
     {
      "time": "2:00 PM",
@@ -76,7 +76,7 @@
      "ts": "2026-10-28T08:29:00-04:00"
     },
     "BTC-USD": {
-     "last": 80529.5391,
+     "last": 80531.9609,
      "chg_pct": -0.21,
      "ts": "2026-10-28T09:25:00-04:00"
     },
@@ -795,7 +795,7 @@
        "score": 1,
        "raw": 1,
        "weight": 0.75,
-       "text": "Price is 37 pts above the gamma flip (7,738). Dealers are long gamma, so they buy dips and sell rips.",
+       "text": "Price is 38 pts above the gamma flip (7,738). Dealers are long gamma, so they buy dips and sell rips.",
        "group": "Dealer positioning"
       },
       {
@@ -813,7 +813,7 @@
        "score": 1,
        "raw": 1,
        "weight": 0.5,
-       "text": "Put wall 7,715 / call wall 8,015: 240 pts up vs 60 down. Near support.",
+       "text": "Put wall 7,710 / call wall 8,015: 240 pts up vs 66 down. Near support.",
        "group": "Dealer positioning"
       },
       {
@@ -822,7 +822,7 @@
        "score": 1,
        "raw": 1,
        "weight": 0.4,
-       "text": "Time decay shifts dealer hedges by $17.67B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+       "text": "Time decay shifts dealer hedges by $17.68B by 4 PM. Dealers buy back hedges, an afternoon bid.",
        "group": "Dealer positioning"
       },
       {
@@ -843,39 +843,39 @@
      },
      "levels": {
       "price": 7775.5,
-      "flip": 7738.11,
-      "flip_close": 7745.86,
+      "flip": 7737.86,
+      "flip_close": 7745.61,
       "call_wall": 8015,
-      "put_wall": 7715,
+      "put_wall": 7710,
       "majors": [
        {
         "level": 7785,
-        "net_gex": 5853336091.338326
+        "net_gex": 5859053593.760835
        },
        {
         "level": 7815,
-        "net_gex": 6284329708.644307
+        "net_gex": 6297220862.434972
        },
        {
         "level": 7865,
-        "net_gex": 5888229171.655016
+        "net_gex": 5902794184.188761
        },
        {
         "level": 7915,
-        "net_gex": 6976286833.8654785
+        "net_gex": 6990098187.263178
        },
        {
         "level": 8015,
-        "net_gex": 4983220823.575863
+        "net_gex": 4992304700.075886
        }
       ]
      },
      "dealer": {
-      "net_gex_bn": 47.778,
+      "net_gex_bn": 48.09,
       "call_put_gamma": 1.24,
-      "dealer_delta_bn": 2569.05,
-      "charm_bn": 17.671,
-      "vanna_bn_per_pt": 33.186,
+      "dealer_delta_bn": 2569.29,
+      "charm_bn": 17.681,
+      "vanna_bn_per_pt": 33.183,
       "chains": [
        "SPX",
        "SPY"
@@ -885,247 +885,247 @@
      "profile": [
       {
        "px": 7308.97,
-       "gex": -121325898601.53183
+       "gex": -121353257337.00143
       },
       {
        "px": 7324.52,
-       "gex": -123313358764.74454
+       "gex": -123346425631.19083
       },
       {
        "px": 7340.07,
-       "gex": -125696493533.48659
+       "gex": -125736239288.08725
       },
       {
        "px": 7355.62,
-       "gex": -128577398088.94164
+       "gex": -128625892486.34404
       },
       {
        "px": 7371.17,
-       "gex": -132068379730.6836
+       "gex": -132126360449.68121
       },
       {
        "px": 7386.72,
-       "gex": -136051996246.23428
+       "gex": -136114431560.42029
       },
       {
        "px": 7402.28,
-       "gex": -139955580145.97568
+       "gex": -140010249786.43338
       },
       {
        "px": 7417.83,
-       "gex": -142902083906.50635
+       "gex": -142935941421.83826
       },
       {
        "px": 7433.38,
-       "gex": -144314801060.8274
+       "gex": -144324815516.07053
       },
       {
        "px": 7448.93,
-       "gex": -144478648393.3602
+       "gex": -144476373010.31635
       },
       {
        "px": 7464.48,
-       "gex": -144417143562.1781
+       "gex": -144420209181.15677
       },
       {
        "px": 7480.03,
-       "gex": -145047343114.3764
+       "gex": -145063907490.2744
       },
       {
        "px": 7495.58,
-       "gex": -146328059277.50214
+       "gex": -146348308633.14642
       },
       {
        "px": 7511.13,
-       "gex": -147199512053.74405
+       "gex": -147202516021.8808
       },
       {
        "px": 7526.68,
-       "gex": -146390608456.79303
+       "gex": -146360372967.97006
       },
       {
        "px": 7542.23,
-       "gex": -143353497494.15564
+       "gex": -143289606950.53995
       },
       {
        "px": 7557.79,
-       "gex": -138511005954.049
+       "gex": -138425415186.009
       },
       {
        "px": 7573.34,
-       "gex": -132710236602.69843
+       "gex": -132615204550.02393
       },
       {
        "px": 7588.89,
-       "gex": -126477654565.01675
+       "gex": -126376346058.87187
       },
       {
        "px": 7604.44,
-       "gex": -119702849633.35327
+       "gex": -119589124162.43959
       },
       {
        "px": 7619.99,
-       "gex": -111867531799.67343
+       "gex": -111732293061.85524
       },
       {
        "px": 7635.54,
-       "gex": -102474811072.73692
+       "gex": -102312030819.69012
       },
       {
        "px": 7651.09,
-       "gex": -91298153005.77267
+       "gex": -91106437809.79048
       },
       {
        "px": 7666.64,
-       "gex": -78356343620.45905
+       "gex": -78137082411.09404
       },
       {
        "px": 7682.19,
-       "gex": -63773190724.29663
+       "gex": -63528474694.04158
       },
       {
        "px": 7697.74,
-       "gex": -47685976577.75088
+       "gex": -47417857454.65966
       },
       {
        "px": 7713.3,
-       "gex": -30231913687.2113
+       "gex": -29942613360.649837
       },
       {
        "px": 7728.85,
-       "gex": -11579646922.273724
+       "gex": -11272384238.195034
       },
       {
        "px": 7744.4,
-       "gex": 7995645654.30545
+       "gex": 8315076427.197014
       },
       {
        "px": 7759.95,
-       "gex": 28013757923.411617
+       "gex": 28335709867.03612
       },
       {
        "px": 7775.5,
-       "gex": 47777695773.23251
+       "gex": 48089852309.89544
       },
       {
        "px": 7791.05,
-       "gex": 66534079704.72235
+       "gex": 66825082196.48508
       },
       {
        "px": 7806.6,
-       "gex": 83686055750.16882
+       "gex": 83948004164.62617
       },
       {
        "px": 7822.15,
-       "gex": 98832817623.58307
+       "gex": 99059994486.5033
       },
       {
        "px": 7837.7,
-       "gex": 111631026246.4084
+       "gex": 111817559133.3422
       },
       {
        "px": 7853.26,
-       "gex": 121746062199.31184
+       "gex": 121887298281.2881
       },
       {
        "px": 7868.81,
-       "gex": 129061127942.35103
+       "gex": 129158501947.22253
       },
       {
        "px": 7884.36,
-       "gex": 133940259409.34665
+       "gex": 134003941497.12253
       },
       {
        "px": 7899.91,
-       "gex": 137193947080.71793
+       "gex": 137238823297.26268
       },
       {
        "px": 7915.46,
-       "gex": 139663459229.93454
+       "gex": 139700435418.3186
       },
       {
        "px": 7931.01,
-       "gex": 141714183758.256
+       "gex": 141743488861.56863
       },
       {
        "px": 7946.56,
-       "gex": 143041842352.39243
+       "gex": 143053882610.1327
       },
       {
        "px": 7962.11,
-       "gex": 142966788235.46985
+       "gex": 142950340101.31012
       },
       {
        "px": 7977.66,
-       "gex": 141009206799.0189
+       "gex": 140960842230.9964
       },
       {
        "px": 7993.21,
-       "gex": 137309035246.68842
+       "gex": 137236629360.24744
       },
       {
        "px": 8008.77,
-       "gex": 132586793697.42532
+       "gex": 132504991898.34735
       },
       {
        "px": 8024.32,
-       "gex": 127725041738.06003
+       "gex": 127647065157.01743
       },
       {
        "px": 8039.87,
-       "gex": 123328514121.79453
+       "gex": 123260692488.44716
       },
       {
        "px": 8055.42,
-       "gex": 119562475089.84799
+       "gex": 119504374887.0082
       },
       {
        "px": 8070.97,
-       "gex": 116288356050.64444
+       "gex": 116236523184.46649
       },
       {
        "px": 8086.52,
-       "gex": 113301013902.7379
+       "gex": 113252526523.51324
       },
       {
        "px": 8102.07,
-       "gex": 110477453338.99002
+       "gex": 110431191380.60449
       },
       {
        "px": 8117.62,
-       "gex": 107791726931.62766
+       "gex": 107747812925.83318
       },
       {
        "px": 8133.17,
-       "gex": 105262375148.45341
+       "gex": 105221190740.13419
       },
       {
        "px": 8148.72,
-       "gex": 102903131875.30536
+       "gex": 102864714967.44386
       },
       {
        "px": 8164.28,
-       "gex": 100701533359.03415
+       "gex": 100665452910.73775
       },
       {
        "px": 8179.83,
-       "gex": 98623511000.18687
+       "gex": 98589131473.48221
       },
       {
        "px": 8195.38,
-       "gex": 96636956414.67519
+       "gex": 96603929266.66537
       },
       {
        "px": 8210.93,
-       "gex": 94739218788.21753
+       "gex": 94707857529.6037
       },
       {
        "px": 8226.48,
-       "gex": 92967049640.84634
+       "gex": 92938258384.1826
       },
       {
        "px": 8242.03,
-       "gex": 91377782802.91411
+       "gex": 91352513678.43196
       }
      ],
      "earnings": [
@@ -1250,55 +1250,55 @@
    "sources": {
     "Yahoo prices": {
      "ok": true,
-     "fetched": "2026-10-28T23:12:11-04:00",
+     "fetched": "2026-10-28T23:21:30-04:00",
      "data_time": "2026-10-28T09:25:00-04:00",
      "detail": "16 of 16 tickers \u00b7 1m bars, cut at 9:25 AM ET"
     },
     "Economic calendar": {
      "ok": true,
-     "fetched": "2026-10-28T23:12:11-04:00",
+     "fetched": "2026-10-28T23:21:30-04:00",
      "data_time": null,
      "detail": ""
     },
     "Earnings Oct 28": {
      "ok": true,
-     "fetched": "2026-10-28T23:12:13-04:00",
+     "fetched": "2026-10-28T23:21:31-04:00",
      "data_time": null,
      "detail": "222 companies"
     },
     "Earnings Oct 27": {
      "ok": true,
-     "fetched": "2026-10-28T23:12:15-04:00",
+     "fetched": "2026-10-28T23:21:34-04:00",
      "data_time": null,
      "detail": "185 companies"
     },
     "CBOE NDX options": {
      "ok": true,
-     "fetched": "2026-10-28T23:12:16-04:00",
-     "data_time": "2026-10-28T23:08:11-04:00",
+     "fetched": "2026-10-28T23:21:36-04:00",
+     "data_time": "2026-10-28T23:19:52-04:00",
      "detail": "15,384 contracts"
     },
     "CBOE QQQ options": {
      "ok": true,
-     "fetched": "2026-10-28T23:12:16-04:00",
+     "fetched": "2026-10-28T23:21:36-04:00",
      "data_time": "2026-10-28T21:06:16-04:00",
      "detail": "10,092 contracts"
     },
     "News headlines": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:20-04:00",
+     "fetched": "2026-10-28T23:24:41-04:00",
      "data_time": null,
      "detail": "5 of 6 feeds live \u00b7 100 headlines"
     },
     "CBOE SPX options": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:19-04:00",
+     "fetched": "2026-10-28T23:24:40-04:00",
      "data_time": "2026-10-28T22:49:46-04:00",
      "detail": "28,948 contracts"
     },
     "CBOE SPY options": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:20-04:00",
+     "fetched": "2026-10-28T23:24:41-04:00",
      "data_time": "2026-10-28T21:31:27-04:00",
      "detail": "12,374 contracts"
     }
@@ -1314,8 +1314,8 @@
     "end": "2026-10-29T02:00:00-04:00"
    },
    "mode": "live",
-   "as_of": "2026-10-28T23:12:08-04:00",
-   "generated": "2026-10-28T23:12:08-04:00",
+   "as_of": "2026-10-28T23:21:25-04:00",
+   "generated": "2026-10-28T23:21:25-04:00",
    "events": [
     {
      "time": "8:30 AM",
@@ -1352,34 +1352,34 @@
    ],
    "macro": {
     "NQ=F": {
-     "last": 29552.75,
-     "chg_pct": -1.76,
-     "ts": "2026-10-28T23:05:00-04:00"
+     "last": 29523.25,
+     "chg_pct": -1.85,
+     "ts": "2026-10-28T23:14:00-04:00"
     },
     "ES=F": {
-     "last": 7747.0,
-     "chg_pct": -0.69,
-     "ts": "2026-10-28T23:05:00-04:00"
+     "last": 7742.25,
+     "chg_pct": -0.75,
+     "ts": "2026-10-28T23:14:00-04:00"
     },
     "ZN=F": {
-     "last": 106.1094,
-     "chg_pct": 0.21,
-     "ts": "2026-10-28T23:05:00-04:00"
+     "last": 106.125,
+     "chg_pct": 0.22,
+     "ts": "2026-10-28T23:14:00-04:00"
     },
     "ZT=F": {
-     "last": 102.082,
+     "last": 102.0859,
      "chg_pct": 0.05,
-     "ts": "2026-10-28T23:04:00-04:00"
+     "ts": "2026-10-28T23:12:00-04:00"
     },
     "DX-Y.NYB": {
-     "last": 102.16,
+     "last": 102.158,
      "chg_pct": 0.07,
-     "ts": "2026-10-28T23:05:00-04:00"
+     "ts": "2026-10-28T23:14:00-04:00"
     },
     "CL=F": {
-     "last": 101.49,
-     "chg_pct": -0.05,
-     "ts": "2026-10-28T23:05:00-04:00"
+     "last": 101.3,
+     "chg_pct": -0.24,
+     "ts": "2026-10-28T23:14:00-04:00"
     },
     "HYG": {
      "last": 77.65,
@@ -1387,14 +1387,14 @@
      "ts": "2026-10-28T17:28:00-04:00"
     },
     "BTC-USD": {
-     "last": 79793.9375,
-     "chg_pct": -2.23,
-     "ts": "2026-10-28T23:12:00-04:00"
+     "last": 79753.1016,
+     "chg_pct": -2.29,
+     "ts": "2026-10-28T23:21:00-04:00"
     },
     "VXX": {
      "last": 18.06,
      "chg_pct": 1.98,
-     "ts": "2026-10-28T19:58:00-04:00"
+     "ts": "2026-10-28T19:58:54-04:00"
     },
     "^N225": {
      "last": 64131.2812,
@@ -1402,9 +1402,9 @@
      "ts": "2026-10-28T22:35:00-04:00"
     },
     "^HSI": {
-     "last": 23160.1895,
-     "chg_pct": 0.28,
-     "ts": "2026-10-28T23:00:00-04:00"
+     "last": 23123.2109,
+     "chg_pct": 0.12,
+     "ts": "2026-10-28T23:09:00-04:00"
     },
     "^VIX": {
      "last": 16.91,
@@ -1417,18 +1417,18 @@
      "name": "Nasdaq-100 futures",
      "bias": {
       "bias": "Bearish",
-      "score": -0.181,
-      "raw_score": -0.213,
+      "score": -0.167,
+      "raw_score": -0.197,
       "dampened": [
        "mega-cap earnings"
       ],
-      "own_score": -0.223,
+      "own_score": -0.189,
       "conviction": "Low",
-      "ups": 2,
+      "ups": 3,
       "downs": 6,
       "total": 19,
-      "overall": "For: Asia session so far, Mega-cap earnings, Gamma flip. Against: VIX term structure, Charm into close. Dealers short gamma: moves can run. ES agrees.",
-      "invalidation": "A reclaim and hold of the gamma flip at 30,090",
+      "overall": "For: Asia session so far, Mega-cap earnings, Gamma flip. Against: VIX term structure, Wall range. Dealers short gamma: moves can run. ES agrees.",
+      "invalidation": "A reclaim and hold of the gamma flip at 30,087",
       "macro_share": 82
      },
      "signals": [
@@ -1438,7 +1438,7 @@
        "score": 0,
        "raw": 0,
        "weight": 1.0,
-       "text": "Nikkei +0.1% \u00b7 Hang Seng +0.3%. Mixed overseas, so no handoff.",
+       "text": "Nikkei +0.1% \u00b7 Hang Seng +0.1%. Mixed overseas, so no handoff.",
        "group": "Macro"
       },
       {
@@ -1447,7 +1447,7 @@
        "score": 0,
        "raw": 0,
        "weight": 1.25,
-       "text": "10Y futures +0.21% \u2248 -3.2 bp in yield (from 5.05%). Rates are not in play.",
+       "text": "10Y futures +0.22% \u2248 -3.4 bp in yield (from 5.05%). Rates are not in play.",
        "group": "Macro"
       },
       {
@@ -1456,7 +1456,7 @@
        "score": 0,
        "raw": 0,
        "weight": 0.75,
-       "text": "2Y futures +0.046% \u2248 -2.4 bp. Fed expectations are steady.",
+       "text": "2Y futures +0.050% \u2248 -2.6 bp. Fed expectations are steady.",
        "group": "Macro"
       },
       {
@@ -1474,7 +1474,7 @@
        "score": 0,
        "raw": 0,
        "weight": 0.5,
-       "text": "WTI 101.49 (-0.0%). No energy shock.",
+       "text": "WTI 101.30 (-0.2%). No energy shock.",
        "group": "Macro"
       },
       {
@@ -1492,7 +1492,7 @@
        "score": -1,
        "raw": -1,
        "weight": 0.5,
-       "text": "Bitcoin -2.2% since yesterday's 4 PM. Speculative de-risking overnight.",
+       "text": "Bitcoin -2.3% since yesterday's 4 PM. Speculative de-risking overnight.",
        "group": "Macro"
       },
       {
@@ -1519,7 +1519,7 @@
        "score": -1,
        "raw": -1,
        "weight": 1.5,
-       "text": "NQ -0.80% since the Asia session opened (29,793.50 \u2192 29,556.00). Early weakness tends to persist through a session.",
+       "text": "NQ -0.88% since the Asia session opened (29,793.50 \u2192 29,530.75). Early weakness tends to persist through a session.",
        "group": "Session"
       },
       {
@@ -1528,7 +1528,7 @@
        "score": 0,
        "raw": 0,
        "weight": 0.75,
-       "text": "NQ +0.14% over the past hour. The last hour went nowhere.",
+       "text": "NQ +0.01% over the past hour. The last hour went nowhere.",
        "group": "Session"
       },
       {
@@ -1555,7 +1555,7 @@
        "score": -1,
        "raw": -1,
        "weight": 0.75,
-       "text": "Price is 537 pts below the gamma flip (30,090). Dealers are short gamma, so their hedging extends moves.",
+       "text": "Price is 564 pts below the gamma flip (30,087). Dealers are short gamma, so their hedging extends moves.",
        "group": "Dealer positioning"
       },
       {
@@ -1564,16 +1564,16 @@
        "score": -1,
        "raw": -1,
        "weight": 0.25,
-       "text": "Call \u00f7 put gamma 0.62. Put-heavy, so hedges sit below.",
+       "text": "Call \u00f7 put gamma 0.60. Put-heavy, so hedges sit below.",
        "group": "Dealer positioning"
       },
       {
        "key": "walls",
        "label": "Wall range",
-       "score": 0,
-       "raw": 0,
+       "score": 1,
+       "raw": 1,
        "weight": 0.5,
-       "text": "Put wall 29,025 / call wall 30,100: 547 pts up vs 528 down. Mid-range.",
+       "text": "Put wall 29,425 / call wall 30,100: 577 pts up vs 98 down. Near support.",
        "group": "Dealer positioning"
       },
       {
@@ -1582,7 +1582,7 @@
        "score": 1,
        "raw": 1,
        "weight": 0.4,
-       "text": "Time decay shifts dealer hedges by $2.49B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+       "text": "Time decay shifts dealer hedges by $2.45B by 4 PM. Dealers buy back hedges, an afternoon bid.",
        "group": "Dealer positioning"
       },
       {
@@ -1591,7 +1591,7 @@
        "score": -1,
        "raw": -1,
        "weight": 0.4,
-       "text": "Implied vol \u2248 +0.23 pts pre-market, worth about $0.59B of dealer selling.",
+       "text": "Implied vol \u2248 +0.23 pts pre-market, worth about $0.58B of dealer selling.",
        "group": "Dealer positioning"
       },
       {
@@ -1606,45 +1606,45 @@
      ],
      "changed": null,
      "expected_range": {
-      "move": 334.0,
-      "low": 29218.75,
-      "high": 29886.75
+      "move": 324.31,
+      "low": 29198.94,
+      "high": 29847.56
      },
      "levels": {
-      "price": 29552.75,
-      "flip": 30089.89,
-      "flip_close": 30101.63,
+      "price": 29523.25,
+      "flip": 30086.85,
+      "flip_close": 30098.88,
       "call_wall": 30100,
-      "put_wall": 29025,
+      "put_wall": 29425,
       "majors": [
        {
         "level": 28200,
-        "net_gex": -681372689.746467
+        "net_gex": -692515558.0289768
        },
        {
         "level": 28600,
-        "net_gex": -875326659.6001874
+        "net_gex": -897898127.725222
        },
        {
         "level": 29025,
-        "net_gex": -1070668332.8875443
+        "net_gex": -1047338596.6412607
        },
        {
         "level": 29425,
-        "net_gex": -714387208.8005596
+        "net_gex": -718978978.1105106
        },
        {
         "level": 30100,
-        "net_gex": 757935678.640427
+        "net_gex": 751947424.6214105
        }
       ]
      },
      "dealer": {
-      "net_gex_bn": -7.014,
-      "call_put_gamma": 0.62,
-      "dealer_delta_bn": 185.72,
-      "charm_bn": 2.49,
-      "vanna_bn_per_pt": 2.514,
+      "net_gex_bn": -7.302,
+      "call_put_gamma": 0.6,
+      "dealer_delta_bn": 186.18,
+      "charm_bn": 2.451,
+      "vanna_bn_per_pt": 2.483,
       "chains": [
        "NDX",
        "QQQ"
@@ -1657,22 +1657,22 @@
        {
         "level": 30050,
         "side": "call",
-        "premium": 20379850.0
+        "premium": 20348100.0
        },
        {
         "level": 29925,
         "side": "call",
-        "premium": 19640303.0
+        "premium": 19736303.0
        },
        {
         "level": 29975,
         "side": "call",
-        "premium": 17488228.5
+        "premium": 17545018.5
        },
        {
         "level": 29925,
         "side": "put",
-        "premium": 15823248.5
+        "premium": 15896098.5
        },
        {
         "level": 29850,
@@ -1683,248 +1683,248 @@
      },
      "profile": [
       {
-       "px": 27779.58,
-       "gex": -11239980615.197653
+       "px": 27751.85,
+       "gex": -11179768644.764862
       },
       {
-       "px": 27838.69,
-       "gex": -11380682002.199451
+       "px": 27810.9,
+       "gex": -11322155574.973724
       },
       {
-       "px": 27897.8,
-       "gex": -11516752987.306503
+       "px": 27869.95,
+       "gex": -11460431075.833277
       },
       {
-       "px": 27956.9,
-       "gex": -11646963254.961926
+       "px": 27928.99,
+       "gex": -11593427445.062296
       },
       {
-       "px": 28016.01,
-       "gex": -11769944386.29927
+       "px": 27988.04,
+       "gex": -11719836345.692
       },
       {
-       "px": 28075.11,
-       "gex": -11884197448.04449
+       "px": 28047.09,
+       "gex": -11838214438.647423
       },
       {
-       "px": 28134.22,
-       "gex": -11988104980.070324
+       "px": 28106.13,
+       "gex": -11946993472.415373
       },
       {
-       "px": 28193.32,
-       "gex": -12079947135.691416
+       "px": 28165.18,
+       "gex": -12044494709.322884
       },
       {
-       "px": 28252.43,
-       "gex": -12157921461.785742
+       "px": 28224.23,
+       "gex": -12128947284.257534
       },
       {
-       "px": 28311.53,
-       "gex": -12220165593.730425
+       "px": 28283.27,
+       "gex": -12198509846.784603
       },
       {
-       "px": 28370.64,
-       "gex": -12264782009.197018
+       "px": 28342.32,
+       "gex": -12251294668.238754
       },
       {
-       "px": 28429.75,
-       "gex": -12289863933.98306
+       "px": 28401.37,
+       "gex": -12285393314.299986
       },
       {
-       "px": 28488.85,
-       "gex": -12293521491.906118
+       "px": 28460.41,
+       "gex": -12298902971.900694
       },
       {
-       "px": 28547.96,
-       "gex": -12273907190.584259
+       "px": 28519.46,
+       "gex": -12289952531.76199
       },
       {
-       "px": 28607.06,
-       "gex": -12229239788.041803
+       "px": 28578.51,
+       "gex": -12256727510.399124
       },
       {
-       "px": 28666.17,
-       "gex": -12157825463.823277
+       "px": 28637.55,
+       "gex": -12197492807.250118
       },
       {
-       "px": 28725.27,
-       "gex": -12058075024.63702
+       "px": 28696.6,
+       "gex": -12110612121.489824
       },
       {
-       "px": 28784.38,
-       "gex": -11928515641.153873
+       "px": 28755.65,
+       "gex": -11994562619.273209
       },
       {
-       "px": 28843.48,
-       "gex": -11767795407.389553
+       "px": 28814.69,
+       "gex": -11847943197.256502
       },
       {
-       "px": 28902.59,
-       "gex": -11574678964.354687
+       "px": 28873.74,
+       "gex": -11669474527.278013
       },
       {
-       "px": 28961.69,
-       "gex": -11348032766.2794
+       "px": 28932.78,
+       "gex": -11457989165.847496
       },
       {
-       "px": 29020.8,
-       "gex": -11086799653.814642
+       "px": 28991.83,
+       "gex": -11212410674.721626
       },
       {
-       "px": 29079.91,
-       "gex": -10789964663.280464
+       "px": 29050.88,
+       "gex": -10931722353.723026
       },
       {
-       "px": 29139.01,
-       "gex": -10456517690.155937
+       "px": 29109.92,
+       "gex": -10614929234.349472
       },
       {
-       "px": 29198.12,
-       "gex": -10085423360.287432
+       "px": 29168.97,
+       "gex": -10261021426.16838
       },
       {
-       "px": 29257.22,
-       "gex": -9675612802.583221
+       "px": 29228.02,
+       "gex": -9868951850.264475
       },
       {
-       "px": 29316.33,
-       "gex": -9226013471.49577
+       "px": 29287.06,
+       "gex": -9437644741.166742
       },
       {
-       "px": 29375.43,
-       "gex": -8735629160.861212
+       "px": 29346.11,
+       "gex": -8966050224.23019
       },
       {
-       "px": 29434.54,
-       "gex": -8203672127.041883
+       "px": 29405.16,
+       "gex": -8453252790.405298
       },
       {
-       "px": 29493.64,
-       "gex": -7629735604.634205
+       "px": 29464.2,
+       "gex": -7898628568.476788
       },
       {
-       "px": 29552.75,
-       "gex": -7013983974.438498
+       "px": 29523.25,
+       "gex": -7302032821.428478
       },
       {
-       "px": 29611.86,
-       "gex": -6357335184.618678
+       "px": 29582.3,
+       "gex": -6663991787.225656
       },
       {
-       "px": 29670.96,
-       "gex": -5661616419.124489
+       "px": 29641.34,
+       "gex": -5985875577.76884
       },
       {
-       "px": 29730.07,
-       "gex": -4929683321.655094
+       "px": 29700.39,
+       "gex": -5270038143.862855
       },
       {
-       "px": 29789.17,
-       "gex": -4165496648.0809197
+       "px": 29759.44,
+       "gex": -4519917602.678121
       },
       {
-       "px": 29848.28,
-       "gex": -3374144565.264858
+       "px": 29818.48,
+       "gex": -3740088454.613155
       },
       {
-       "px": 29907.38,
-       "gex": -2561789800.5513773
+       "px": 29877.53,
+       "gex": -2936248038.9191008
       },
       {
-       "px": 29966.49,
-       "gex": -1735519443.4198394
+       "px": 29936.58,
+       "gex": -2115113094.5315356
       },
       {
-       "px": 30025.59,
-       "gex": -903088109.3864876
+       "px": 29995.62,
+       "gex": -1284208739.274762
       },
       {
-       "px": 30084.7,
-       "gex": -72568824.33538103
+       "px": 30054.67,
+       "gex": -451552885.9421978
       },
       {
-       "px": 30143.81,
-       "gex": 748050783.973015
+       "px": 30113.72,
+       "gex": 374734966.66652584
       },
       {
-       "px": 30202.91,
-       "gex": 1551276914.4122076
+       "px": 30172.76,
+       "gex": 1186852882.6691935
       },
       {
-       "px": 30262.02,
-       "gex": 2330473743.550801
+       "px": 30231.81,
+       "gex": 1977711272.9017227
       },
       {
-       "px": 30321.12,
-       "gex": 3080144778.105858
+       "px": 30290.85,
+       "gex": 2741258747.910043
       },
       {
-       "px": 30380.23,
-       "gex": 3796105727.508932
+       "px": 30349.9,
+       "gex": 3472707632.3553624
       },
       {
-       "px": 30439.33,
-       "gex": 4475534697.539988
+       "px": 30408.95,
+       "gex": 4168640332.8804617
       },
       {
-       "px": 30498.44,
-       "gex": 5116896280.170391
+       "px": 30467.99,
+       "gex": 4826988451.858403
       },
       {
-       "px": 30557.54,
-       "gex": 5719749004.039078
+       "px": 30527.04,
+       "gex": 5446887871.257347
       },
       {
-       "px": 30616.65,
-       "gex": 6284461878.207577
+       "px": 30586.09,
+       "gex": 6028427729.221487
       },
       {
-       "px": 30675.75,
-       "gex": 6811882797.258705
+       "px": 30645.13,
+       "gex": 6572328721.511964
       },
       {
-       "px": 30734.86,
-       "gex": 7303013505.295811
+       "px": 30704.18,
+       "gex": 7079601736.475682
       },
       {
-       "px": 30793.97,
-       "gex": 7758746576.220418
+       "px": 30763.23,
+       "gex": 7551244736.8705845
       },
       {
-       "px": 30853.07,
-       "gex": 8179706775.356418
+       "px": 30822.27,
+       "gex": 7988029127.852698
       },
       {
-       "px": 30912.18,
-       "gex": 8566214834.544147
+       "px": 30881.32,
+       "gex": 8390406604.679922
       },
       {
-       "px": 30971.28,
-       "gex": 8918363187.397295
+       "px": 30940.37,
+       "gex": 8758539101.632956
       },
       {
-       "px": 31030.39,
-       "gex": 9236169145.70646
+       "px": 30999.41,
+       "gex": 9092426602.926224
       },
       {
-       "px": 31089.49,
-       "gex": 9519757927.456972
+       "px": 31058.46,
+       "gex": 9392088394.635708
       },
       {
-       "px": 31148.6,
-       "gex": 9769528204.010952
+       "px": 31117.51,
+       "gex": 9657747410.024134
       },
       {
-       "px": 31207.7,
-       "gex": 9986264317.709368
+       "px": 31176.55,
+       "gex": 9889974435.883015
       },
       {
-       "px": 31266.81,
-       "gex": 10171177037.63487
+       "px": 31235.6,
+       "gex": 10089765007.796154
       },
       {
-       "px": 31325.92,
-       "gex": 10325873016.865509
+       "px": 31294.65,
+       "gex": 10258541008.380037
       }
      ],
      "earnings": [
@@ -2005,14 +2005,14 @@
      "bias": {
       "bias": "Bearish",
       "score": -0.173,
-      "raw_score": -0.204,
+      "raw_score": -0.203,
       "dampened": [
        "mega-cap earnings"
       ],
-      "own_score": -0.193,
+      "own_score": -0.211,
       "conviction": "Low",
       "ups": 3,
-      "downs": 6,
+      "downs": 7,
       "total": 19,
       "overall": "For: Asia session so far, Mega-cap earnings, Gamma flip. Against: VIX term structure, Wall range. Dealers short gamma: moves can run. NQ agrees.",
       "invalidation": "A reclaim and hold of the gamma flip at 7,790",
@@ -2025,7 +2025,7 @@
        "score": 0,
        "raw": 0,
        "weight": 1.0,
-       "text": "Nikkei +0.1% \u00b7 Hang Seng +0.3%. Mixed overseas, so no handoff.",
+       "text": "Nikkei +0.1% \u00b7 Hang Seng +0.1%. Mixed overseas, so no handoff.",
        "group": "Macro"
       },
       {
@@ -2034,7 +2034,7 @@
        "score": 0,
        "raw": 0,
        "weight": 0.9375,
-       "text": "10Y futures +0.21% \u2248 -3.2 bp in yield (from 5.05%). Rates are not in play.",
+       "text": "10Y futures +0.22% \u2248 -3.4 bp in yield (from 5.05%). Rates are not in play.",
        "group": "Macro"
       },
       {
@@ -2043,7 +2043,7 @@
        "score": 0,
        "raw": 0,
        "weight": 0.75,
-       "text": "2Y futures +0.046% \u2248 -2.4 bp. Fed expectations are steady.",
+       "text": "2Y futures +0.050% \u2248 -2.6 bp. Fed expectations are steady.",
        "group": "Macro"
       },
       {
@@ -2061,7 +2061,7 @@
        "score": 0,
        "raw": 0,
        "weight": 0.5,
-       "text": "WTI 101.49 (-0.0%). No energy shock.",
+       "text": "WTI 101.30 (-0.2%). No energy shock.",
        "group": "Macro"
       },
       {
@@ -2079,7 +2079,7 @@
        "score": -1,
        "raw": -1,
        "weight": 0.5,
-       "text": "Bitcoin -2.2% since yesterday's 4 PM. Speculative de-risking overnight.",
+       "text": "Bitcoin -2.3% since yesterday's 4 PM. Speculative de-risking overnight.",
        "group": "Macro"
       },
       {
@@ -2106,7 +2106,7 @@
        "score": -1,
        "raw": -1,
        "weight": 1.5,
-       "text": "ES -0.25% since the Asia session opened (7,766.50 \u2192 7,747.25). Early weakness tends to persist through a session.",
+       "text": "ES -0.31% since the Asia session opened (7,766.50 \u2192 7,742.75). Early weakness tends to persist through a session.",
        "group": "Session"
       },
       {
@@ -2115,7 +2115,7 @@
        "score": 0,
        "raw": 0,
        "weight": 0.75,
-       "text": "ES +0.04% over the past hour. The last hour went nowhere.",
+       "text": "ES -0.05% over the past hour. The last hour went nowhere.",
        "group": "Session"
       },
       {
@@ -2142,16 +2142,16 @@
        "score": -1,
        "raw": -1,
        "weight": 0.75,
-       "text": "Price is 43 pts below the gamma flip (7,790). Dealers are short gamma, so their hedging extends moves.",
+       "text": "Price is 48 pts below the gamma flip (7,790). Dealers are short gamma, so their hedging extends moves.",
        "group": "Dealer positioning"
       },
       {
        "key": "tilt",
        "label": "Gamma tilt",
-       "score": 0,
-       "raw": 0,
+       "score": -1,
+       "raw": -1,
        "weight": 0.25,
-       "text": "Call \u00f7 put gamma 0.82. Balanced.",
+       "text": "Call \u00f7 put gamma 0.80. Put-heavy, so hedges sit below.",
        "group": "Dealer positioning"
       },
       {
@@ -2160,7 +2160,7 @@
        "score": 1,
        "raw": 1,
        "weight": 0.5,
-       "text": "Put wall 7,705 / call wall 8,060: 313 pts up vs 42 down. Near support.",
+       "text": "Put wall 7,705 / call wall 8,060: 318 pts up vs 37 down. Near support.",
        "group": "Dealer positioning"
       },
       {
@@ -2169,7 +2169,7 @@
        "score": 1,
        "raw": 1,
        "weight": 0.4,
-       "text": "Time decay shifts dealer hedges by $17.56B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+       "text": "Time decay shifts dealer hedges by $17.36B by 4 PM. Dealers buy back hedges, an afternoon bid.",
        "group": "Dealer positioning"
       },
       {
@@ -2178,7 +2178,7 @@
        "score": -1,
        "raw": -1,
        "weight": 0.4,
-       "text": "Implied vol \u2248 +0.16 pts pre-market, worth about $4.90B of dealer selling.",
+       "text": "Implied vol \u2248 +0.16 pts pre-market, worth about $4.86B of dealer selling.",
        "group": "Dealer positioning"
       },
       {
@@ -2193,45 +2193,45 @@
      ],
      "changed": null,
      "expected_range": {
-      "move": 61.08,
-      "low": 7685.92,
-      "high": 7808.08
+      "move": 59.33,
+      "low": 7682.92,
+      "high": 7801.58
      },
      "levels": {
-      "price": 7747.0,
-      "flip": 7790.23,
+      "price": 7742.25,
+      "flip": 7790.24,
       "flip_close": 7793.93,
       "call_wall": 8060,
       "put_wall": 7705,
       "majors": [
        {
         "level": 7555,
-        "net_gex": -5247150569.962956
+        "net_gex": -5368654772.542471
        },
        {
         "level": 7655,
-        "net_gex": -6098363445.0756645
+        "net_gex": -6268916036.652311
        },
        {
         "level": 7705,
-        "net_gex": -5396243442.015438
+        "net_gex": -5501655955.561985
        },
        {
         "level": 7755,
-        "net_gex": -3879690152.449873
+        "net_gex": -3859360113.381119
        },
        {
         "level": 7960,
-        "net_gex": 3543927344.6146727
+        "net_gex": 3430000647.461196
        }
       ]
      },
      "dealer": {
-      "net_gex_bn": -39.02,
-      "call_put_gamma": 0.82,
-      "dealer_delta_bn": 2492.34,
-      "charm_bn": 17.557,
-      "vanna_bn_per_pt": 29.89,
+      "net_gex_bn": -42.894,
+      "call_put_gamma": 0.8,
+      "dealer_delta_bn": 2493.15,
+      "charm_bn": 17.359,
+      "vanna_bn_per_pt": 29.652,
       "chains": [
        "SPX",
        "SPY"
@@ -2270,248 +2270,248 @@
      },
      "profile": [
       {
-       "px": 7282.18,
-       "gex": -110152647986.93803
+       "px": 7277.71,
+       "gex": -109845409332.54861
       },
       {
-       "px": 7297.67,
-       "gex": -111223938273.74251
+       "px": 7293.2,
+       "gex": -110910459442.64943
       },
       {
-       "px": 7313.17,
-       "gex": -112312513769.92775
+       "px": 7308.68,
+       "gex": -111994477237.35907
       },
       {
-       "px": 7328.66,
-       "gex": -113411556661.852
+       "px": 7324.17,
+       "gex": -113091337391.0221
       },
       {
-       "px": 7344.16,
-       "gex": -114511717559.29762
+       "px": 7339.65,
+       "gex": -114192491640.29771
       },
       {
-       "px": 7359.65,
-       "gex": -115600750842.88776
+       "px": 7355.14,
+       "gex": -115286597888.2138
       },
       {
-       "px": 7375.14,
-       "gex": -116663188026.31442
+       "px": 7370.62,
+       "gex": -116359182642.98282
       },
       {
-       "px": 7390.64,
-       "gex": -117680072126.92477
+       "px": 7386.11,
+       "gex": -117392356412.72711
       },
       {
-       "px": 7406.13,
-       "gex": -118628787668.43661
+       "px": 7401.59,
+       "gex": -118364611097.52762
       },
       {
-       "px": 7421.63,
-       "gex": -119483035527.06918
+       "px": 7417.08,
+       "gex": -119250743482.32625
       },
       {
-       "px": 7437.12,
-       "gex": -120213007740.45479
+       "px": 7432.56,
+       "gex": -120021960527.62839
       },
       {
-       "px": 7452.61,
-       "gex": -120785797965.7438
+       "px": 7448.04,
+       "gex": -120646213925.30815
       },
       {
-       "px": 7468.11,
-       "gex": -121166026204.40051
+       "px": 7463.53,
+       "gex": -121088767520.99449
       },
       {
-       "px": 7483.6,
-       "gex": -121316565195.80612
+       "px": 7479.01,
+       "gex": -121312918406.58913
       },
       {
-       "px": 7499.1,
-       "gex": -121199155917.87207
+       "px": 7494.5,
+       "gex": -121280688986.71979
       },
       {
-       "px": 7514.59,
-       "gex": -120774634167.01306
+       "px": 7509.98,
+       "gex": -120953222383.7121
       },
       {
-       "px": 7530.08,
-       "gex": -120002507047.43784
+       "px": 7525.47,
+       "gex": -120290596601.73767
       },
       {
-       "px": 7545.58,
-       "gex": -118839751431.21857
+       "px": 7540.95,
+       "gex": -119250866216.79778
       },
       {
-       "px": 7561.07,
-       "gex": -117238955438.19638
+       "px": 7556.44,
+       "gex": -117788358541.58755
       },
       {
-       "px": 7576.57,
-       "gex": -115146233058.8699
+       "px": 7571.92,
+       "gex": -115851558711.17786
       },
       {
-       "px": 7592.06,
-       "gex": -112499593089.01581
+       "px": 7587.4,
+       "gex": -113381213946.69202
       },
       {
-       "px": 7607.55,
-       "gex": -109228484804.569
+       "px": 7602.89,
+       "gex": -110309418631.0114
       },
       {
-       "px": 7623.05,
-       "gex": -105254968364.49356
+       "px": 7618.37,
+       "gex": -106560269697.3188
       },
       {
-       "px": 7638.54,
-       "gex": -100496413641.46645
+       "px": 7633.86,
+       "gex": -102052189089.83578
       },
       {
-       "px": 7654.04,
-       "gex": -94869074624.56685
+       "px": 7649.34,
+       "gex": -96701391538.24556
       },
       {
-       "px": 7669.53,
-       "gex": -88291714650.69972
+       "px": 7664.83,
+       "gex": -90425617008.37512
       },
       {
-       "px": 7685.02,
-       "gex": -80688971625.93575
+       "px": 7680.31,
+       "gex": -83147531192.53947
       },
       {
-       "px": 7700.52,
-       "gex": -71995252816.6781
+       "px": 7695.8,
+       "gex": -74798190908.59206
       },
       {
-       "px": 7716.01,
-       "gex": -62160986695.04053
+       "px": 7711.28,
+       "gex": -65322183472.160255
       },
       {
-       "px": 7731.51,
-       "gex": -51163081091.64337
+       "px": 7726.77,
+       "gex": -54686532325.78198
       },
       {
-       "px": 7747.0,
-       "gex": -39019840608.26609
+       "px": 7742.25,
+       "gex": -42894377833.501884
       },
       {
-       "px": 7762.49,
-       "gex": -25807808921.429897
+       "px": 7757.73,
+       "gex": -30001835446.13665
       },
       {
-       "px": 7777.99,
-       "gex": -11675537959.387426
+       "px": 7773.22,
+       "gex": -16133568626.019615
       },
       {
-       "px": 7793.48,
-       "gex": 3151136199.9464765
+       "px": 7788.7,
+       "gex": -1491361296.9915147
       },
       {
-       "px": 7808.98,
-       "gex": 18375511198.143986
+       "px": 7804.19,
+       "gex": 13648541339.403105
       },
       {
-       "px": 7824.47,
-       "gex": 33647620583.31584
+       "px": 7819.67,
+       "gex": 28949979185.651394
       },
       {
-       "px": 7839.96,
-       "gex": 48589439792.965614
+       "px": 7835.16,
+       "gex": 44040376585.072495
       },
       {
-       "px": 7855.46,
-       "gex": 62823155365.99807
+       "px": 7850.64,
+       "gex": 58538583788.60029
       },
       {
-       "px": 7870.95,
-       "gex": 75998881575.0844
+       "px": 7866.13,
+       "gex": 72083006610.83667
       },
       {
-       "px": 7886.45,
-       "gex": 87819577063.92688
+       "px": 7881.61,
+       "gex": 84357474899.64069
       },
       {
-       "px": 7901.94,
-       "gex": 98061512610.89392
+       "px": 7897.09,
+       "gex": 95113229929.85725
       },
       {
-       "px": 7917.43,
-       "gex": 106588448703.82481
+       "px": 7912.58,
+       "gex": 104185335856.33432
       },
       {
-       "px": 7932.93,
-       "gex": 113357572879.34317
+       "px": 7928.06,
+       "gex": 111501495472.2406
       },
       {
-       "px": 7948.42,
-       "gex": 118415980008.11487
+       "px": 7943.55,
+       "gex": 117081641420.22508
       },
       {
-       "px": 7963.92,
-       "gex": 121888039131.762
+       "px": 7959.03,
+       "gex": 121028043732.23386
       },
       {
-       "px": 7979.41,
-       "gex": 123955738158.35129
+       "px": 7974.52,
+       "gex": 123507494447.79567
       },
       {
-       "px": 7994.9,
-       "gex": 124835332515.16727
+       "px": 7990.0,
+       "gex": 124728621373.91072
       },
       {
-       "px": 8010.4,
-       "gex": 124753991426.4644
+       "px": 8005.49,
+       "gex": 124918045937.1234
       },
       {
-       "px": 8025.89,
-       "gex": 123929671672.25925
+       "px": 8020.97,
+       "gex": 124298866868.09363
       },
       {
-       "px": 8041.39,
-       "gex": 122556415661.96985
+       "px": 8036.46,
+       "gex": 123074047710.09895
       },
       {
-       "px": 8056.88,
-       "gex": 120795992055.68396
+       "px": 8051.94,
+       "gex": 121416038039.7358
       },
       {
-       "px": 8072.37,
-       "gex": 118775571386.15984
+       "px": 8067.42,
+       "gex": 119462678840.97807
       },
       {
-       "px": 8087.87,
-       "gex": 116590192382.41064
+       "px": 8082.91,
+       "gex": 117318389044.12424
       },
       {
-       "px": 8103.36,
-       "gex": 114308270162.73677
+       "px": 8098.39,
+       "gex": 115058978461.59315
       },
       {
-       "px": 8118.86,
-       "gex": 111978347764.61313
+       "px": 8113.88,
+       "gex": 112738245289.32315
       },
       {
-       "px": 8134.35,
-       "gex": 109635602988.2092
+       "px": 8129.36,
+       "gex": 110394733056.36969
       },
       {
-       "px": 8149.84,
-       "gex": 107307129046.80717
+       "px": 8144.85,
+       "gex": 108057491244.58672
       },
       {
-       "px": 8165.34,
-       "gex": 105015544323.78653
+       "px": 8160.33,
+       "gex": 105750231555.04942
       },
       {
-       "px": 8180.83,
-       "gex": 102780935922.83865
+       "px": 8175.82,
+       "gex": 103493760921.74045
       },
       {
-       "px": 8196.33,
-       "gex": 100621446717.03056
+       "px": 8191.3,
+       "gex": 101306927399.8354
       },
       {
-       "px": 8211.82,
-       "gex": 98552967041.29013
+       "px": 8206.78,
+       "gex": 99206514174.4797
       }
      ],
      "earnings": [
@@ -2604,55 +2604,55 @@
    "sources": {
     "Yahoo prices": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:22-04:00",
-     "data_time": "2026-10-28T23:12:08.257950-04:00",
-     "detail": "16 of 16 tickers \u00b7 1m bars, cut at 11:12 PM ET"
+     "fetched": "2026-10-28T23:24:43-04:00",
+     "data_time": "2026-10-28T23:21:25.413840-04:00",
+     "detail": "16 of 16 tickers \u00b7 1m bars, cut at 11:21 PM ET"
     },
     "Economic calendar": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:22-04:00",
+     "fetched": "2026-10-28T23:24:43-04:00",
      "data_time": null,
      "detail": ""
     },
     "Earnings Oct 29": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:24-04:00",
+     "fetched": "2026-10-28T23:24:45-04:00",
      "data_time": null,
      "detail": "317 companies"
     },
     "Earnings Oct 28": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:26-04:00",
+     "fetched": "2026-10-28T23:24:48-04:00",
      "data_time": null,
      "detail": "222 companies"
     },
     "CBOE NDX options": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:27-04:00",
-     "data_time": "2026-10-28T23:08:11-04:00",
+     "fetched": "2026-10-28T23:24:49-04:00",
+     "data_time": "2026-10-28T23:19:52-04:00",
      "detail": "15,384 contracts"
     },
     "CBOE QQQ options": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:27-04:00",
+     "fetched": "2026-10-28T23:24:50-04:00",
      "data_time": "2026-10-28T21:06:16-04:00",
      "detail": "10,092 contracts"
     },
     "News headlines": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:32-04:00",
+     "fetched": "2026-10-28T23:24:55-04:00",
      "data_time": null,
      "detail": "5 of 6 feeds live \u00b7 100 headlines"
     },
     "CBOE SPX options": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:30-04:00",
+     "fetched": "2026-10-28T23:24:53-04:00",
      "data_time": "2026-10-28T22:49:46-04:00",
      "detail": "28,948 contracts"
     },
     "CBOE SPY options": {
      "ok": true,
-     "fetched": "2026-10-28T23:15:31-04:00",
+     "fetched": "2026-10-28T23:24:54-04:00",
      "data_time": "2026-10-28T21:31:27-04:00",
      "detail": "12,374 contracts"
     }
@@ -2670,7 +2670,7 @@
   },
   "mode": "point-in-time",
   "as_of": "2026-10-28T18:00:00-04:00",
-  "generated": "2026-10-28T23:12:08-04:00",
+  "generated": "2026-10-28T23:21:25-04:00",
   "events": [
    {
     "time": "8:30 AM",
@@ -2707,12 +2707,12 @@
   ],
   "macro": {
    "NQ=F": {
-    "last": 29773.75,
-    "chg_pct": -0.12,
+    "last": 29770.75,
+    "chg_pct": -0.14,
     "ts": "2026-10-28T18:00:00-04:00"
    },
    "ES=F": {
-    "last": 7764.75,
+    "last": 7764.25,
     "chg_pct": 0.1,
     "ts": "2026-10-28T18:00:00-04:00"
    },
@@ -2742,7 +2742,7 @@
     "ts": "2026-10-28T17:28:00-04:00"
    },
    "BTC-USD": {
-    "last": 81224.8203,
+    "last": 81224.8125,
     "chg_pct": 0.65,
     "ts": "2026-10-28T18:00:00-04:00"
    },
@@ -2757,7 +2757,7 @@
     "ts": "2026-10-28T02:29:00-04:00"
    },
    "^GDAXI": {
-    "last": 25704.0,
+    "last": 25704.0195,
     "chg_pct": 0.37,
     "ts": "2026-10-28T12:30:00-04:00"
    },
@@ -2877,7 +2877,7 @@
       "score": 1,
       "raw": 1,
       "weight": 1.0,
-      "text": "NQ +0.91% from yesterday's 4 PM to today's 4 PM. A strong cash session tends to carry into Globex.",
+      "text": "NQ +0.90% from yesterday's 4 PM to today's 4 PM. A strong cash session tends to carry into Globex.",
       "group": "Session"
      },
      {
@@ -2895,7 +2895,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.75,
-      "text": "NQ +0.60% in the final hour (3 to 4 PM). Buyers into the bell, the late-day flow that tends to persist (Baltussen et al.).",
+      "text": "NQ +0.59% in the final hour (3 to 4 PM). Buyers into the bell, the late-day flow that tends to persist (Baltussen et al.).",
       "group": "Session"
      },
      {
@@ -2922,7 +2922,7 @@
       "score": -1,
       "raw": -1,
       "weight": 0.75,
-      "text": "Price is 54 pts below the gamma flip (29,828). Dealers are short gamma, so their hedging extends moves.",
+      "text": "Price is 57 pts below the gamma flip (29,828). Dealers are short gamma, so their hedging extends moves.",
       "group": "Dealer positioning"
      },
      {
@@ -2940,7 +2940,7 @@
       "score": -1,
       "raw": -1,
       "weight": 0.5,
-      "text": "Put wall 28,750 / call wall 29,825: 51 pts up vs 1,024 down. Pressed into resistance.",
+      "text": "Put wall 28,750 / call wall 29,825: 54 pts up vs 1,021 down. Pressed into resistance.",
       "group": "Dealer positioning"
      },
      {
@@ -2955,12 +2955,12 @@
     ],
     "changed": null,
     "expected_range": {
-     "move": 539.23,
-     "low": 29234.52,
-     "high": 30312.98
+     "move": 539.17,
+     "low": 29231.58,
+     "high": 30309.92
     },
     "levels": {
-     "price": 29773.75,
+     "price": 29770.75,
      "flip": 29828.2,
      "flip_close": null,
      "call_wall": 29825,
@@ -2968,32 +2968,32 @@
      "majors": [
       {
        "level": 28350,
-       "net_gex": -564565943.4158427
+       "net_gex": -566115397.1474283
       },
       {
        "level": 28750,
-       "net_gex": -712908332.0317186
+       "net_gex": -714826477.9305055
       },
       {
        "level": 29300,
-       "net_gex": -403969529.01495516
+       "net_gex": -404524317.52250445
       },
       {
        "level": 29825,
-       "net_gex": 812516290.7380537
+       "net_gex": 812461650.067798
       },
       {
        "level": 30400,
-       "net_gex": 411468654.5580161
+       "net_gex": 409299392.36878926
       }
      ]
     },
     "dealer": {
-     "net_gex_bn": -0.745,
+     "net_gex_bn": -0.786,
      "call_put_gamma": 0.95,
-     "dealer_delta_bn": 183.03,
+     "dealer_delta_bn": 183.02,
      "charm_bn": -0.0,
-     "vanna_bn_per_pt": 2.919,
+     "vanna_bn_per_pt": 2.918,
      "chains": [
       "NDX",
       "QQQ"
@@ -3002,248 +3002,248 @@
     "flow": null,
     "profile": [
      {
-      "px": 27987.32,
-      "gex": -12042052672.69188
+      "px": 27984.5,
+      "gex": -12038982134.22786
      },
      {
-      "px": 28046.87,
-      "gex": -12098324239.147247
+      "px": 28044.05,
+      "gex": -12096036792.532135
      },
      {
-      "px": 28106.42,
-      "gex": -12137025436.37544
+      "px": 28103.59,
+      "gex": -12135609090.641478
      },
      {
-      "px": 28165.97,
-      "gex": -12156371962.797918
+      "px": 28163.13,
+      "gex": -12155915491.653671
      },
      {
-      "px": 28225.51,
-      "gex": -12154584653.767641
+      "px": 28222.67,
+      "gex": -12155176704.246534
      },
      {
-      "px": 28285.06,
-      "gex": -12129907437.168985
+      "px": 28282.21,
+      "gex": -12131635704.101486
      },
      {
-      "px": 28344.61,
-      "gex": -12080623261.347977
+      "px": 28341.75,
+      "gex": -12083573770.196321
      },
      {
-      "px": 28404.16,
-      "gex": -12005067138.451918
+      "px": 28401.3,
+      "gex": -12009323678.415941
      },
      {
-      "px": 28463.7,
-      "gex": -11901635497.84087
+      "px": 28460.84,
+      "gex": -11907279243.810474
      },
      {
-      "px": 28523.25,
-      "gex": -11768791179.426369
+      "px": 28520.38,
+      "gex": -11775900532.425854
      },
      {
-      "px": 28582.8,
-      "gex": -11605063693.80289
+      "px": 28579.92,
+      "gex": -11613714350.320837
      },
      {
-      "px": 28642.35,
-      "gex": -11409044945.295202
+      "px": 28639.46,
+      "gex": -11419310170.323652
      },
      {
-      "px": 28701.89,
-      "gex": -11179381570.405148
+      "px": 28699.0,
+      "gex": -11191332591.962812
      },
      {
-      "px": 28761.44,
-      "gex": -10914766441.593693
+      "px": 28758.54,
+      "gex": -10928472805.802162
      },
      {
-      "px": 28820.99,
-      "gex": -10613933616.598206
+      "px": 28818.09,
+      "gex": -10629463252.382235
      },
      {
-      "px": 28880.54,
-      "gex": -10275662701.403133
+      "px": 28877.63,
+      "gex": -10293081367.945316
      },
      {
-      "px": 28940.08,
-      "gex": -9898799566.548958
+      "px": 28937.17,
+      "gex": -9918169333.746332
      },
      {
-      "px": 28999.63,
-      "gex": -9482299779.939402
+      "px": 28996.71,
+      "gex": -9503676263.008947
      },
      {
-      "px": 29059.18,
-      "gex": -9025298374.725584
+      "px": 29056.25,
+      "gex": -9048726628.377441
      },
      {
-      "px": 29118.73,
-      "gex": -8527204752.752479
+      "px": 29115.79,
+      "gex": -8552714001.926807
      },
      {
-      "px": 29178.27,
-      "gex": -7987815777.652159
+      "px": 29175.33,
+      "gex": -8015413441.421698
      },
      {
-      "px": 29237.82,
-      "gex": -7407435418.976044
+      "px": 29234.88,
+      "gex": -7437101065.792706
      },
      {
-      "px": 29297.37,
-      "gex": -6786987577.828702
+      "px": 29294.42,
+      "gex": -6818667458.378214
      },
      {
-      "px": 29356.92,
-      "gex": -6128110576.862415
+      "px": 29353.96,
+      "gex": -6161713226.165065
      },
      {
-      "px": 29416.47,
-      "gex": -5433225913.3993
+      "px": 29413.5,
+      "gex": -5468619101.257337
      },
      {
-      "px": 29476.01,
-      "gex": -4705577609.2934265
+      "px": 29473.04,
+      "gex": -4742586785.717421
      },
      {
-      "px": 29535.56,
-      "gex": -3949239596.269224
+      "px": 29532.58,
+      "gex": -3987648001.0589247
      },
      {
-      "px": 29595.11,
-      "gex": -3169086860.408311
+      "px": 29592.13,
+      "gex": -3208637595.098755
      },
      {
-      "px": 29654.65,
-      "gex": -2370723682.269943
+      "px": 29651.67,
+      "gex": -2411124133.423222
      },
      {
-      "px": 29714.2,
-      "gex": -1560362305.7883558
+      "px": 29711.21,
+      "gex": -1601291218.9944077
      },
      {
-      "px": 29773.75,
-      "gex": -744649610.7992227
+      "px": 29770.75,
+      "gex": -785766801.8375416
      },
      {
-      "px": 29833.3,
-      "gex": 69552699.01888323
+      "px": 29830.29,
+      "gex": 28594464.55807209
      },
      {
-      "px": 29892.85,
-      "gex": 875419765.6431065
+      "px": 29889.83,
+      "gex": 834961641.0128113
      },
      {
-      "px": 29952.39,
-      "gex": 1666425116.3101735
+      "px": 29949.37,
+      "gex": 1626789014.6965907
      },
      {
-      "px": 30011.94,
-      "gex": 2436586420.934393
+      "px": 30008.92,
+      "gex": 2398063154.04875
      },
      {
-      "px": 30071.49,
-      "gex": 3180670364.21817
+      "px": 30068.46,
+      "gex": 3143510296.9217787
      },
      {
-      "px": 30131.03,
-      "gex": 3894335848.4577494
+      "px": 30128.0,
+      "gex": 3858743004.97701
      },
      {
-      "px": 30190.58,
-      "gex": 4574202073.189213
+      "px": 30187.54,
+      "gex": 4540332208.074509
      },
      {
-      "px": 30250.13,
-      "gex": 5217837562.805744
+      "px": 30247.08,
+      "gex": 5185800190.514951
      },
      {
-      "px": 30309.68,
-      "gex": 5823676875.57033
+      "px": 30306.62,
+      "gex": 5793540699.8005085
      },
      {
-      "px": 30369.23,
-      "gex": 6390881970.716755
+      "px": 30366.17,
+      "gex": 6362682660.918303
      },
      {
-      "px": 30428.77,
-      "gex": 6919173044.906601
+      "px": 30425.71,
+      "gex": 6892921980.513503
      },
      {
-      "px": 30488.32,
-      "gex": 7408657154.3214245
+      "px": 30485.25,
+      "gex": 7384349686.090859
      },
      {
-      "px": 30547.87,
-      "gex": 7859680983.81561
+      "px": 30544.79,
+      "gex": 7837302979.363937
      },
      {
-      "px": 30607.42,
-      "gex": 8272726931.604797
+      "px": 30604.33,
+      "gex": 8252258835.292518
      },
      {
-      "px": 30666.96,
-      "gex": 8648360912.941477
+      "px": 30663.87,
+      "gex": 8629779146.199692
      },
      {
-      "px": 30726.51,
-      "gex": 8987228605.96062
+      "px": 30723.41,
+      "gex": 8970504715.014915
      },
      {
-      "px": 30786.06,
-      "gex": 9290087095.10926
+      "px": 30782.96,
+      "gex": 9275185481.407959
      },
      {
-      "px": 30845.61,
-      "gex": 9557853155.44578
+      "px": 30842.5,
+      "gex": 9544728413.224583
      },
      {
-      "px": 30905.15,
-      "gex": 9791648652.1404
+      "px": 30902.04,
+      "gex": 9780243471.768778
      },
      {
-      "px": 30964.7,
-      "gex": 9992827222.827612
+      "px": 30961.58,
+      "gex": 9983071548.868193
      },
      {
-      "px": 31024.25,
-      "gex": 10162973038.996105
+      "px": 31021.12,
+      "gex": 10154784792.043781
      },
      {
-      "px": 31083.8,
-      "gex": 10303870013.369537
+      "px": 31080.66,
+      "gex": 10297157299.046848
      },
      {
-      "px": 31143.34,
-      "gex": 10417446479.416094
+      "px": 31140.2,
+      "gex": 10412110902.407288
      },
      {
-      "px": 31202.89,
-      "gex": 10505704841.667086
+      "px": 31199.75,
+      "gex": 10501645367.557838
      },
      {
-      "px": 31262.44,
-      "gex": 10570647468.828373
+      "px": 31259.29,
+      "gex": 10567764242.192072
      },
      {
-      "px": 31321.99,
-      "gex": 10614209367.023304
+      "px": 31318.83,
+      "gex": 10612406978.453917
      },
      {
-      "px": 31381.53,
-      "gex": 10638205604.815483
+      "px": 31378.37,
+      "gex": 10637395460.832333
      },
      {
-      "px": 31441.08,
-      "gex": 10644297953.093695
+      "px": 31437.91,
+      "gex": 10644399594.059364
      },
      {
-      "px": 31500.63,
-      "gex": 10633981606.482262
+      "px": 31497.45,
+      "gex": 10634922997.73541
      },
      {
-      "px": 31560.18,
-      "gex": 10608589825.43856
+      "px": 31557.0,
+      "gex": 10610306787.043858
      }
     ],
     "earnings": [
@@ -3409,7 +3409,7 @@
       "score": -1,
       "raw": -1,
       "weight": 1.25,
-      "text": "ES -0.46% from 4 PM to the 6 PM cutoff. After-hours selling, often an earnings miss, sets a heavy tone.",
+      "text": "ES -0.47% from 4 PM to the 6 PM cutoff. After-hours selling, often an earnings miss, sets a heavy tone.",
       "group": "Session"
      },
      {
@@ -3463,7 +3463,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.5,
-      "text": "Put wall 7,715 / call wall 8,015: 250 pts up vs 50 down. Near support.",
+      "text": "Put wall 7,710 / call wall 8,015: 251 pts up vs 54 down. Near support.",
       "group": "Dealer positioning"
      },
      {
@@ -3479,42 +3479,42 @@
     "changed": null,
     "expected_range": {
      "move": 73.42,
-     "low": 7691.33,
-     "high": 7838.17
+     "low": 7690.83,
+     "high": 7837.67
     },
     "levels": {
-     "price": 7764.75,
-     "flip": 7745.96,
+     "price": 7764.25,
+     "flip": 7745.71,
      "flip_close": null,
      "call_wall": 8015,
-     "put_wall": 7715,
+     "put_wall": 7710,
      "majors": [
       {
-       "level": 7615,
-       "net_gex": -4261209061.9457345
+       "level": 7610,
+       "net_gex": -4137116591.0060167
       },
       {
        "level": 7815,
-       "net_gex": 4777281203.865378
+       "net_gex": 4771900117.680963
       },
       {
        "level": 7865,
-       "net_gex": 5053452198.449835
+       "net_gex": 5043728454.279896
       },
       {
        "level": 7915,
-       "net_gex": 6070948200.16741
+       "net_gex": 6057717411.872143
       },
       {
        "level": 8015,
-       "net_gex": 4353098987.942028
+       "net_gex": 4345215662.680504
       }
      ]
     },
     "dealer": {
-     "net_gex_bn": 18.008,
+     "net_gex_bn": 17.767,
      "call_put_gamma": 1.09,
-     "dealer_delta_bn": 2509.6,
+     "dealer_delta_bn": 2509.46,
      "charm_bn": -0.0,
      "vanna_bn_per_pt": 32.079,
      "chains": [
@@ -3525,248 +3525,248 @@
     "flow": null,
     "profile": [
      {
-      "px": 7298.86,
-      "gex": -114230035175.9523
+      "px": 7298.39,
+      "gex": -114213778125.25519
      },
      {
-      "px": 7314.39,
-      "gex": -115295950088.06259
+      "px": 7313.92,
+      "gex": -115279978762.25328
      },
      {
-      "px": 7329.92,
-      "gex": -116332502779.18024
+      "px": 7329.45,
+      "gex": -116317072549.72708
      },
      {
-      "px": 7345.45,
-      "gex": -117321266923.35547
+      "px": 7344.98,
+      "gex": -117306685836.28069
      },
      {
-      "px": 7360.98,
-      "gex": -118240429627.83713
+      "px": 7360.51,
+      "gex": -118227059352.32848
      },
      {
-      "px": 7376.51,
-      "gex": -119064839813.54285
+      "px": 7376.04,
+      "gex": -119053094093.48112
      },
      {
-      "px": 7392.04,
-      "gex": -119766219697.01051
+      "px": 7391.57,
+      "gex": -119756560390.89342
      },
      {
-      "px": 7407.57,
-      "gex": -120313510266.3292
+      "px": 7407.09,
+      "gex": -120306441738.25394
      },
      {
-      "px": 7423.1,
-      "gex": -120673274107.36853
+      "px": 7422.62,
+      "gex": -120669337494.18037
      },
      {
-      "px": 7438.63,
-      "gex": -120810034203.62646
+      "px": 7438.15,
+      "gex": -120809803686.68147
      },
      {
-      "px": 7454.16,
-      "gex": -120686403464.51044
+      "px": 7453.68,
+      "gex": -120690486819.51877
      },
      {
-      "px": 7469.69,
-      "gex": -120262874651.27182
+      "px": 7469.21,
+      "gex": -120271919789.78412
      },
      {
-      "px": 7485.22,
-      "gex": -119497204032.94682
+      "px": 7484.74,
+      "gex": -119511911917.47258
      },
      {
-      "px": 7500.75,
-      "gex": -118343429162.29951
+      "px": 7500.27,
+      "gex": -118364571585.48447
      },
      {
-      "px": 7516.28,
-      "gex": -116750687367.7344
+      "px": 7515.79,
+      "gex": -116779126140.167
      },
      {
-      "px": 7531.81,
-      "gex": -114662107269.59169
+      "px": 7531.32,
+      "gex": -114698810044.57243
      },
      {
-      "px": 7547.34,
-      "gex": -112014088492.46716
+      "px": 7546.85,
+      "gex": -112060136365.87787
      },
      {
-      "px": 7562.87,
-      "gex": -108736240443.86447
+      "px": 7562.38,
+      "gex": -108792823749.06569
      },
      {
-      "px": 7578.4,
-      "gex": -104752135035.56226
+      "px": 7577.91,
+      "gex": -104820535807.0694
      },
      {
-      "px": 7593.93,
-      "gex": -99980904645.275
+      "px": 7593.44,
+      "gex": -100062465735.03387
      },
      {
-      "px": 7609.45,
-      "gex": -94339678369.31944
+      "px": 7608.96,
+      "gex": -94435758706.4226
      },
      {
-      "px": 7624.98,
-      "gex": -87746964529.03136
+      "px": 7624.49,
+      "gex": -87858876969.43407
      },
      {
-      "px": 7640.51,
-      "gex": -80127329352.82065
+      "px": 7640.02,
+      "gex": -80256253347.15523
      },
      {
-      "px": 7656.04,
-      "gex": -71417933088.60869
+      "px": 7655.55,
+      "gex": -71564792414.14783
      },
      {
-      "px": 7671.57,
-      "gex": -61577420688.211784
+      "px": 7671.08,
+      "gex": -61742720739.99757
      },
      {
-      "px": 7687.1,
-      "gex": -50597130476.21817
+      "px": 7686.61,
+      "gex": -50780761980.89297
      },
      {
-      "px": 7702.63,
-      "gex": -38513605400.745514
+      "px": 7702.14,
+      "gex": -38714639321.35701
      },
      {
-      "px": 7718.16,
-      "gex": -25420288803.257572
+      "px": 7717.66,
+      "gex": -25636803563.987053
      },
      {
-      "px": 7733.69,
-      "gex": -11475570917.970268
+      "px": 7733.19,
+      "gex": -11704559469.142944
      },
      {
-      "px": 7749.22,
-      "gex": 3095543366.26217
+      "px": 7748.72,
+      "gex": 2858147664.6612587
      },
      {
-      "px": 7764.75,
-      "gex": 18007860572.791004
+      "px": 7764.25,
+      "gex": 17767022011.95592
      },
      {
-      "px": 7780.28,
-      "gex": 32930634535.63062
+      "px": 7779.78,
+      "gex": 32691927147.477592
      },
      {
-      "px": 7795.81,
-      "gex": 47508901493.05663
+      "px": 7795.31,
+      "gex": 47278129043.93495
      },
      {
-      "px": 7811.34,
-      "gex": 61388831076.12758
+      "px": 7810.84,
+      "gex": 61171603226.44789
      },
      {
-      "px": 7826.87,
-      "gex": 74243887418.78749
+      "px": 7826.36,
+      "gex": 74045204438.10242
      },
      {
-      "px": 7842.4,
-      "gex": 85798645667.5013
+      "px": 7841.89,
+      "gex": 85622540385.76996
      },
      {
-      "px": 7857.93,
-      "gex": 95847552700.08888
+      "px": 7857.42,
+      "gex": 95696829513.0662
      },
      {
-      "px": 7873.46,
-      "gex": 104266624671.76494
+      "px": 7872.95,
+      "gex": 104142722751.46042
      },
      {
-      "px": 7888.99,
-      "gex": 111016981259.37064
+      "px": 7888.48,
+      "gex": 110919973241.20609
      },
      {
-      "px": 7904.52,
-      "gex": 116140172994.95465
+      "px": 7904.01,
+      "gex": 116068892582.4794
      },
      {
-      "px": 7920.05,
-      "gex": 119746343583.63118
+      "px": 7919.53,
+      "gex": 119698618296.43808
      },
      {
-      "px": 7935.57,
-      "gex": 121997200031.62296
+      "px": 7935.06,
+      "gex": 121970151971.9237
      },
      {
-      "px": 7951.1,
-      "gex": 123086355341.41656
+      "px": 7950.59,
+      "gex": 123076726083.96042
      },
      {
-      "px": 7966.63,
-      "gex": 123219745505.4623
+      "px": 7966.12,
+      "gex": 123224202241.70691
      },
      {
-      "px": 7982.16,
-      "gex": 122598494986.28442
+      "px": 7981.65,
+      "gex": 122613883265.59827
      },
      {
-      "px": 7997.69,
-      "gex": 121405908982.81268
+      "px": 7997.18,
+      "gex": 121429430592.85818
      },
      {
-      "px": 8013.22,
-      "gex": 119799378571.62141
+      "px": 8012.71,
+      "gex": 119828688139.63403
      },
      {
-      "px": 8028.75,
-      "gex": 117907096673.0321
+      "px": 8028.23,
+      "gex": 117940324202.93387
      },
      {
-      "px": 8044.28,
-      "gex": 115828774956.1997
+      "px": 8043.76,
+      "gex": 115864491233.63452
      },
      {
-      "px": 8059.81,
-      "gex": 113639133843.05565
+      "px": 8059.29,
+      "gex": 113676280230.1916
      },
      {
-      "px": 8075.34,
-      "gex": 111392833695.26297
+      "px": 8074.82,
+      "gex": 111430637496.30656
      },
      {
-      "px": 8090.87,
-      "gex": 109129672711.9741
+      "px": 8090.35,
+      "gex": 109167565291.87964
      },
      {
-      "px": 8106.4,
-      "gex": 106879197542.74844
+      "px": 8105.88,
+      "gex": 106916746492.47624
      },
      {
-      "px": 8121.93,
-      "gex": 104664248195.66417
+      "px": 8121.41,
+      "gex": 104701108741.30939
      },
      {
-      "px": 8137.46,
-      "gex": 102503301303.88457
+      "px": 8136.93,
+      "gex": 102539187073.51938
      },
      {
-      "px": 8152.99,
-      "gex": 100411731266.93082
+      "px": 8152.46,
+      "gex": 100446401085.00452
      },
      {
-      "px": 8168.52,
-      "gex": 98402258040.26733
+      "px": 8167.99,
+      "gex": 98435513717.08275
      },
      {
-      "px": 8184.05,
-      "gex": 96484900941.2163
+      "px": 8183.52,
+      "gex": 96516590804.51807
      },
      {
-      "px": 8199.58,
-      "gex": 94666733187.17935
+      "px": 8199.05,
+      "gex": 94696756917.02844
      },
      {
-      "px": 8215.11,
-      "gex": 92951661476.4989
+      "px": 8214.58,
+      "gex": 92979973162.89792
      },
      {
-      "px": 8230.64,
-      "gex": 91340366978.36668
+      "px": 8230.1,
+      "gex": 91366974792.06058
      }
     ],
     "earnings": [
@@ -3853,55 +3853,55 @@
   "sources": {
    "Yahoo prices": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:33-04:00",
+    "fetched": "2026-10-28T23:24:57-04:00",
     "data_time": "2026-10-28T18:00:00-04:00",
     "detail": "16 of 16 tickers \u00b7 1m bars, cut at 6:00 PM ET"
    },
    "Economic calendar": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:33-04:00",
+    "fetched": "2026-10-28T23:24:57-04:00",
     "data_time": null,
     "detail": ""
    },
    "Earnings Oct 28": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:34-04:00",
+    "fetched": "2026-10-28T23:24:58-04:00",
     "data_time": null,
     "detail": "222 companies"
    },
    "Earnings Oct 29": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:36-04:00",
+    "fetched": "2026-10-28T23:24:59-04:00",
     "data_time": null,
     "detail": "317 companies"
    },
    "CBOE NDX options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:37-04:00",
-    "data_time": "2026-10-28T23:08:11-04:00",
+    "fetched": "2026-10-28T23:25:00-04:00",
+    "data_time": "2026-10-28T23:19:52-04:00",
     "detail": "15,384 contracts"
    },
    "CBOE QQQ options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:38-04:00",
+    "fetched": "2026-10-28T23:25:01-04:00",
     "data_time": "2026-10-28T21:06:16-04:00",
     "detail": "10,092 contracts"
    },
    "News headlines": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:41-04:00",
+    "fetched": "2026-10-28T23:25:04-04:00",
     "data_time": null,
     "detail": "5 of 6 feeds live \u00b7 100 headlines"
    },
    "CBOE SPX options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:40-04:00",
+    "fetched": "2026-10-28T23:25:03-04:00",
     "data_time": "2026-10-28T22:49:46-04:00",
     "detail": "28,948 contracts"
    },
    "CBOE SPY options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:40-04:00",
+    "fetched": "2026-10-28T23:25:04-04:00",
     "data_time": "2026-10-28T21:31:27-04:00",
     "detail": "12,374 contracts"
    }
@@ -4010,7 +4010,7 @@
   },
   "mode": "point-in-time",
   "as_of": "2026-10-28T09:25:00-04:00",
-  "generated": "2026-10-28T23:12:08-04:00",
+  "generated": "2026-10-28T23:21:25-04:00",
   "events": [
    {
     "time": "2:00 PM",
@@ -4074,7 +4074,7 @@
     "ts": "2026-10-28T08:29:00-04:00"
    },
    "BTC-USD": {
-    "last": 80529.5391,
+    "last": 80531.9609,
     "chg_pct": -0.21,
     "ts": "2026-10-28T09:25:00-04:00"
    },
@@ -4793,7 +4793,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.75,
-      "text": "Price is 37 pts above the gamma flip (7,738). Dealers are long gamma, so they buy dips and sell rips.",
+      "text": "Price is 38 pts above the gamma flip (7,738). Dealers are long gamma, so they buy dips and sell rips.",
       "group": "Dealer positioning"
      },
      {
@@ -4811,7 +4811,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.5,
-      "text": "Put wall 7,715 / call wall 8,015: 240 pts up vs 60 down. Near support.",
+      "text": "Put wall 7,710 / call wall 8,015: 240 pts up vs 66 down. Near support.",
       "group": "Dealer positioning"
      },
      {
@@ -4820,7 +4820,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.4,
-      "text": "Time decay shifts dealer hedges by $17.67B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+      "text": "Time decay shifts dealer hedges by $17.68B by 4 PM. Dealers buy back hedges, an afternoon bid.",
       "group": "Dealer positioning"
      },
      {
@@ -4841,39 +4841,39 @@
     },
     "levels": {
      "price": 7775.5,
-     "flip": 7738.11,
-     "flip_close": 7745.86,
+     "flip": 7737.86,
+     "flip_close": 7745.61,
      "call_wall": 8015,
-     "put_wall": 7715,
+     "put_wall": 7710,
      "majors": [
       {
        "level": 7785,
-       "net_gex": 5853336091.338326
+       "net_gex": 5859053593.760835
       },
       {
        "level": 7815,
-       "net_gex": 6284329708.644307
+       "net_gex": 6297220862.434972
       },
       {
        "level": 7865,
-       "net_gex": 5888229171.655016
+       "net_gex": 5902794184.188761
       },
       {
        "level": 7915,
-       "net_gex": 6976286833.8654785
+       "net_gex": 6990098187.263178
       },
       {
        "level": 8015,
-       "net_gex": 4983220823.575863
+       "net_gex": 4992304700.075886
       }
      ]
     },
     "dealer": {
-     "net_gex_bn": 47.778,
+     "net_gex_bn": 48.09,
      "call_put_gamma": 1.24,
-     "dealer_delta_bn": 2569.05,
-     "charm_bn": 17.671,
-     "vanna_bn_per_pt": 33.186,
+     "dealer_delta_bn": 2569.29,
+     "charm_bn": 17.681,
+     "vanna_bn_per_pt": 33.183,
      "chains": [
       "SPX",
       "SPY"
@@ -4883,247 +4883,247 @@
     "profile": [
      {
       "px": 7308.97,
-      "gex": -121325898601.53183
+      "gex": -121353257337.00143
      },
      {
       "px": 7324.52,
-      "gex": -123313358764.74454
+      "gex": -123346425631.19083
      },
      {
       "px": 7340.07,
-      "gex": -125696493533.48659
+      "gex": -125736239288.08725
      },
      {
       "px": 7355.62,
-      "gex": -128577398088.94164
+      "gex": -128625892486.34404
      },
      {
       "px": 7371.17,
-      "gex": -132068379730.6836
+      "gex": -132126360449.68121
      },
      {
       "px": 7386.72,
-      "gex": -136051996246.23428
+      "gex": -136114431560.42029
      },
      {
       "px": 7402.28,
-      "gex": -139955580145.97568
+      "gex": -140010249786.43338
      },
      {
       "px": 7417.83,
-      "gex": -142902083906.50635
+      "gex": -142935941421.83826
      },
      {
       "px": 7433.38,
-      "gex": -144314801060.8274
+      "gex": -144324815516.07053
      },
      {
       "px": 7448.93,
-      "gex": -144478648393.3602
+      "gex": -144476373010.31635
      },
      {
       "px": 7464.48,
-      "gex": -144417143562.1781
+      "gex": -144420209181.15677
      },
      {
       "px": 7480.03,
-      "gex": -145047343114.3764
+      "gex": -145063907490.2744
      },
      {
       "px": 7495.58,
-      "gex": -146328059277.50214
+      "gex": -146348308633.14642
      },
      {
       "px": 7511.13,
-      "gex": -147199512053.74405
+      "gex": -147202516021.8808
      },
      {
       "px": 7526.68,
-      "gex": -146390608456.79303
+      "gex": -146360372967.97006
      },
      {
       "px": 7542.23,
-      "gex": -143353497494.15564
+      "gex": -143289606950.53995
      },
      {
       "px": 7557.79,
-      "gex": -138511005954.049
+      "gex": -138425415186.009
      },
      {
       "px": 7573.34,
-      "gex": -132710236602.69843
+      "gex": -132615204550.02393
      },
      {
       "px": 7588.89,
-      "gex": -126477654565.01675
+      "gex": -126376346058.87187
      },
      {
       "px": 7604.44,
-      "gex": -119702849633.35327
+      "gex": -119589124162.43959
      },
      {
       "px": 7619.99,
-      "gex": -111867531799.67343
+      "gex": -111732293061.85524
      },
      {
       "px": 7635.54,
-      "gex": -102474811072.73692
+      "gex": -102312030819.69012
      },
      {
       "px": 7651.09,
-      "gex": -91298153005.77267
+      "gex": -91106437809.79048
      },
      {
       "px": 7666.64,
-      "gex": -78356343620.45905
+      "gex": -78137082411.09404
      },
      {
       "px": 7682.19,
-      "gex": -63773190724.29663
+      "gex": -63528474694.04158
      },
      {
       "px": 7697.74,
-      "gex": -47685976577.75088
+      "gex": -47417857454.65966
      },
      {
       "px": 7713.3,
-      "gex": -30231913687.2113
+      "gex": -29942613360.649837
      },
      {
       "px": 7728.85,
-      "gex": -11579646922.273724
+      "gex": -11272384238.195034
      },
      {
       "px": 7744.4,
-      "gex": 7995645654.30545
+      "gex": 8315076427.197014
      },
      {
       "px": 7759.95,
-      "gex": 28013757923.411617
+      "gex": 28335709867.03612
      },
      {
       "px": 7775.5,
-      "gex": 47777695773.23251
+      "gex": 48089852309.89544
      },
      {
       "px": 7791.05,
-      "gex": 66534079704.72235
+      "gex": 66825082196.48508
      },
      {
       "px": 7806.6,
-      "gex": 83686055750.16882
+      "gex": 83948004164.62617
      },
      {
       "px": 7822.15,
-      "gex": 98832817623.58307
+      "gex": 99059994486.5033
      },
      {
       "px": 7837.7,
-      "gex": 111631026246.4084
+      "gex": 111817559133.3422
      },
      {
       "px": 7853.26,
-      "gex": 121746062199.31184
+      "gex": 121887298281.2881
      },
      {
       "px": 7868.81,
-      "gex": 129061127942.35103
+      "gex": 129158501947.22253
      },
      {
       "px": 7884.36,
-      "gex": 133940259409.34665
+      "gex": 134003941497.12253
      },
      {
       "px": 7899.91,
-      "gex": 137193947080.71793
+      "gex": 137238823297.26268
      },
      {
       "px": 7915.46,
-      "gex": 139663459229.93454
+      "gex": 139700435418.3186
      },
      {
       "px": 7931.01,
-      "gex": 141714183758.256
+      "gex": 141743488861.56863
      },
      {
       "px": 7946.56,
-      "gex": 143041842352.39243
+      "gex": 143053882610.1327
      },
      {
       "px": 7962.11,
-      "gex": 142966788235.46985
+      "gex": 142950340101.31012
      },
      {
       "px": 7977.66,
-      "gex": 141009206799.0189
+      "gex": 140960842230.9964
      },
      {
       "px": 7993.21,
-      "gex": 137309035246.68842
+      "gex": 137236629360.24744
      },
      {
       "px": 8008.77,
-      "gex": 132586793697.42532
+      "gex": 132504991898.34735
      },
      {
       "px": 8024.32,
-      "gex": 127725041738.06003
+      "gex": 127647065157.01743
      },
      {
       "px": 8039.87,
-      "gex": 123328514121.79453
+      "gex": 123260692488.44716
      },
      {
       "px": 8055.42,
-      "gex": 119562475089.84799
+      "gex": 119504374887.0082
      },
      {
       "px": 8070.97,
-      "gex": 116288356050.64444
+      "gex": 116236523184.46649
      },
      {
       "px": 8086.52,
-      "gex": 113301013902.7379
+      "gex": 113252526523.51324
      },
      {
       "px": 8102.07,
-      "gex": 110477453338.99002
+      "gex": 110431191380.60449
      },
      {
       "px": 8117.62,
-      "gex": 107791726931.62766
+      "gex": 107747812925.83318
      },
      {
       "px": 8133.17,
-      "gex": 105262375148.45341
+      "gex": 105221190740.13419
      },
      {
       "px": 8148.72,
-      "gex": 102903131875.30536
+      "gex": 102864714967.44386
      },
      {
       "px": 8164.28,
-      "gex": 100701533359.03415
+      "gex": 100665452910.73775
      },
      {
       "px": 8179.83,
-      "gex": 98623511000.18687
+      "gex": 98589131473.48221
      },
      {
       "px": 8195.38,
-      "gex": 96636956414.67519
+      "gex": 96603929266.66537
      },
      {
       "px": 8210.93,
-      "gex": 94739218788.21753
+      "gex": 94707857529.6037
      },
      {
       "px": 8226.48,
-      "gex": 92967049640.84634
+      "gex": 92938258384.1826
      },
      {
       "px": 8242.03,
-      "gex": 91377782802.91411
+      "gex": 91352513678.43196
      }
     ],
     "earnings": [
@@ -5248,55 +5248,55 @@
   "sources": {
    "Yahoo prices": {
     "ok": true,
-    "fetched": "2026-10-28T23:12:11-04:00",
+    "fetched": "2026-10-28T23:21:30-04:00",
     "data_time": "2026-10-28T09:25:00-04:00",
     "detail": "16 of 16 tickers \u00b7 1m bars, cut at 9:25 AM ET"
    },
    "Economic calendar": {
     "ok": true,
-    "fetched": "2026-10-28T23:12:11-04:00",
+    "fetched": "2026-10-28T23:21:30-04:00",
     "data_time": null,
     "detail": ""
    },
    "Earnings Oct 28": {
     "ok": true,
-    "fetched": "2026-10-28T23:12:13-04:00",
+    "fetched": "2026-10-28T23:21:31-04:00",
     "data_time": null,
     "detail": "222 companies"
    },
    "Earnings Oct 27": {
     "ok": true,
-    "fetched": "2026-10-28T23:12:15-04:00",
+    "fetched": "2026-10-28T23:21:34-04:00",
     "data_time": null,
     "detail": "185 companies"
    },
    "CBOE NDX options": {
     "ok": true,
-    "fetched": "2026-10-28T23:12:16-04:00",
-    "data_time": "2026-10-28T23:08:11-04:00",
+    "fetched": "2026-10-28T23:21:36-04:00",
+    "data_time": "2026-10-28T23:19:52-04:00",
     "detail": "15,384 contracts"
    },
    "CBOE QQQ options": {
     "ok": true,
-    "fetched": "2026-10-28T23:12:16-04:00",
+    "fetched": "2026-10-28T23:21:36-04:00",
     "data_time": "2026-10-28T21:06:16-04:00",
     "detail": "10,092 contracts"
    },
    "News headlines": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:20-04:00",
+    "fetched": "2026-10-28T23:24:41-04:00",
     "data_time": null,
     "detail": "5 of 6 feeds live \u00b7 100 headlines"
    },
    "CBOE SPX options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:19-04:00",
+    "fetched": "2026-10-28T23:24:40-04:00",
     "data_time": "2026-10-28T22:49:46-04:00",
     "detail": "28,948 contracts"
    },
    "CBOE SPY options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:20-04:00",
+    "fetched": "2026-10-28T23:24:41-04:00",
     "data_time": "2026-10-28T21:31:27-04:00",
     "detail": "12,374 contracts"
    }
@@ -5312,8 +5312,8 @@
    "end": "2026-10-29T02:00:00-04:00"
   },
   "mode": "live",
-  "as_of": "2026-10-28T23:12:08-04:00",
-  "generated": "2026-10-28T23:12:08-04:00",
+  "as_of": "2026-10-28T23:21:25-04:00",
+  "generated": "2026-10-28T23:21:25-04:00",
   "events": [
    {
     "time": "8:30 AM",
@@ -5350,34 +5350,34 @@
   ],
   "macro": {
    "NQ=F": {
-    "last": 29552.75,
-    "chg_pct": -1.76,
-    "ts": "2026-10-28T23:05:00-04:00"
+    "last": 29523.25,
+    "chg_pct": -1.85,
+    "ts": "2026-10-28T23:14:00-04:00"
    },
    "ES=F": {
-    "last": 7747.0,
-    "chg_pct": -0.69,
-    "ts": "2026-10-28T23:05:00-04:00"
+    "last": 7742.25,
+    "chg_pct": -0.75,
+    "ts": "2026-10-28T23:14:00-04:00"
    },
    "ZN=F": {
-    "last": 106.1094,
-    "chg_pct": 0.21,
-    "ts": "2026-10-28T23:05:00-04:00"
+    "last": 106.125,
+    "chg_pct": 0.22,
+    "ts": "2026-10-28T23:14:00-04:00"
    },
    "ZT=F": {
-    "last": 102.082,
+    "last": 102.0859,
     "chg_pct": 0.05,
-    "ts": "2026-10-28T23:04:00-04:00"
+    "ts": "2026-10-28T23:12:00-04:00"
    },
    "DX-Y.NYB": {
-    "last": 102.16,
+    "last": 102.158,
     "chg_pct": 0.07,
-    "ts": "2026-10-28T23:05:00-04:00"
+    "ts": "2026-10-28T23:14:00-04:00"
    },
    "CL=F": {
-    "last": 101.49,
-    "chg_pct": -0.05,
-    "ts": "2026-10-28T23:05:00-04:00"
+    "last": 101.3,
+    "chg_pct": -0.24,
+    "ts": "2026-10-28T23:14:00-04:00"
    },
    "HYG": {
     "last": 77.65,
@@ -5385,14 +5385,14 @@
     "ts": "2026-10-28T17:28:00-04:00"
    },
    "BTC-USD": {
-    "last": 79793.9375,
-    "chg_pct": -2.23,
-    "ts": "2026-10-28T23:12:00-04:00"
+    "last": 79753.1016,
+    "chg_pct": -2.29,
+    "ts": "2026-10-28T23:21:00-04:00"
    },
    "VXX": {
     "last": 18.06,
     "chg_pct": 1.98,
-    "ts": "2026-10-28T19:58:00-04:00"
+    "ts": "2026-10-28T19:58:54-04:00"
    },
    "^N225": {
     "last": 64131.2812,
@@ -5400,9 +5400,9 @@
     "ts": "2026-10-28T22:35:00-04:00"
    },
    "^HSI": {
-    "last": 23160.1895,
-    "chg_pct": 0.28,
-    "ts": "2026-10-28T23:00:00-04:00"
+    "last": 23123.2109,
+    "chg_pct": 0.12,
+    "ts": "2026-10-28T23:09:00-04:00"
    },
    "^VIX": {
     "last": 16.91,
@@ -5415,18 +5415,18 @@
     "name": "Nasdaq-100 futures",
     "bias": {
      "bias": "Bearish",
-     "score": -0.181,
-     "raw_score": -0.213,
+     "score": -0.167,
+     "raw_score": -0.197,
      "dampened": [
       "mega-cap earnings"
      ],
-     "own_score": -0.223,
+     "own_score": -0.189,
      "conviction": "Low",
-     "ups": 2,
+     "ups": 3,
      "downs": 6,
      "total": 19,
-     "overall": "For: Asia session so far, Mega-cap earnings, Gamma flip. Against: VIX term structure, Charm into close. Dealers short gamma: moves can run. ES agrees.",
-     "invalidation": "A reclaim and hold of the gamma flip at 30,090",
+     "overall": "For: Asia session so far, Mega-cap earnings, Gamma flip. Against: VIX term structure, Wall range. Dealers short gamma: moves can run. ES agrees.",
+     "invalidation": "A reclaim and hold of the gamma flip at 30,087",
      "macro_share": 82
     },
     "signals": [
@@ -5436,7 +5436,7 @@
       "score": 0,
       "raw": 0,
       "weight": 1.0,
-      "text": "Nikkei +0.1% \u00b7 Hang Seng +0.3%. Mixed overseas, so no handoff.",
+      "text": "Nikkei +0.1% \u00b7 Hang Seng +0.1%. Mixed overseas, so no handoff.",
       "group": "Macro"
      },
      {
@@ -5445,7 +5445,7 @@
       "score": 0,
       "raw": 0,
       "weight": 1.25,
-      "text": "10Y futures +0.21% \u2248 -3.2 bp in yield (from 5.05%). Rates are not in play.",
+      "text": "10Y futures +0.22% \u2248 -3.4 bp in yield (from 5.05%). Rates are not in play.",
       "group": "Macro"
      },
      {
@@ -5454,7 +5454,7 @@
       "score": 0,
       "raw": 0,
       "weight": 0.75,
-      "text": "2Y futures +0.046% \u2248 -2.4 bp. Fed expectations are steady.",
+      "text": "2Y futures +0.050% \u2248 -2.6 bp. Fed expectations are steady.",
       "group": "Macro"
      },
      {
@@ -5472,7 +5472,7 @@
       "score": 0,
       "raw": 0,
       "weight": 0.5,
-      "text": "WTI 101.49 (-0.0%). No energy shock.",
+      "text": "WTI 101.30 (-0.2%). No energy shock.",
       "group": "Macro"
      },
      {
@@ -5490,7 +5490,7 @@
       "score": -1,
       "raw": -1,
       "weight": 0.5,
-      "text": "Bitcoin -2.2% since yesterday's 4 PM. Speculative de-risking overnight.",
+      "text": "Bitcoin -2.3% since yesterday's 4 PM. Speculative de-risking overnight.",
       "group": "Macro"
      },
      {
@@ -5517,7 +5517,7 @@
       "score": -1,
       "raw": -1,
       "weight": 1.5,
-      "text": "NQ -0.80% since the Asia session opened (29,793.50 \u2192 29,556.00). Early weakness tends to persist through a session.",
+      "text": "NQ -0.88% since the Asia session opened (29,793.50 \u2192 29,530.75). Early weakness tends to persist through a session.",
       "group": "Session"
      },
      {
@@ -5526,7 +5526,7 @@
       "score": 0,
       "raw": 0,
       "weight": 0.75,
-      "text": "NQ +0.14% over the past hour. The last hour went nowhere.",
+      "text": "NQ +0.01% over the past hour. The last hour went nowhere.",
       "group": "Session"
      },
      {
@@ -5553,7 +5553,7 @@
       "score": -1,
       "raw": -1,
       "weight": 0.75,
-      "text": "Price is 537 pts below the gamma flip (30,090). Dealers are short gamma, so their hedging extends moves.",
+      "text": "Price is 564 pts below the gamma flip (30,087). Dealers are short gamma, so their hedging extends moves.",
       "group": "Dealer positioning"
      },
      {
@@ -5562,16 +5562,16 @@
       "score": -1,
       "raw": -1,
       "weight": 0.25,
-      "text": "Call \u00f7 put gamma 0.62. Put-heavy, so hedges sit below.",
+      "text": "Call \u00f7 put gamma 0.60. Put-heavy, so hedges sit below.",
       "group": "Dealer positioning"
      },
      {
       "key": "walls",
       "label": "Wall range",
-      "score": 0,
-      "raw": 0,
+      "score": 1,
+      "raw": 1,
       "weight": 0.5,
-      "text": "Put wall 29,025 / call wall 30,100: 547 pts up vs 528 down. Mid-range.",
+      "text": "Put wall 29,425 / call wall 30,100: 577 pts up vs 98 down. Near support.",
       "group": "Dealer positioning"
      },
      {
@@ -5580,7 +5580,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.4,
-      "text": "Time decay shifts dealer hedges by $2.49B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+      "text": "Time decay shifts dealer hedges by $2.45B by 4 PM. Dealers buy back hedges, an afternoon bid.",
       "group": "Dealer positioning"
      },
      {
@@ -5589,7 +5589,7 @@
       "score": -1,
       "raw": -1,
       "weight": 0.4,
-      "text": "Implied vol \u2248 +0.23 pts pre-market, worth about $0.59B of dealer selling.",
+      "text": "Implied vol \u2248 +0.23 pts pre-market, worth about $0.58B of dealer selling.",
       "group": "Dealer positioning"
      },
      {
@@ -5604,45 +5604,45 @@
     ],
     "changed": null,
     "expected_range": {
-     "move": 334.0,
-     "low": 29218.75,
-     "high": 29886.75
+     "move": 324.31,
+     "low": 29198.94,
+     "high": 29847.56
     },
     "levels": {
-     "price": 29552.75,
-     "flip": 30089.89,
-     "flip_close": 30101.63,
+     "price": 29523.25,
+     "flip": 30086.85,
+     "flip_close": 30098.88,
      "call_wall": 30100,
-     "put_wall": 29025,
+     "put_wall": 29425,
      "majors": [
       {
        "level": 28200,
-       "net_gex": -681372689.746467
+       "net_gex": -692515558.0289768
       },
       {
        "level": 28600,
-       "net_gex": -875326659.6001874
+       "net_gex": -897898127.725222
       },
       {
        "level": 29025,
-       "net_gex": -1070668332.8875443
+       "net_gex": -1047338596.6412607
       },
       {
        "level": 29425,
-       "net_gex": -714387208.8005596
+       "net_gex": -718978978.1105106
       },
       {
        "level": 30100,
-       "net_gex": 757935678.640427
+       "net_gex": 751947424.6214105
       }
      ]
     },
     "dealer": {
-     "net_gex_bn": -7.014,
-     "call_put_gamma": 0.62,
-     "dealer_delta_bn": 185.72,
-     "charm_bn": 2.49,
-     "vanna_bn_per_pt": 2.514,
+     "net_gex_bn": -7.302,
+     "call_put_gamma": 0.6,
+     "dealer_delta_bn": 186.18,
+     "charm_bn": 2.451,
+     "vanna_bn_per_pt": 2.483,
      "chains": [
       "NDX",
       "QQQ"
@@ -5655,22 +5655,22 @@
       {
        "level": 30050,
        "side": "call",
-       "premium": 20379850.0
+       "premium": 20348100.0
       },
       {
        "level": 29925,
        "side": "call",
-       "premium": 19640303.0
+       "premium": 19736303.0
       },
       {
        "level": 29975,
        "side": "call",
-       "premium": 17488228.5
+       "premium": 17545018.5
       },
       {
        "level": 29925,
        "side": "put",
-       "premium": 15823248.5
+       "premium": 15896098.5
       },
       {
        "level": 29850,
@@ -5681,248 +5681,248 @@
     },
     "profile": [
      {
-      "px": 27779.58,
-      "gex": -11239980615.197653
+      "px": 27751.85,
+      "gex": -11179768644.764862
      },
      {
-      "px": 27838.69,
-      "gex": -11380682002.199451
+      "px": 27810.9,
+      "gex": -11322155574.973724
      },
      {
-      "px": 27897.8,
-      "gex": -11516752987.306503
+      "px": 27869.95,
+      "gex": -11460431075.833277
      },
      {
-      "px": 27956.9,
-      "gex": -11646963254.961926
+      "px": 27928.99,
+      "gex": -11593427445.062296
      },
      {
-      "px": 28016.01,
-      "gex": -11769944386.29927
+      "px": 27988.04,
+      "gex": -11719836345.692
      },
      {
-      "px": 28075.11,
-      "gex": -11884197448.04449
+      "px": 28047.09,
+      "gex": -11838214438.647423
      },
      {
-      "px": 28134.22,
-      "gex": -11988104980.070324
+      "px": 28106.13,
+      "gex": -11946993472.415373
      },
      {
-      "px": 28193.32,
-      "gex": -12079947135.691416
+      "px": 28165.18,
+      "gex": -12044494709.322884
      },
      {
-      "px": 28252.43,
-      "gex": -12157921461.785742
+      "px": 28224.23,
+      "gex": -12128947284.257534
      },
      {
-      "px": 28311.53,
-      "gex": -12220165593.730425
+      "px": 28283.27,
+      "gex": -12198509846.784603
      },
      {
-      "px": 28370.64,
-      "gex": -12264782009.197018
+      "px": 28342.32,
+      "gex": -12251294668.238754
      },
      {
-      "px": 28429.75,
-      "gex": -12289863933.98306
+      "px": 28401.37,
+      "gex": -12285393314.299986
      },
      {
-      "px": 28488.85,
-      "gex": -12293521491.906118
+      "px": 28460.41,
+      "gex": -12298902971.900694
      },
      {
-      "px": 28547.96,
-      "gex": -12273907190.584259
+      "px": 28519.46,
+      "gex": -12289952531.76199
      },
      {
-      "px": 28607.06,
-      "gex": -12229239788.041803
+      "px": 28578.51,
+      "gex": -12256727510.399124
      },
      {
-      "px": 28666.17,
-      "gex": -12157825463.823277
+      "px": 28637.55,
+      "gex": -12197492807.250118
      },
      {
-      "px": 28725.27,
-      "gex": -12058075024.63702
+      "px": 28696.6,
+      "gex": -12110612121.489824
      },
      {
-      "px": 28784.38,
-      "gex": -11928515641.153873
+      "px": 28755.65,
+      "gex": -11994562619.273209
      },
      {
-      "px": 28843.48,
-      "gex": -11767795407.389553
+      "px": 28814.69,
+      "gex": -11847943197.256502
      },
      {
-      "px": 28902.59,
-      "gex": -11574678964.354687
+      "px": 28873.74,
+      "gex": -11669474527.278013
      },
      {
-      "px": 28961.69,
-      "gex": -11348032766.2794
+      "px": 28932.78,
+      "gex": -11457989165.847496
      },
      {
-      "px": 29020.8,
-      "gex": -11086799653.814642
+      "px": 28991.83,
+      "gex": -11212410674.721626
      },
      {
-      "px": 29079.91,
-      "gex": -10789964663.280464
+      "px": 29050.88,
+      "gex": -10931722353.723026
      },
      {
-      "px": 29139.01,
-      "gex": -10456517690.155937
+      "px": 29109.92,
+      "gex": -10614929234.349472
      },
      {
-      "px": 29198.12,
-      "gex": -10085423360.287432
+      "px": 29168.97,
+      "gex": -10261021426.16838
      },
      {
-      "px": 29257.22,
-      "gex": -9675612802.583221
+      "px": 29228.02,
+      "gex": -9868951850.264475
      },
      {
-      "px": 29316.33,
-      "gex": -9226013471.49577
+      "px": 29287.06,
+      "gex": -9437644741.166742
      },
      {
-      "px": 29375.43,
-      "gex": -8735629160.861212
+      "px": 29346.11,
+      "gex": -8966050224.23019
      },
      {
-      "px": 29434.54,
-      "gex": -8203672127.041883
+      "px": 29405.16,
+      "gex": -8453252790.405298
      },
      {
-      "px": 29493.64,
-      "gex": -7629735604.634205
+      "px": 29464.2,
+      "gex": -7898628568.476788
      },
      {
-      "px": 29552.75,
-      "gex": -7013983974.438498
+      "px": 29523.25,
+      "gex": -7302032821.428478
      },
      {
-      "px": 29611.86,
-      "gex": -6357335184.618678
+      "px": 29582.3,
+      "gex": -6663991787.225656
      },
      {
-      "px": 29670.96,
-      "gex": -5661616419.124489
+      "px": 29641.34,
+      "gex": -5985875577.76884
      },
      {
-      "px": 29730.07,
-      "gex": -4929683321.655094
+      "px": 29700.39,
+      "gex": -5270038143.862855
      },
      {
-      "px": 29789.17,
-      "gex": -4165496648.0809197
+      "px": 29759.44,
+      "gex": -4519917602.678121
      },
      {
-      "px": 29848.28,
-      "gex": -3374144565.264858
+      "px": 29818.48,
+      "gex": -3740088454.613155
      },
      {
-      "px": 29907.38,
-      "gex": -2561789800.5513773
+      "px": 29877.53,
+      "gex": -2936248038.9191008
      },
      {
-      "px": 29966.49,
-      "gex": -1735519443.4198394
+      "px": 29936.58,
+      "gex": -2115113094.5315356
      },
      {
-      "px": 30025.59,
-      "gex": -903088109.3864876
+      "px": 29995.62,
+      "gex": -1284208739.274762
      },
      {
-      "px": 30084.7,
-      "gex": -72568824.33538103
+      "px": 30054.67,
+      "gex": -451552885.9421978
      },
      {
-      "px": 30143.81,
-      "gex": 748050783.973015
+      "px": 30113.72,
+      "gex": 374734966.66652584
      },
      {
-      "px": 30202.91,
-      "gex": 1551276914.4122076
+      "px": 30172.76,
+      "gex": 1186852882.6691935
      },
      {
-      "px": 30262.02,
-      "gex": 2330473743.550801
+      "px": 30231.81,
+      "gex": 1977711272.9017227
      },
      {
-      "px": 30321.12,
-      "gex": 3080144778.105858
+      "px": 30290.85,
+      "gex": 2741258747.910043
      },
      {
-      "px": 30380.23,
-      "gex": 3796105727.508932
+      "px": 30349.9,
+      "gex": 3472707632.3553624
      },
      {
-      "px": 30439.33,
-      "gex": 4475534697.539988
+      "px": 30408.95,
+      "gex": 4168640332.8804617
      },
      {
-      "px": 30498.44,
-      "gex": 5116896280.170391
+      "px": 30467.99,
+      "gex": 4826988451.858403
      },
      {
-      "px": 30557.54,
-      "gex": 5719749004.039078
+      "px": 30527.04,
+      "gex": 5446887871.257347
      },
      {
-      "px": 30616.65,
-      "gex": 6284461878.207577
+      "px": 30586.09,
+      "gex": 6028427729.221487
      },
      {
-      "px": 30675.75,
-      "gex": 6811882797.258705
+      "px": 30645.13,
+      "gex": 6572328721.511964
      },
      {
-      "px": 30734.86,
-      "gex": 7303013505.295811
+      "px": 30704.18,
+      "gex": 7079601736.475682
      },
      {
-      "px": 30793.97,
-      "gex": 7758746576.220418
+      "px": 30763.23,
+      "gex": 7551244736.8705845
      },
      {
-      "px": 30853.07,
-      "gex": 8179706775.356418
+      "px": 30822.27,
+      "gex": 7988029127.852698
      },
      {
-      "px": 30912.18,
-      "gex": 8566214834.544147
+      "px": 30881.32,
+      "gex": 8390406604.679922
      },
      {
-      "px": 30971.28,
-      "gex": 8918363187.397295
+      "px": 30940.37,
+      "gex": 8758539101.632956
      },
      {
-      "px": 31030.39,
-      "gex": 9236169145.70646
+      "px": 30999.41,
+      "gex": 9092426602.926224
      },
      {
-      "px": 31089.49,
-      "gex": 9519757927.456972
+      "px": 31058.46,
+      "gex": 9392088394.635708
      },
      {
-      "px": 31148.6,
-      "gex": 9769528204.010952
+      "px": 31117.51,
+      "gex": 9657747410.024134
      },
      {
-      "px": 31207.7,
-      "gex": 9986264317.709368
+      "px": 31176.55,
+      "gex": 9889974435.883015
      },
      {
-      "px": 31266.81,
-      "gex": 10171177037.63487
+      "px": 31235.6,
+      "gex": 10089765007.796154
      },
      {
-      "px": 31325.92,
-      "gex": 10325873016.865509
+      "px": 31294.65,
+      "gex": 10258541008.380037
      }
     ],
     "earnings": [
@@ -6003,14 +6003,14 @@
     "bias": {
      "bias": "Bearish",
      "score": -0.173,
-     "raw_score": -0.204,
+     "raw_score": -0.203,
      "dampened": [
       "mega-cap earnings"
      ],
-     "own_score": -0.193,
+     "own_score": -0.211,
      "conviction": "Low",
      "ups": 3,
-     "downs": 6,
+     "downs": 7,
      "total": 19,
      "overall": "For: Asia session so far, Mega-cap earnings, Gamma flip. Against: VIX term structure, Wall range. Dealers short gamma: moves can run. NQ agrees.",
      "invalidation": "A reclaim and hold of the gamma flip at 7,790",
@@ -6023,7 +6023,7 @@
       "score": 0,
       "raw": 0,
       "weight": 1.0,
-      "text": "Nikkei +0.1% \u00b7 Hang Seng +0.3%. Mixed overseas, so no handoff.",
+      "text": "Nikkei +0.1% \u00b7 Hang Seng +0.1%. Mixed overseas, so no handoff.",
       "group": "Macro"
      },
      {
@@ -6032,7 +6032,7 @@
       "score": 0,
       "raw": 0,
       "weight": 0.9375,
-      "text": "10Y futures +0.21% \u2248 -3.2 bp in yield (from 5.05%). Rates are not in play.",
+      "text": "10Y futures +0.22% \u2248 -3.4 bp in yield (from 5.05%). Rates are not in play.",
       "group": "Macro"
      },
      {
@@ -6041,7 +6041,7 @@
       "score": 0,
       "raw": 0,
       "weight": 0.75,
-      "text": "2Y futures +0.046% \u2248 -2.4 bp. Fed expectations are steady.",
+      "text": "2Y futures +0.050% \u2248 -2.6 bp. Fed expectations are steady.",
       "group": "Macro"
      },
      {
@@ -6059,7 +6059,7 @@
       "score": 0,
       "raw": 0,
       "weight": 0.5,
-      "text": "WTI 101.49 (-0.0%). No energy shock.",
+      "text": "WTI 101.30 (-0.2%). No energy shock.",
       "group": "Macro"
      },
      {
@@ -6077,7 +6077,7 @@
       "score": -1,
       "raw": -1,
       "weight": 0.5,
-      "text": "Bitcoin -2.2% since yesterday's 4 PM. Speculative de-risking overnight.",
+      "text": "Bitcoin -2.3% since yesterday's 4 PM. Speculative de-risking overnight.",
       "group": "Macro"
      },
      {
@@ -6104,7 +6104,7 @@
       "score": -1,
       "raw": -1,
       "weight": 1.5,
-      "text": "ES -0.25% since the Asia session opened (7,766.50 \u2192 7,747.25). Early weakness tends to persist through a session.",
+      "text": "ES -0.31% since the Asia session opened (7,766.50 \u2192 7,742.75). Early weakness tends to persist through a session.",
       "group": "Session"
      },
      {
@@ -6113,7 +6113,7 @@
       "score": 0,
       "raw": 0,
       "weight": 0.75,
-      "text": "ES +0.04% over the past hour. The last hour went nowhere.",
+      "text": "ES -0.05% over the past hour. The last hour went nowhere.",
       "group": "Session"
      },
      {
@@ -6140,16 +6140,16 @@
       "score": -1,
       "raw": -1,
       "weight": 0.75,
-      "text": "Price is 43 pts below the gamma flip (7,790). Dealers are short gamma, so their hedging extends moves.",
+      "text": "Price is 48 pts below the gamma flip (7,790). Dealers are short gamma, so their hedging extends moves.",
       "group": "Dealer positioning"
      },
      {
       "key": "tilt",
       "label": "Gamma tilt",
-      "score": 0,
-      "raw": 0,
+      "score": -1,
+      "raw": -1,
       "weight": 0.25,
-      "text": "Call \u00f7 put gamma 0.82. Balanced.",
+      "text": "Call \u00f7 put gamma 0.80. Put-heavy, so hedges sit below.",
       "group": "Dealer positioning"
      },
      {
@@ -6158,7 +6158,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.5,
-      "text": "Put wall 7,705 / call wall 8,060: 313 pts up vs 42 down. Near support.",
+      "text": "Put wall 7,705 / call wall 8,060: 318 pts up vs 37 down. Near support.",
       "group": "Dealer positioning"
      },
      {
@@ -6167,7 +6167,7 @@
       "score": 1,
       "raw": 1,
       "weight": 0.4,
-      "text": "Time decay shifts dealer hedges by $17.56B by 4 PM. Dealers buy back hedges, an afternoon bid.",
+      "text": "Time decay shifts dealer hedges by $17.36B by 4 PM. Dealers buy back hedges, an afternoon bid.",
       "group": "Dealer positioning"
      },
      {
@@ -6176,7 +6176,7 @@
       "score": -1,
       "raw": -1,
       "weight": 0.4,
-      "text": "Implied vol \u2248 +0.16 pts pre-market, worth about $4.90B of dealer selling.",
+      "text": "Implied vol \u2248 +0.16 pts pre-market, worth about $4.86B of dealer selling.",
       "group": "Dealer positioning"
      },
      {
@@ -6191,45 +6191,45 @@
     ],
     "changed": null,
     "expected_range": {
-     "move": 61.08,
-     "low": 7685.92,
-     "high": 7808.08
+     "move": 59.33,
+     "low": 7682.92,
+     "high": 7801.58
     },
     "levels": {
-     "price": 7747.0,
-     "flip": 7790.23,
+     "price": 7742.25,
+     "flip": 7790.24,
      "flip_close": 7793.93,
      "call_wall": 8060,
      "put_wall": 7705,
      "majors": [
       {
        "level": 7555,
-       "net_gex": -5247150569.962956
+       "net_gex": -5368654772.542471
       },
       {
        "level": 7655,
-       "net_gex": -6098363445.0756645
+       "net_gex": -6268916036.652311
       },
       {
        "level": 7705,
-       "net_gex": -5396243442.015438
+       "net_gex": -5501655955.561985
       },
       {
        "level": 7755,
-       "net_gex": -3879690152.449873
+       "net_gex": -3859360113.381119
       },
       {
        "level": 7960,
-       "net_gex": 3543927344.6146727
+       "net_gex": 3430000647.461196
       }
      ]
     },
     "dealer": {
-     "net_gex_bn": -39.02,
-     "call_put_gamma": 0.82,
-     "dealer_delta_bn": 2492.34,
-     "charm_bn": 17.557,
-     "vanna_bn_per_pt": 29.89,
+     "net_gex_bn": -42.894,
+     "call_put_gamma": 0.8,
+     "dealer_delta_bn": 2493.15,
+     "charm_bn": 17.359,
+     "vanna_bn_per_pt": 29.652,
      "chains": [
       "SPX",
       "SPY"
@@ -6268,248 +6268,248 @@
     },
     "profile": [
      {
-      "px": 7282.18,
-      "gex": -110152647986.93803
+      "px": 7277.71,
+      "gex": -109845409332.54861
      },
      {
-      "px": 7297.67,
-      "gex": -111223938273.74251
+      "px": 7293.2,
+      "gex": -110910459442.64943
      },
      {
-      "px": 7313.17,
-      "gex": -112312513769.92775
+      "px": 7308.68,
+      "gex": -111994477237.35907
      },
      {
-      "px": 7328.66,
-      "gex": -113411556661.852
+      "px": 7324.17,
+      "gex": -113091337391.0221
      },
      {
-      "px": 7344.16,
-      "gex": -114511717559.29762
+      "px": 7339.65,
+      "gex": -114192491640.29771
      },
      {
-      "px": 7359.65,
-      "gex": -115600750842.88776
+      "px": 7355.14,
+      "gex": -115286597888.2138
      },
      {
-      "px": 7375.14,
-      "gex": -116663188026.31442
+      "px": 7370.62,
+      "gex": -116359182642.98282
      },
      {
-      "px": 7390.64,
-      "gex": -117680072126.92477
+      "px": 7386.11,
+      "gex": -117392356412.72711
      },
      {
-      "px": 7406.13,
-      "gex": -118628787668.43661
+      "px": 7401.59,
+      "gex": -118364611097.52762
      },
      {
-      "px": 7421.63,
-      "gex": -119483035527.06918
+      "px": 7417.08,
+      "gex": -119250743482.32625
      },
      {
-      "px": 7437.12,
-      "gex": -120213007740.45479
+      "px": 7432.56,
+      "gex": -120021960527.62839
      },
      {
-      "px": 7452.61,
-      "gex": -120785797965.7438
+      "px": 7448.04,
+      "gex": -120646213925.30815
      },
      {
-      "px": 7468.11,
-      "gex": -121166026204.40051
+      "px": 7463.53,
+      "gex": -121088767520.99449
      },
      {
-      "px": 7483.6,
-      "gex": -121316565195.80612
+      "px": 7479.01,
+      "gex": -121312918406.58913
      },
      {
-      "px": 7499.1,
-      "gex": -121199155917.87207
+      "px": 7494.5,
+      "gex": -121280688986.71979
      },
      {
-      "px": 7514.59,
-      "gex": -120774634167.01306
+      "px": 7509.98,
+      "gex": -120953222383.7121
      },
      {
-      "px": 7530.08,
-      "gex": -120002507047.43784
+      "px": 7525.47,
+      "gex": -120290596601.73767
      },
      {
-      "px": 7545.58,
-      "gex": -118839751431.21857
+      "px": 7540.95,
+      "gex": -119250866216.79778
      },
      {
-      "px": 7561.07,
-      "gex": -117238955438.19638
+      "px": 7556.44,
+      "gex": -117788358541.58755
      },
      {
-      "px": 7576.57,
-      "gex": -115146233058.8699
+      "px": 7571.92,
+      "gex": -115851558711.17786
      },
      {
-      "px": 7592.06,
-      "gex": -112499593089.01581
+      "px": 7587.4,
+      "gex": -113381213946.69202
      },
      {
-      "px": 7607.55,
-      "gex": -109228484804.569
+      "px": 7602.89,
+      "gex": -110309418631.0114
      },
      {
-      "px": 7623.05,
-      "gex": -105254968364.49356
+      "px": 7618.37,
+      "gex": -106560269697.3188
      },
      {
-      "px": 7638.54,
-      "gex": -100496413641.46645
+      "px": 7633.86,
+      "gex": -102052189089.83578
      },
      {
-      "px": 7654.04,
-      "gex": -94869074624.56685
+      "px": 7649.34,
+      "gex": -96701391538.24556
      },
      {
-      "px": 7669.53,
-      "gex": -88291714650.69972
+      "px": 7664.83,
+      "gex": -90425617008.37512
      },
      {
-      "px": 7685.02,
-      "gex": -80688971625.93575
+      "px": 7680.31,
+      "gex": -83147531192.53947
      },
      {
-      "px": 7700.52,
-      "gex": -71995252816.6781
+      "px": 7695.8,
+      "gex": -74798190908.59206
      },
      {
-      "px": 7716.01,
-      "gex": -62160986695.04053
+      "px": 7711.28,
+      "gex": -65322183472.160255
      },
      {
-      "px": 7731.51,
-      "gex": -51163081091.64337
+      "px": 7726.77,
+      "gex": -54686532325.78198
      },
      {
-      "px": 7747.0,
-      "gex": -39019840608.26609
+      "px": 7742.25,
+      "gex": -42894377833.501884
      },
      {
-      "px": 7762.49,
-      "gex": -25807808921.429897
+      "px": 7757.73,
+      "gex": -30001835446.13665
      },
      {
-      "px": 7777.99,
-      "gex": -11675537959.387426
+      "px": 7773.22,
+      "gex": -16133568626.019615
      },
      {
-      "px": 7793.48,
-      "gex": 3151136199.9464765
+      "px": 7788.7,
+      "gex": -1491361296.9915147
      },
      {
-      "px": 7808.98,
-      "gex": 18375511198.143986
+      "px": 7804.19,
+      "gex": 13648541339.403105
      },
      {
-      "px": 7824.47,
-      "gex": 33647620583.31584
+      "px": 7819.67,
+      "gex": 28949979185.651394
      },
      {
-      "px": 7839.96,
-      "gex": 48589439792.965614
+      "px": 7835.16,
+      "gex": 44040376585.072495
      },
      {
-      "px": 7855.46,
-      "gex": 62823155365.99807
+      "px": 7850.64,
+      "gex": 58538583788.60029
      },
      {
-      "px": 7870.95,
-      "gex": 75998881575.0844
+      "px": 7866.13,
+      "gex": 72083006610.83667
      },
      {
-      "px": 7886.45,
-      "gex": 87819577063.92688
+      "px": 7881.61,
+      "gex": 84357474899.64069
      },
      {
-      "px": 7901.94,
-      "gex": 98061512610.89392
+      "px": 7897.09,
+      "gex": 95113229929.85725
      },
      {
-      "px": 7917.43,
-      "gex": 106588448703.82481
+      "px": 7912.58,
+      "gex": 104185335856.33432
      },
      {
-      "px": 7932.93,
-      "gex": 113357572879.34317
+      "px": 7928.06,
+      "gex": 111501495472.2406
      },
      {
-      "px": 7948.42,
-      "gex": 118415980008.11487
+      "px": 7943.55,
+      "gex": 117081641420.22508
      },
      {
-      "px": 7963.92,
-      "gex": 121888039131.762
+      "px": 7959.03,
+      "gex": 121028043732.23386
      },
      {
-      "px": 7979.41,
-      "gex": 123955738158.35129
+      "px": 7974.52,
+      "gex": 123507494447.79567
      },
      {
-      "px": 7994.9,
-      "gex": 124835332515.16727
+      "px": 7990.0,
+      "gex": 124728621373.91072
      },
      {
-      "px": 8010.4,
-      "gex": 124753991426.4644
+      "px": 8005.49,
+      "gex": 124918045937.1234
      },
      {
-      "px": 8025.89,
-      "gex": 123929671672.25925
+      "px": 8020.97,
+      "gex": 124298866868.09363
      },
      {
-      "px": 8041.39,
-      "gex": 122556415661.96985
+      "px": 8036.46,
+      "gex": 123074047710.09895
      },
      {
-      "px": 8056.88,
-      "gex": 120795992055.68396
+      "px": 8051.94,
+      "gex": 121416038039.7358
      },
      {
-      "px": 8072.37,
-      "gex": 118775571386.15984
+      "px": 8067.42,
+      "gex": 119462678840.97807
      },
      {
-      "px": 8087.87,
-      "gex": 116590192382.41064
+      "px": 8082.91,
+      "gex": 117318389044.12424
      },
      {
-      "px": 8103.36,
-      "gex": 114308270162.73677
+      "px": 8098.39,
+      "gex": 115058978461.59315
      },
      {
-      "px": 8118.86,
-      "gex": 111978347764.61313
+      "px": 8113.88,
+      "gex": 112738245289.32315
      },
      {
-      "px": 8134.35,
-      "gex": 109635602988.2092
+      "px": 8129.36,
+      "gex": 110394733056.36969
      },
      {
-      "px": 8149.84,
-      "gex": 107307129046.80717
+      "px": 8144.85,
+      "gex": 108057491244.58672
      },
      {
-      "px": 8165.34,
-      "gex": 105015544323.78653
+      "px": 8160.33,
+      "gex": 105750231555.04942
      },
      {
-      "px": 8180.83,
-      "gex": 102780935922.83865
+      "px": 8175.82,
+      "gex": 103493760921.74045
      },
      {
-      "px": 8196.33,
-      "gex": 100621446717.03056
+      "px": 8191.3,
+      "gex": 101306927399.8354
      },
      {
-      "px": 8211.82,
-      "gex": 98552967041.29013
+      "px": 8206.78,
+      "gex": 99206514174.4797
      }
     ],
     "earnings": [
@@ -6602,55 +6602,55 @@
   "sources": {
    "Yahoo prices": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:22-04:00",
-    "data_time": "2026-10-28T23:12:08.257950-04:00",
-    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 11:12 PM ET"
+    "fetched": "2026-10-28T23:24:43-04:00",
+    "data_time": "2026-10-28T23:21:25.413840-04:00",
+    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 11:21 PM ET"
    },
    "Economic calendar": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:22-04:00",
+    "fetched": "2026-10-28T23:24:43-04:00",
     "data_time": null,
     "detail": ""
    },
    "Earnings Oct 29": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:24-04:00",
+    "fetched": "2026-10-28T23:24:45-04:00",
     "data_time": null,
     "detail": "317 companies"
    },
    "Earnings Oct 28": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:26-04:00",
+    "fetched": "2026-10-28T23:24:48-04:00",
     "data_time": null,
     "detail": "222 companies"
    },
    "CBOE NDX options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:27-04:00",
-    "data_time": "2026-10-28T23:08:11-04:00",
+    "fetched": "2026-10-28T23:24:49-04:00",
+    "data_time": "2026-10-28T23:19:52-04:00",
     "detail": "15,384 contracts"
    },
    "CBOE QQQ options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:27-04:00",
+    "fetched": "2026-10-28T23:24:50-04:00",
     "data_time": "2026-10-28T21:06:16-04:00",
     "detail": "10,092 contracts"
    },
    "News headlines": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:32-04:00",
+    "fetched": "2026-10-28T23:24:55-04:00",
     "data_time": null,
     "detail": "5 of 6 feeds live \u00b7 100 headlines"
    },
    "CBOE SPX options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:30-04:00",
+    "fetched": "2026-10-28T23:24:53-04:00",
     "data_time": "2026-10-28T22:49:46-04:00",
     "detail": "28,948 contracts"
    },
    "CBOE SPY options": {
     "ok": true,
-    "fetched": "2026-10-28T23:15:31-04:00",
+    "fetched": "2026-10-28T23:24:54-04:00",
     "data_time": "2026-10-28T21:31:27-04:00",
     "detail": "12,374 contracts"
    }
