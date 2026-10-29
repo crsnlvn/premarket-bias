@@ -229,6 +229,46 @@ _CAL: list | None = None
 CAL_CACHE = OUT / "calendar_cache.json"
 
 
+# Indicators from the macro notes that have no free official feed. The calendar lists each
+# release's previous value, which is the latest actual, so we keep a running record of them.
+CAL_GAUGE_TITLES = {"ISM Manufacturing PMI", "ISM Services PMI", "Chicago PMI", "CB Consumer Confidence"}
+READINGS = OUT / "macro_readings.json"
+
+
+def remember_readings(feed):
+    try:
+        store = json.loads(READINGS.read_text()) if READINGS.exists() else {}
+    except Exception:  # noqa: BLE001
+        store = {}
+    today = datetime.now(ET).date().isoformat()
+    for ev in feed:
+        title = ev.get("title", "")
+        if ev.get("country") != "USD" or title not in CAL_GAUGE_TITLES:
+            continue
+        val = _num(ev.get("previous"))
+        if val is None:
+            continue
+        rows = store.setdefault(title, [])
+        rel = str(ev.get("date", ""))[:10]
+        if not any(r["release"] == rel for r in rows):
+            rows.append({"release": rel, "previous": val, "seen": today})
+        store[title] = sorted(rows, key=lambda r: r["release"])[-24:]
+    try:
+        READINGS.write_text(json.dumps(store, indent=1))
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def latest_reading(title, as_of):
+    """Most recent known actual for a calendar-sourced indicator, public by as_of."""
+    try:
+        rows = json.loads(READINGS.read_text()).get(title, []) if READINGS.exists() else []
+    except Exception:  # noqa: BLE001
+        return None
+    rows = [r for r in rows if r["seen"] <= as_of.date().isoformat()]
+    return rows[-1]["previous"] if rows else None
+
+
 def _calendar_feed():
     """
     The ForexFactory feed rate-limits repeat hits, and every run used to call it three
@@ -242,6 +282,7 @@ def _calendar_feed():
         js = _get_json("https://nfs.faireconomy.media/ff_calendar_thisweek.json", "calendar.json") or []
         if js and not FIXTURES:
             CAL_CACHE.write_text(json.dumps(js))
+            remember_readings(js)
         _CAL = js
         return js, "ok"
     except Exception as e:  # noqa: BLE001
@@ -315,98 +356,6 @@ def _num(v):
     return -x if neg else x
 
 
-# ───────────────────────── news: earnings + headlines ──────────────────────
-def report_time(e) -> datetime | None:
-    """When an earnings release hit the tape, from the calendar's date and session."""
-    d = date.fromisoformat(e["date"])
-    if e["when"].startswith("before"):
-        return datetime.combine(d, time(7, 0), ET)
-    if e["when"].startswith("after") or e["when"] == "last night":
-        return datetime.combine(d, time(16, 5), ET)
-    return None
-
-
-def eps_surprise(sym, rep_at: datetime, as_of: datetime):
-    """(reported, estimate, surprise %) from Yahoo, only if that report is public by as_of."""
-    if FIXTURES:
-        return None
-    try:
-        import yfinance as yf
-        df = yf.Ticker(sym.replace(".", "-")).get_earnings_dates(limit=8)
-        if df is None or df.empty:
-            return None
-        df.index = df.index.tz_convert(ET)
-        near = df[(abs((df.index - rep_at).total_seconds()) < 36 * 3600) & (df.index <= as_of)]
-        if near.empty:
-            return None
-        row = near.iloc[0]
-        act, est = row.get("Reported EPS"), row.get("EPS Estimate")
-        if act is None or est is None or (isinstance(act, float) and math.isnan(act)):
-            return None
-        sp = row.get("Surprise(%)")
-        if sp is None or (isinstance(sp, float) and math.isnan(sp)):
-            sp = (act - est) / abs(est) * 100 if est else None
-        return float(act), float(est), (float(sp) if sp is not None else None)
-    except Exception as e:  # noqa: BLE001
-        print(f"eps {sym}: {type(e).__name__} {e}", file=sys.stderr)
-        return None
-
-
-def earnings_signal(cfg, earnings, as_of):
-    """
-    Mega-caps that have already reported by the cutoff: how each stock is trading vs its
-    pre-report close (the market's verdict), with the EPS beat or miss alongside.
-    """
-    seen, rows = set(), []
-    for e in earnings:
-        sym = e["symbol"]
-        if sym not in cfg["megacaps"] or sym in seen:
-            continue
-        rep_at = report_time(e)
-        if not rep_at or rep_at > as_of:
-            continue                                  # not out yet at this cutoff
-        seen.add(sym)
-        base_day = rep_at.date() if rep_at.time() >= time(16) else prev_weekday(rep_at.date())
-        h = fetch_bars(sym.replace(".", "-"), datetime.combine(base_day, time(15, 0), ET), as_of)
-        react = None
-        if h is not None:
-            b0 = h[h.index <= datetime.combine(base_day, time(16, 0), ET)]
-            if not b0.empty:
-                react = pct(float(h["Close"].iloc[-1]), float(b0["Close"].iloc[-1]))
-        es = eps_surprise(sym, rep_at, as_of)
-        if es is None and e.get("eps") is not None and e.get("eps_est") is not None:
-            sp = e.get("surprise")
-            es = (e["eps"], e["eps_est"], sp if sp is not None else
-                  ((e["eps"] - e["eps_est"]) / abs(e["eps_est"]) * 100 if e["eps_est"] else None))
-        if react is None and es is None:
-            continue
-        rows.append({"symbol": sym, "react": react, "eps": es})
-    if not rows:
-        return None
-    reacts = [r["react"] for r in rows if r["react"] is not None]
-    surps = [r["eps"][2] for r in rows if r["eps"] and r["eps"][2] is not None]
-    if reacts:   # price reaction is the verdict; EPS can beat and still sell off on guidance
-        avg = sum(reacts) / len(reacts)
-        sc = 1 if avg > 1.5 else -1 if avg < -1.5 else 0
-    else:
-        avg = sum(surps) / len(surps)
-        sc = 1 if avg > 5 else -1 if avg < -5 else 0
-    parts = []
-    for r in rows:
-        bits = []
-        if r["eps"]:
-            a, est, sp = r["eps"]
-            bits.append(f"EPS {a:.2f} vs {est:.2f} est" + (f" ({'beat' if sp > 0 else 'miss'} {sp:+.0f}%)" if sp is not None else ""))
-        if r["react"] is not None:
-            bits.append(f"stock {r['react']:+.1f}%")
-        parts.append(f"{r['symbol']}: " + ", ".join(bits))
-    return sig("earnings", "Mega-cap earnings", sc, 1.25,
-               "; ".join(parts) + ". " +
-               ("The market is buying the results, and mega-caps carry the index." if sc > 0 else
-                "The market is selling the results, and mega-caps drag the index." if sc < 0 else
-                "A mixed or muted reaction, so earnings aren't moving the index much."), "News")
-
-
 # ───────────────────── official macro data (Fed reaction function) ────────────────
 # Framework: the user's macro notes. The Fed reacts to three things (jobs, inflation,
 # activity); hot data → contractionary Fed → bearish for stocks, cool data → expansionary
@@ -414,26 +363,91 @@ def earnings_signal(cfg, earnings, as_of):
 # Free source: FRED's public CSV download (no key). ISM, Chicago PMI and Conference
 # Board confidence are licensed and not on FRED, so they can't be scored here.
 _FRED: dict = {}
+FRED_CACHE = OUT / "fred_cache.json"
+FRED_ERR: list[str] = []
+BROWSER_UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
+                            "(KHTML, like Gecko) Version/17.5 Safari/605.1.15", "Accept": "text/csv,text/plain,*/*"}
+
+
+def _fred_cache():
+    try:
+        return json.loads(FRED_CACHE.read_text()) if FRED_CACHE.exists() else {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+# Same official numbers straight from the Bureau of Labor Statistics (free API, no key),
+# used when FRED can't be reached. Jobless claims come from the Labor Dept, not BLS.
+BLS_IDS = {"UNRATE": "LNS14000000", "PAYEMS": "CES0000000001", "CPIAUCSL": "CUSR0000SA0", "CPIAUCNS": "CUUR0000SA0",
+           "CPILFESL": "CUSR0000SA0L1E", "CPILFENS": "CUUR0000SA0L1E", "PPIFIS": "WPSFD4", "PPIFES": "WPSFD49104"}
+
+
+def bls(series):
+    try:
+        r = requests.get(f"https://api.bls.gov/publicAPI/v1/timeseries/data/{BLS_IDS[series]}", headers=BROWSER_UA, timeout=30)
+        r.raise_for_status()
+        js = r.json()
+        rows = []
+        for item in (js.get("Results", {}).get("series") or [{}])[0].get("data", []):
+            per = item.get("period", "")
+            if not per.startswith("M") or per == "M13":
+                continue
+            try:
+                rows.append((date(int(item["year"]), int(per[1:]), 1), float(item["value"])))
+            except (ValueError, KeyError):
+                continue
+        return sorted(rows)
+    except Exception as e:  # noqa: BLE001
+        FRED_ERR.append(f"BLS {series}: {type(e).__name__}")
+        print(f"bls {series}: {type(e).__name__} {e}", file=sys.stderr)
+        return []
 
 
 def fred(series):
-    """[(date, value)] oldest → newest from FRED's public CSV. Cached per run."""
+    """
+    [(date, value)] oldest → newest. Tries FRED's CSV download, then its plain-text file.
+    Official data changes once a month, so the last good pull is kept on disk and used
+    whenever FRED is unreachable from the runner.
+    """
     if series in _FRED:
         return _FRED[series]
     out = []
     if not FIXTURES:
-        try:
-            r = requests.get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}",
-                             headers=UA, timeout=30)
-            r.raise_for_status()
-            for line in r.text.strip().splitlines()[1:]:
-                d, _, v = line.partition(",")
-                try:
-                    out.append((date.fromisoformat(d.strip()), float(v)))
-                except ValueError:
-                    continue          # "." marks a missing value
-        except Exception as e:  # noqa: BLE001
-            print(f"fred {series}: {type(e).__name__} {e}", file=sys.stderr)
+        for url in (f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}",
+                    f"https://fred.stlouisfed.org/data/{series}.txt"):
+            try:
+                r = requests.get(url, headers=BROWSER_UA, timeout=30)
+                r.raise_for_status()
+                lines = r.text.strip().splitlines()
+                if url.endswith(".txt"):
+                    lines = lines[next(i for i, ln in enumerate(lines) if ln.upper().startswith("DATE")) + 1:]
+                else:
+                    lines = lines[1:]
+                for line in lines:
+                    parts = line.replace(",", " ").split()
+                    if len(parts) < 2:
+                        continue
+                    try:
+                        out.append((date.fromisoformat(parts[0]), float(parts[1])))
+                    except ValueError:
+                        continue          # "." marks a missing value
+                if len(out) > 12:
+                    break
+                out = []
+            except Exception as e:  # noqa: BLE001
+                FRED_ERR.append(f"{series}: {type(e).__name__} {str(e)[:80]}")
+                print(f"fred {series} {url}: {type(e).__name__} {e}", file=sys.stderr)
+        if not out and series in BLS_IDS:
+            out = bls(series)
+        cache = _fred_cache()
+        if out:
+            cache[series] = [[d.isoformat(), v] for d, v in out[-400:]]
+            try:
+                FRED_CACHE.write_text(json.dumps(cache))
+            except Exception:  # noqa: BLE001
+                pass
+        elif series in cache:
+            out = [(date.fromisoformat(d), v) for d, v in cache[series]]
     _FRED[series] = out
     return out
 
@@ -455,7 +469,7 @@ def _upto(rows, as_of, lag_days):
 # hot  → Fed leans contractionary → -1 for stocks; cool → expansionary → +1
 FED_GAUGES = {
     "Unemployment rate": ("UNRATE", lambda r: r[-1][1], lambda x: x < 4.0, lambda x: x > 5.5, "%", 36),
-    "Initial jobless claims (4-wk avg)": ("ICSA", lambda r: sum(v for _, v in r[-4:]) / 4 / 1000,
+    "Initial jobless claims": ("ICSA", lambda r: r[-1][1] / 1000,
                                           lambda x: x < 250, lambda x: x > 350, "K", 5),
     "Payrolls (3-mo avg change)": ("PAYEMS", lambda r: (r[-1][1] - r[-4][1]) / 3,
                                    lambda x: x > 200, lambda x: x < 75, "K", 36),
@@ -463,6 +477,11 @@ FED_GAUGES = {
     "Core CPI y/y": ("CPILFENS", _yoy, lambda x: x > 2.2, lambda x: x < 1.8, "%", 45),
     "PPI m/m": ("PPIFIS", _mom, lambda x: x > 0.2, lambda x: x < 0.0, "%", 45),
 }
+
+
+# PMIs: over 55 is strong expansion, under 50 contraction. Confidence: over 120 strong, under 100 weak.
+CAL_GAUGES = {"ISM Manufacturing PMI": (55, 50, "ISM manufacturing"), "ISM Services PMI": (55, 50, "ISM services"),
+              "Chicago PMI": (55, 50, "Chicago PMI"), "CB Consumer Confidence": (120, 100, "Consumer confidence")}
 
 
 def fed_pressure_signal(as_of):
@@ -479,8 +498,15 @@ def fed_pressure_signal(as_of):
         v = -1 if hot(x) else 1 if cool(x) else 0
         votes.append(v)
         parts.append(f"{name} {x:,.1f}{unit} ({'hot' if v < 0 else 'cool' if v > 0 else 'in range'})")
+    for title, (hot_at, cool_at, label) in CAL_GAUGES.items():
+        x = latest_reading(title, as_of)
+        if x is None:
+            continue
+        v = -1 if x > hot_at else 1 if x < cool_at else 0
+        votes.append(v)
+        parts.append(f"{label} {x:,.1f} ({'hot' if v < 0 else 'cool' if v > 0 else 'in range'})")
     if len(votes) < 3:
-        note("Official macro data (FRED) unavailable, Fed-pressure gauge skipped")
+        note("Official macro data (FRED) unavailable, Fed-pressure gauge skipped" + (f" ({FRED_ERR[0]})" if FRED_ERR else ""))
         return None
     net = sum(votes) / len(votes)
     sc = 1 if net >= 0.34 else -1 if net <= -0.34 else 0
@@ -557,173 +583,6 @@ def surprise_signal(events, as_of):
                 ("Hot and cool surprises cancel out." if any(hits) else
                  "In line with expectations, so no repricing of the Fed.")), "Macro")
 
-
-NEWS_FEEDS = {
-    "CNBC": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258",
-    "CNBC Top": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114",
-    "MarketWatch": "https://feeds.content.dowjones.io/public/rss/mw_topstories",
-    "MarketWatch Pulse": "https://feeds.content.dowjones.io/public/rss/mw_marketpulse",
-    "Yahoo Finance": "https://finance.yahoo.com/news/rssindex",
-    "Investing.com": "https://www.investing.com/rss/news_25.rss",
-}
-NEWS_DIR = OUT / "news"
-# A small finance lexicon in the spirit of Loughran & McDonald (2011): words that move
-# risk appetite, not general sentiment. Phrases are checked before single words.
-POS_PHRASES = ["record high", "all-time high", "beats estimates", "tops estimates", "raises guidance",
-               "rate cut", "cuts rates", "soft landing", "cooling inflation", "inflation cools",
-               "trade deal", "ceasefire", "better than expected", "beat expectations"]
-NEG_PHRASES = ["sell-off", "selloff", "misses estimates", "cuts guidance", "lowers guidance",
-               "rate hike", "raises rates", "hotter than expected", "worse than expected",
-               "inflation heats", "trade war", "government shutdown", "missed expectations"]
-POS_WORDS = {"rally", "rallies", "rallied", "surge", "surges", "surged", "soar", "soars", "soared", "jump",
-             "jumps", "jumped", "gain", "gains", "climb", "climbs", "rebound", "rebounds", "upgrade",
-             "upgrades", "beat", "beats", "strong", "stronger", "optimism", "bullish", "boom", "eases",
-             "easing", "dovish", "stimulus", "outperform", "upbeat", "accelerates", "higher", "rises", "rose",
-             "rise", "climbed", "gained", "advance", "advances", "rallying", "spike", "spikes", "spiked"}
-# pure direction words: their meaning for stocks flips when the subject is yields, oil, VIX...
-DIRECTION = {"rally", "rallies", "rallied", "surge", "surges", "surged", "soar", "soars", "soared", "jump",
-             "jumps", "jumped", "gain", "gains", "climb", "climbs", "climbed", "gained", "rebound", "rebounds",
-             "higher", "rises", "rose", "rise", "advance", "advances", "rallying", "spike", "spikes", "spiked",
-             "plunge", "plunges", "plunged", "tumble", "tumbles", "tumbled", "slump", "slumps", "sink", "sinks",
-             "sank", "slide", "slides", "drop", "drops", "dropped", "fall", "falls", "fell", "lower"}
-NEG_WORDS = {"plunge", "plunges", "plunged", "tumble", "tumbles", "tumbled", "slump", "slumps", "sink",
-             "sinks", "sank", "slide", "slides", "drop", "drops", "dropped", "fall", "falls", "fell",
-             "selloff", "miss", "misses", "missed", "downgrade", "downgrades", "weak", "weaker", "fears",
-             "fear", "recession", "hawkish", "tariff", "tariffs", "war", "crisis", "bearish", "slowdown",
-             "layoffs", "warns", "warning", "default", "shutdown", "lower", "losses", "slowing", "worst", "turmoil"}
-
-
-INVERSE_SUBJECTS = {"yield", "yields", "treasury", "treasuries", "vix", "volatility", "oil", "crude",
-                    "inflation", "unemployment", "jobless", "dollar", "cpi", "pce"}
-EQUITY_WORDS = {"stock", "stocks", "nasdaq", "s&p", "dow", "futures", "shares", "equities", "market",
-                "markets", "tech", "wall", "index", "chip", "chips"}
-
-
-def tone(title: str) -> int:
-    """+1 risk-on, -1 risk-off, 0 neutral, for one headline."""
-    t = title.lower()
-    p = sum(t.count(x) for x in POS_PHRASES)
-    n = sum(t.count(x) for x in NEG_PHRASES)
-    for x in POS_PHRASES + NEG_PHRASES:
-        t = t.replace(x, " ")
-    words = re.findall(r"[a-z&\-]+", t)
-    ws = set(words)
-    inverse = bool(ws & INVERSE_SUBJECTS) and not ws & EQUITY_WORDS   # "yields drop", "oil surges"
-    softens = {"ease", "eases", "easing", "fade", "fades", "recede", "recedes", "abate"}
-    for i, w in enumerate(words):
-        prev, nxt = words[max(0, i - 3):i], words[i + 1:i + 3]
-        if w in POS_WORDS:
-            v = -1 if ("not" in prev or "no" in prev) else 1
-        elif w in NEG_WORDS:
-            if "despite" in prev or "without" in prev or "no" in prev:   # "rise despite tariff fears"
-                continue
-            v = 1 if set(nxt) & softens else -1                          # "recession fears ease"
-        else:
-            continue
-        if inverse and w in DIRECTION:
-            v = -v
-        if v > 0:
-            p += 1
-        else:
-            n += 1
-    return (p > n) - (p < n)
-
-
-def _parse_rss(xml_text, source):
-    import xml.etree.ElementTree as ElT
-    from email.utils import parsedate_to_datetime
-    out = []
-    root = ElT.fromstring(xml_text)
-    for it in root.iter("item"):
-        title = (it.findtext("title") or "").strip()
-        pub = it.findtext("pubDate")
-        if not title or not pub:
-            continue
-        try:
-            ts = parsedate_to_datetime(pub)
-            ts = (ts if ts.tzinfo else ts.replace(tzinfo=ZoneInfo("UTC"))).astimezone(ET)
-        except Exception:  # noqa: BLE001
-            continue
-        out.append({"title": title, "source": source, "ts": ts.isoformat()})
-    return out
-
-
-_NEWS: dict | None = None
-
-
-def collect_headlines():
-    """
-    Pull every feed once per run and add new headlines to a dated archive, so a
-    read rebuilt later still sees exactly what was public before its cutoff.
-    """
-    global _NEWS
-    if _NEWS is not None:
-        return _NEWS
-    live, ok = [], 0
-    if not FIXTURES:
-        for name, url in NEWS_FEEDS.items():
-            try:
-                r = requests.get(url, headers=UA, timeout=20)
-                r.raise_for_status()
-                live += _parse_rss(r.text, name)
-                ok += 1
-            except Exception as e:  # noqa: BLE001
-                print(f"news {name}: {type(e).__name__} {e}", file=sys.stderr)
-    _NEWS = {"ok": ok, "n": len(live)}
-    NEWS_DIR.mkdir(parents=True, exist_ok=True)
-    by_day: dict[str, list] = {}
-    for h in live:
-        by_day.setdefault(h["ts"][:10], []).append(h)
-    for day, items in by_day.items():
-        f = NEWS_DIR / f"{day}.json"
-        old = json.loads(f.read_text()) if f.exists() else []
-        have = {x["title"].lower() for x in old}
-        new = [x for x in items if x["title"].lower() not in have and not have.add(x["title"].lower())]
-        if new:
-            f.write_text(json.dumps(sorted(old + new, key=lambda x: x["ts"]), indent=0))
-    for old in sorted(NEWS_DIR.glob("20*.json"))[:-45]:   # keep ~6 weeks
-        old.unlink()
-    return _NEWS
-
-
-def load_headlines(as_of):
-    """Archived headlines from the cutoff's day and the two days before it."""
-    out = []
-    for k in range(3):
-        f = NEWS_DIR / f"{(as_of.date() - timedelta(days=k)).isoformat()}.json"
-        if f.exists():
-            out += json.loads(f.read_text())
-    return out
-
-
-def news_signal(as_of, hours=16):
-    """Net risk-on vs risk-off tone of market headlines in the hours before the cutoff."""
-    start = (as_of - timedelta(hours=hours)).isoformat()
-    st = collect_headlines()
-    stamp("News headlines", st["ok"] > 0,
-          detail=f"{st['ok']} of {len(NEWS_FEEDS)} feeds live · {st['n']} headlines")
-    seen, items = set(), []
-    for h in load_headlines(as_of):
-        k = h["title"].lower()
-        if start <= h["ts"] <= as_of.isoformat() and k not in seen:
-            seen.add(k)
-            items.append(dict(h, tone=tone(h["title"])))
-    scored = [h for h in items if h["tone"]]
-    if len(items) < 8 or len(scored) < 4:
-        if items or not FIXTURES:
-            note(f"Too few headlines before the cutoff ({len(items)}) to score news tone")
-        return None
-    pos = sum(h["tone"] > 0 for h in scored)
-    neg = len(scored) - pos
-    net = (pos - neg) / len(scored)
-    sc = 1 if net > 0.15 else -1 if net < -0.15 else 0
-    lead = sorted(scored, key=lambda h: h["ts"], reverse=True)
-    ex = [h for h in lead if (h["tone"] > 0) == (sc > 0)][:2] if sc else lead[:2]
-    return sig("news", "Headline tone", sc, 0.75,
-               f"{pos} risk-on vs {neg} risk-off of {len(items)} market headlines in the {hours}h before the cutoff "
-               f"(net {net:+.2f}). Latest: " + " · ".join(f"\"{h['title']}\" ({h['source']})" for h in ex) + ". " +
-               ("The news flow is constructive." if sc > 0 else "The news flow is risk-off." if sc < 0
-                else "The news flow is mixed."), "News")
 
 
 # ─────────────────────────── option math helpers ──────────────────────────
@@ -900,22 +759,13 @@ def vol_shift_pts(cfg, q):
 
 def macro_signals(cfg, q):
     S = []
-    # overnight futures
-    c = chg(q, cfg["future"])
-    if c is not None:
-        sc = 1 if c > 0.25 else -1 if c < -0.25 else 0
-        S.append(sig("overnight", "Overnight futures", sc, 1.5,
-                     f"{cfg['future'][:2]} {c:+.2f}% vs yesterday's 4 PM ({q[cfg['future']]['last']:,.2f}). " +
-                     ("Globex buyers did the lifting, and overnight strength tends to carry into the open."
-                      if sc > 0 else "Selling came in overnight, so the open starts on the back foot."
-                      if sc < 0 else "A quiet overnight. Direction will be set at the open."), "Macro"))
     # global equities
     g = {GLOBAL[t]: chg(q, t) for t in GLOBAL if chg(q, t) is not None}
     if g:
         avg = sum(g.values()) / len(g)
         sc = 1 if avg > 0.4 else -1 if avg < -0.4 else 0
         S.append(sig("global", "Global equities", sc, 1.0,
-                     " · ".join(f"{k} {v:+.1f}%" for k, v in g.items()) + ". " +
+                     ", ".join(f"{k} {v:+.1f}%" for k, v in g.items()) + ". " +
                      ("Asia and Europe are risk-on, which hands New York a tailwind." if sc > 0 else
                       "Overseas selling is a headwind going into the open." if sc < 0
                       else "Mixed overseas, so no handoff."), "Macro"))
@@ -961,13 +811,6 @@ def macro_signals(cfg, q):
                      ("Credit is bid. Equity rallies backed by credit tend to stick." if sc > 0 else
                       "Credit is leaking. Equity often follows credit lower." if sc < 0
                       else "Credit is calm."), "Macro"))
-    c = chg(q, "BTC-USD")
-    if c is not None:
-        sc = 1 if c > 2 else -1 if c < -2 else 0
-        S.append(sig("crypto", "Crypto risk appetite", sc, 0.5,
-                     f"Bitcoin {c:+.1f}% since yesterday's 4 PM. " +
-                     ("Speculative appetite is firm overnight." if sc > 0 else
-                      "Speculative de-risking overnight." if sc < 0 else "No signal."), "Macro"))
     # volatility
     vx = chg(q, "VXX")
     if vx is not None:
@@ -990,33 +833,7 @@ def macro_signals(cfg, q):
 
 def overnight_signals(cfg, q):
     """Evening read for the 6 PM–8:30 AM Globex session, built from data up to 6 PM ET."""
-    S = [s for s in macro_signals(cfg, q) if s["key"] not in ("overnight", "global", "volpre")]
-    f = q.get(cfg["future"])
-    mk = (f or {}).get("marks", {})
-    sym = cfg["future"][:2]
-    if f and "close" in mk:
-        day = pct(mk["close"], f["prev"])
-        sc = 1 if day > 0.4 else -1 if day < -0.4 else 0
-        S.append(sig("day", "Day session", sc, 1.0,
-                     f"{sym} {day:+.2f}% from yesterday's 4 PM to today's 4 PM. " +
-                     ("A strong cash session tends to carry into Globex." if sc > 0 else
-                      "A weak cash session tends to keep sellers active overnight." if sc < 0
-                      else "A flat day, with no momentum handed off."), "Session"))
-        ah = pct(f["last"], mk["close"])
-        sc = 1 if ah > 0.2 else -1 if ah < -0.2 else 0
-        S.append(sig("afterhours", "After-hours reaction", sc, 1.25,
-                     f"{sym} {ah:+.2f}% from 4 PM to the 6 PM cutoff. " +
-                     ("After-hours buyers, often an earnings beat, set the overnight tone." if sc > 0 else
-                      "After-hours selling, often an earnings miss, sets a heavy tone." if sc < 0
-                      else "No after-hours reaction."), "Session"))
-    if f and "close" in mk and "lasthour" in mk:
-        lh = pct(mk["close"], mk["lasthour"])
-        sc = 1 if lh > 0.15 else -1 if lh < -0.15 else 0
-        S.append(sig("lasthour", "Last-hour trend", sc, 0.75,
-                     f"{sym} {lh:+.2f}% in the final hour (3 to 4 PM). " +
-                     ("Buyers into the bell, the late-day flow that tends to persist (Baltussen et al.)." if sc > 0 else
-                      "Sellers into the bell, and late-day weakness tends to persist." if sc < 0
-                      else "A neutral close."), "Session"))
+    S = [s for s in macro_signals(cfg, q) if s["key"] not in ("global", "volpre")]   # overseas closes are stale at 6 PM
     v = q.get("^VIX")
     if v and v.get("fresh", True):
         c = pct(v["last"], v["prev"])
@@ -1046,44 +863,6 @@ def fetch_bars(ticker, start: datetime, end: datetime):
     except Exception as e:  # noqa: BLE001
         print(f"bars {ticker}: {type(e).__name__} {e}", file=sys.stderr)
         return None
-
-
-def session_signals(cfg, sess, as_of):
-    """What the session in progress has done so far. Only bars up to as_of."""
-    name, start, end, _ = sess
-    h = fetch_bars(cfg["future"], start - timedelta(minutes=1), as_of)
-    sym = cfg["future"][:2]
-    if h is None or len(h) < 5:
-        note(f"{sym}: no intraday bars for the {name} session yet")
-        return []
-    S, last, first = [], float(h["Close"].iloc[-1]), float(h["Open"].iloc[0])
-    mins = (as_of - start).total_seconds() / 60
-    drift = pct(last, first)
-    sc = 1 if drift > 0.2 else -1 if drift < -0.2 else 0
-    S.append(sig("sessdrift", f"{name} session so far", sc, 1.5,
-                 f"{sym} {drift:+.2f}% since the {name} session opened ({first:,.2f} → {last:,.2f}). " +
-                 ("Early strength tends to persist through a session (Gao, Han, Li & Zhou 2018)." if sc > 0 else
-                  "Early weakness tends to persist through a session." if sc < 0 else
-                  "Little net movement, so no momentum to lean on."), "Session"))
-    hr = h[h.index <= as_of - timedelta(minutes=60)]
-    if mins >= 75 and not hr.empty:
-        lh = pct(last, float(hr["Close"].iloc[-1]))
-        sc = 1 if lh > 0.15 else -1 if lh < -0.15 else 0
-        S.append(sig("lasthr", "Last hour", sc, 0.75,
-                     f"{sym} {lh:+.2f}% over the past hour. " +
-                     ("Buyers are in control right now." if sc > 0 else "Sellers are in control right now." if sc < 0
-                      else "The last hour went nowhere."), "Session"))
-    if name == "NY" and as_of.time() >= OPEN_MOVE_END:
-        orb = h[h.index < datetime.combine(start.date(), OPEN_MOVE_END, ET)]
-        if len(orb) >= 5:
-            hi, lo = float(orb["High"].max()), float(orb["Low"].min())
-            sc = 1 if last > hi else -1 if last < lo else 0
-            S.append(sig("orange", "Opening range", sc, 1.25,
-                         f"9:30–10:00 range {lo:,.2f}–{hi:,.2f}, price {last:,.2f}. " +
-                         ("Broke above the opening range: range breaks tend to run." if sc > 0 else
-                          "Broke below the opening range: range breaks tend to run." if sc < 0 else
-                          "Still inside the opening range, so expect rotation until it breaks."), "Session"))
-    return S
 
 
 def dealer_signals(cfg, pos, q):
@@ -1193,9 +972,6 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
     if upcoming:
         score *= EVENT_DAMP
         damp.append("high-impact release later today")
-    if mega:
-        score *= EARNINGS_DAMP
-        damp.append("mega-cap earnings")
     bias = label_of(score)
     a = abs(score)
     lvl = 0 if a < NEUTRAL_BAND else 1 if a < 0.30 else 2 if a < 0.50 else 3
@@ -1375,8 +1151,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     print(f"[{view}] session {target} · evidence cut at {as_of:%Y-%m-%d %H:%M} ET", file=sys.stderr)
     marks = None
     if view == "overnight":
-        marks = {"close": datetime.combine(target, time(16, 0), ET),
-                 "lasthour": datetime.combine(target, time(15, 0), ET)}
+        marks = {"close": datetime.combine(target, time(16, 0), ET)}
     quotes = fetch_quotes(MACRO_TICKERS, target, as_of, marks)
     events = fetch_calendar(target if view != "overnight" else next_weekday(target))
     if view == "overnight":   # tonight's reporters plus tomorrow morning's
@@ -1402,12 +1177,11 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
         if view == "overnight":
             base = overnight_signals(cfg, quotes)
         elif view == "now" and sess:
-            # "since yesterday's 4 PM" is stale mid-session: the session's own tape replaces it
-            base = [x for x in macro_signals(cfg, quotes) if x["key"] != "overnight"] + session_signals(cfg, sess, as_of)
+            # no intraday price-action signals: the call comes from macro, positioning and news
+            base = macro_signals(cfg, quotes)
         else:
             base = macro_signals(cfg, quotes)
-        extra = [x for x in (earnings_signal(cfg, earnings, as_of), news_signal(as_of),
-                             fed_pressure_signal(as_of), surprise_signal(events, as_of)) if x]
+        extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of)) if x]
         base = base + extra
         # learn only from sessions graded before this one, so every read stays point-in-time
         key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
@@ -1531,6 +1305,137 @@ def grade_now(hist):
             f.write_text(json.dumps(rep_, indent=1))
 
 
+# ───────────────────────── red folder: CPI and FOMC previews ─────────────────────────
+def daily_closes(ticker, days=70):
+    """[(date, close)] daily, oldest → newest, from Yahoo."""
+    if FIXTURES:
+        return []
+    try:
+        import yfinance as yf
+        h = yf.Ticker(ticker).history(period=f"{days}d", interval="1d", auto_adjust=False)
+        return [(i.date(), float(v)) for i, v in h["Close"].dropna().items()]
+    except Exception as e:  # noqa: BLE001
+        print(f"daily {ticker}: {type(e).__name__} {e}", file=sys.stderr)
+        return []
+
+
+def _chg_n(rows, n, pct_=True):
+    if len(rows) <= n:
+        return None
+    a, b = rows[-n - 1][1], rows[-1][1]
+    return pct(b, a) if pct_ else b - a
+
+
+def _vote(key, label, v, w, text):
+    return {"key": key, "label": label, "score": v, "weight": w, "text": text}
+
+
+def _preview(votes, pos_word, neg_word):
+    tot = sum(x["weight"] for x in votes) or 1
+    sc = sum(x["score"] * x["weight"] for x in votes) / tot
+    lean = pos_word if sc >= 0 else neg_word
+    a = abs(sc)
+    return round(sc, 3), lean, ("Very low" if a < .1 else "Low" if a < .3 else "Medium" if a < .55 else "High")
+
+
+def cpi_preview(as_of):
+    """Will CPI land hot or cool vs the forecast? Leading inflation inputs, per the macro notes (PPI leads CPI)."""
+    V = []
+    ppi = _upto(fred("PPIFIS"), as_of, 45)
+    if len(ppi) > 2:
+        x = _mom(ppi)
+        V.append(_vote("ppi", "PPI m/m (leads CPI)", 1 if x > .2 else -1 if x < 0 else 0, 1.5,
+                       f"Producer prices {x:+.2f}% last month. Costs at producers pass through to consumers."))
+    core_sa, core_nsa = _upto(fred("CPILFESL"), as_of, 45), _upto(fred("CPILFENS"), as_of, 45)
+    if len(core_sa) > 4 and len(core_nsa) > 13:
+        ann3 = ((core_sa[-1][1] / core_sa[-4][1]) ** 4 - 1) * 100
+        yoy = _yoy(core_nsa)
+        V.append(_vote("coremom", "Core CPI momentum", 1 if ann3 > yoy + .3 else -1 if ann3 < yoy - .3 else 0, 1.0,
+                       f"Core CPI is running {ann3:.1f}% annualized over 3 months vs {yoy:.1f}% over 12."))
+        m = _mom(core_sa)
+        V.append(_vote("sticky", "Last core print", 1 if m > .3 else -1 if m < .2 else 0, .75,
+                       f"Core CPI rose {m:+.2f}% last month. Over 0.3% is sticky, under 0.2% is cooling."))
+    oil = daily_closes("CL=F")
+    c = _chg_n(oil, 21)
+    if c is not None:
+        V.append(_vote("oil", "Oil over the month", 1 if c > 5 else -1 if c < -5 else 0, .75,
+                       f"WTI {c:+.1f}% over the past month. Energy feeds straight into headline CPI."))
+    two = daily_closes("2YY=F")
+    c = _chg_n(two, 21, False)
+    if c is not None:
+        bp = c * 100
+        V.append(_vote("two", "2-year yield trend", 1 if bp > 15 else -1 if bp < -15 else 0, .75,
+                       f"2-year yield {bp:+.0f} bp over the past month. Rates traders lean the way they expect the print."))
+    if not V:
+        return None
+    sc, lean, conv = _preview(V, "Hotter", "Cooler")
+    return {"score": sc, "lean": f"{lean} than forecast", "call": "Bearish" if sc >= 0 else "Bullish", "conviction": conv,
+            "votes": V, "why": "A hot CPI pushes yields up and cuts the odds of Fed easing, which hits stocks, tech hardest."}
+
+
+def fomc_preview(as_of):
+    """Will the Fed sound more hawkish or dovish than the market has priced?"""
+    V, priced, effr = [], None, None
+    dff = fred("DFF")
+    if dff:
+        effr = dff[-1][1]
+    else:
+        zq = daily_closes("ZQ=F", 10)
+        effr = 100 - zq[-1][1] if zq else None
+    bill = daily_closes("^IRX", 10)
+    if effr is not None and bill:
+        gap = (bill[-1][1] - effr) * 100
+        priced = "a cut" if gap < -15 else "a hike" if gap > 15 else "a hold"
+    # the data side: the same Fed-pressure gauge (hot data = hawkish)
+    fp = fed_pressure_signal(as_of)
+    hawk = 0
+    if fp:
+        hawk = -fp["score"]
+        V.append(_vote("data", "Official data", hawk, 1.5, fp["text"].split(". Most")[0].split(". The data")[0] + "."))
+    if priced:
+        mis = 1 if (priced == "a cut" and hawk > 0) else -1 if (priced != "a cut" and hawk < 0) else 0
+        V.append(_vote("priced", "What's priced", mis, 1.25,
+                       f"Bills vs the fed funds rate price {priced}. " +
+                       ("Hot data against priced cuts is the classic hawkish surprise." if mis > 0 else
+                        "Cool data against no priced cut leaves room for a dovish surprise." if mis < 0 else
+                        "Data and pricing agree, so a surprise is less likely.")))
+    two = daily_closes("2YY=F")
+    c = _chg_n(two, 21, False)
+    if c is not None:
+        bp = c * 100
+        V.append(_vote("two", "2-year yield trend", 1 if bp > 15 else -1 if bp < -15 else 0, .75,
+                       f"2-year yield {bp:+.0f} bp over the past month: the market's own read on the Fed path."))
+    be = fred("T10YIE")
+    if len(be) > 22:
+        d = (be[-1][1] - be[-22][1]) * 100
+        V.append(_vote("breakeven", "Inflation expectations", 1 if d > 10 else -1 if d < -10 else 0, .75,
+                       f"10-year breakeven inflation {d:+.0f} bp over the past month ({be[-1][1]:.2f}%)."))
+    if not V:
+        return None
+    sc, lean, conv = _preview(V, "Hawkish", "Dovish")
+    return {"score": sc, "lean": lean, "call": "Bearish" if sc >= 0 else "Bullish", "conviction": conv,
+            "priced": priced, "effr": effr, "votes": V,
+            "why": "A hawkish Fed (fewer cuts, higher for longer) lifts yields and the dollar, which pressures stocks."}
+
+
+def red_folder(now):
+    """This week's high-impact US releases, plus CPI and FOMC previews built from macro data only."""
+    hi = [e for e in WEEK_EVENTS if e["impact"] == "High"]
+    def when(words):
+        m = [e for e in hi if any(w in e["title"] for w in words)]
+        return {"date": m[0]["date"], "time": m[0]["time"], "titles": sorted({e["title"] for e in m})} if m else None
+    out = {"generated": now.isoformat(timespec="seconds"), "events": sorted(hi, key=lambda e: e["ts"]), "previews": {}}
+    for key, fn, words, name in (("cpi", cpi_preview, ("CPI",), "CPI"), ("fomc", fomc_preview, ("FOMC", "Federal Funds Rate"), "FOMC")):
+        try:
+            p = fn(now)
+        except Exception:  # noqa: BLE001
+            traceback.print_exc(); p = None
+        if p:
+            p.update(name=name, scheduled=when(words))
+            out["previews"][key] = p
+    return out
+
+
 def resolve_overnight(now):
     forced = os.environ.get("REPORT_DATE", "").strip()
     if forced:
@@ -1571,7 +1476,7 @@ def main():
     on_cut = datetime.combine(on_day, time(18, 0), ET)
     overnight = finish(build_view(on_day, on_cut, False, now, "overnight", hist_on), hist_on, "overnight")
 
-    report = {"generated": now.isoformat(timespec="seconds"),
+    report = {"generated": now.isoformat(timespec="seconds"), "red": red_folder(now),
               "ny": {"preopen": preopen, "now": current}, "overnight": overnight,
               "week": sorted(WEEK_EVENTS, key=lambda e: e["ts"])}
     latest = OUT / "latest.json"
