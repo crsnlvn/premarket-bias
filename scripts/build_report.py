@@ -437,9 +437,10 @@ def fred(series):
             if isinstance(e, (requests.ConnectionError, requests.Timeout)) or getattr(getattr(e, "response", None), "status_code", 0) in (400, 401, 403):
                 DEAD.add("fredapi")
             out = []
-    if not FIXTURES and not out:
-        for url in (f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}",
-                    f"https://fred.stlouisfed.org/data/{series}.txt"):
+    api_ok = bool(out)
+    if not FIXTURES:
+        for url in (() if api_ok else (f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}",
+                    f"https://fred.stlouisfed.org/data/{series}.txt")):
             if "fred" in DEAD:
                 break
             try:
@@ -1348,6 +1349,11 @@ def daily_closes(ticker, days=70):
         return []
 
 
+def two_year():
+    rows = fred("DGS2")
+    return rows if len(rows) > 25 else daily_closes("2YY=F")
+
+
 def _chg_n(rows, n, pct_=True):
     if len(rows) <= n:
         return None
@@ -1389,7 +1395,7 @@ def cpi_preview(as_of):
     if c is not None:
         V.append(_vote("oil", "Oil over the month", 1 if c > 5 else -1 if c < -5 else 0, .75,
                        f"WTI {c:+.1f}% over the past month. Energy feeds straight into headline CPI."))
-    two = daily_closes("2YY=F")
+    two = two_year()
     c = _chg_n(two, 21, False)
     if c is not None:
         bp = c * 100
@@ -1428,7 +1434,7 @@ def fomc_preview(as_of):
                        ("Hot data against priced cuts is the classic hawkish surprise." if mis > 0 else
                         "Cool data against no priced cut leaves room for a dovish surprise." if mis < 0 else
                         "Data and pricing agree, so a surprise is less likely.")))
-    two = daily_closes("2YY=F")
+    two = two_year()
     c = _chg_n(two, 21, False)
     if c is not None:
         bp = c * 100
@@ -1451,7 +1457,7 @@ def red_folder(now):
     """This week's high-impact US releases, plus CPI and FOMC previews built from macro data only."""
     hi = [e for e in WEEK_EVENTS if e["impact"] == "High"]
     def when(words):
-        m = [e for e in hi if any(w in e["title"] for w in words)]
+        m = [e for e in hi if any(w in e["title"] for w in words) and e["ts"] >= now.isoformat()]
         return {"date": m[0]["date"], "time": m[0]["time"], "titles": sorted({e["title"] for e in m})} if m else None
     out = {"generated": now.isoformat(timespec="seconds"), "events": sorted(hi, key=lambda e: e["ts"]), "previews": {}}
     for key, fn, words, name in (("cpi", cpi_preview, ("CPI",), "CPI"), ("fomc", fomc_preview, ("FOMC", "Federal Funds Rate"), "FOMC")):
