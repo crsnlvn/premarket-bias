@@ -9,7 +9,7 @@
  },
  "mode": "point-in-time",
  "as_of": "2026-10-28T18:00:00-04:00",
- "generated": "2026-10-29T08:58:03-04:00",
+ "generated": "2026-10-29T09:39:11-04:00",
  "events": [
   {
    "time": "8:30 AM",
@@ -233,7 +233,15 @@
    "profile": [],
    "earnings": [],
    "scorecard": null,
-   "outcome": null
+   "outcome": {
+    "open": 29773.75,
+    "noon": 29621.25,
+    "close": 29621.25,
+    "move": -152.5,
+    "start": "2026-10-28T18:00:00-04:00",
+    "end": "2026-10-29T09:30:00-04:00",
+    "result": "miss"
+   }
   },
   "ES": {
    "name": "S&P 500 futures",
@@ -350,7 +358,15 @@
     }
    ],
    "scorecard": null,
-   "outcome": null
+   "outcome": {
+    "open": 7764.75,
+    "noon": 7748.5,
+    "close": 7748.5,
+    "move": -16.25,
+    "start": "2026-10-28T18:00:00-04:00",
+    "end": "2026-10-29T09:30:00-04:00",
+    "result": "miss"
+   }
   }
  },
  "divergence": null,
@@ -361,38 +377,38 @@
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-29T08:58:29-04:00",
+   "fetched": "2026-10-29T09:39:41-04:00",
    "data_time": "2026-10-28T18:00:00-04:00",
    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 6:00 PM ET"
   },
   "Economic calendar": {
    "ok": true,
-   "fetched": "2026-10-29T08:58:29-04:00",
+   "fetched": "2026-10-29T09:39:41-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 28": {
    "ok": true,
-   "fetched": "2026-10-29T08:58:31-04:00",
+   "fetched": "2026-10-29T09:39:42-04:00",
    "data_time": null,
    "detail": "246 companies"
   },
   "Earnings Oct 29": {
    "ok": true,
-   "fetched": "2026-10-29T08:58:34-04:00",
+   "fetched": "2026-10-29T09:39:45-04:00",
    "data_time": null,
    "detail": "312 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-29T08:58:35-04:00",
-   "data_time": "2026-10-29T08:53:26-04:00",
+   "fetched": "2026-10-29T09:39:45-04:00",
+   "data_time": "2026-10-29T09:39:06-04:00",
    "detail": "16,412 contracts"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-29T08:58:37-04:00",
-   "data_time": "2026-10-29T08:58:19-04:00",
+   "fetched": "2026-10-29T09:39:47-04:00",
+   "data_time": "2026-10-29T09:39:21-04:00",
    "detail": "29,376 contracts"
   }
  }
