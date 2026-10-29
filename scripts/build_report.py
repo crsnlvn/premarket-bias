@@ -1288,17 +1288,25 @@ def previous_call(hist, view, target, as_of, sess):
     """The last call already published for this same window, so near-zero wobbles don't flip it."""
     try:
         if view == "now" and sess:
-            end = sess[2].isoformat()
-            for f in sorted(hist.glob("20*.json"), reverse=True)[:12]:
+            # The session's call is the one made right before it opened; later reads only flip it
+            # if they clear the hold band. If the session opened before any read, use the first one inside it.
+            end, start = sess[2].isoformat(), sess[1].isoformat()
+            same = []
+            for f in sorted(hist.glob("20*.json"))[-40:]:
                 d = json.loads(f.read_text())
                 if (d.get("window") or {}).get("end") == end and d.get("as_of", "") < as_of.isoformat():
-                    return {k: m["bias"]["bias"] for k, m in d.get("markets", {}).items()}
-            return {}
+                    same.append(d)
+            before = [d for d in same if d["as_of"] < start]
+            pick = before[-1] if before else (same[0] if same else None)
+            if not pick:
+                return {}
+            return {k: label_of(m["bias"].get("own_score", m["bias"]["score"]))
+                    for k, m in pick.get("markets", {}).items()}
         f = hist / f"{target.isoformat()}.json"
         if f.exists():
             d = json.loads(f.read_text())
             if d.get("as_of", "") < as_of.isoformat():
-                return {k: m["bias"]["bias"] for k, m in d.get("markets", {}).items()}
+                return {k: label_of(m["bias"].get("own_score", m["bias"]["score"])) for k, m in d.get("markets", {}).items()}
     except Exception:  # noqa: BLE001
         pass
     return {}
