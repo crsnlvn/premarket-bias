@@ -33,6 +33,7 @@ jobs:
       - name: Build report
         env:
           REPORT_DATE: ${{ github.event.inputs.date }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python scripts/build_report.py
       - name: Publish
         run: |
