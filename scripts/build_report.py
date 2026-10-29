@@ -560,6 +560,11 @@ RELEASES = {
     "Unemployment Rate": ("UNRATE", lambda r: r[-1][1], -1, "month", 0.1),
     "Non-Farm Employment Change": ("PAYEMS", lambda r: r[-1][1] - r[-2][1], 1, "month", 25),
     "Unemployment Claims": ("ICSA", lambda r: r[-1][1] / 1000, -1, "week", 7),
+    "Core PCE Price Index m/m": ("PCEPILFE", _mom, 1, "month", 0.1),     # the Fed's preferred inflation gauge
+    "PCE Price Index m/m": ("PCEPI", _mom, 1, "month", 0.1),
+    "Advance GDP q/q": ("A191RL1Q225SBEA", lambda r: r[-1][1], 1, "quarter", 0.3),
+    "Prelim GDP q/q": ("A191RL1Q225SBEA", lambda r: r[-1][1], 1, "quarter", 0.3),
+    "Final GDP q/q": ("A191RL1Q225SBEA", lambda r: r[-1][1], 1, "quarter", 0.3),
 }
 
 
@@ -570,6 +575,8 @@ def _fresh_for(rows, released: date, kind):
     obs = rows[-1][0]
     if kind == "week":
         return 0 <= (released - obs).days <= 8
+    if kind == "quarter":   # quarterly series are dated at the start of the quarter they cover
+        return 60 <= (released - obs).days <= 150
     prev_month = (released.replace(day=1) - timedelta(days=1)).replace(day=1)
     return obs == prev_month
 

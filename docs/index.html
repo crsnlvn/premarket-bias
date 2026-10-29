@@ -372,11 +372,12 @@ function ago(d){
   const h=Math.floor(m/60); if(h<24) return h+' hr '+(m%60)+' min ago';
   const dd=Math.floor(h/24); return dd+' day'+(dd>1?'s':'')+' ago';
 }
-function nextRun(){   // mirrors the GitHub schedule (UTC): weekdays 12:10 and 13:10, plus every hour at :40 Sun–Fri
-  const now=new Date(), slots=[...Array(24).keys()].map(h=>[h,40]).concat([[12,10],[13,10]]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
-  for(let i=0;i<10;i++) for(const [h,mi] of slots){
+function nextRun(){   // mirrors the GitHub schedule (UTC): weekdays :07/:22/:37/:52 from 12 to 14, plus every hour at :40 Sun–Fri
+  const now=new Date(), pre=[12,13,14].flatMap(h=>[7,22,37,52].map(m=>[h,m,true]));
+  const slots=[...Array(24).keys()].map(h=>[h,40,false]).concat(pre).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  for(let i=0;i<10;i++) for(const [h,mi,weekdayOnly] of slots){
     const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+i,h,mi)), wd=d.getUTCDay();
-    if(mi===10 ? (wd>=1&&wd<=5) : wd<=5) if(d>now) return d;
+    if(weekdayOnly ? (wd>=1&&wd<=5) : wd<=5) if(d>now) return d;
   }
 }
 const winName = D => (D && D.window && D.window.name) || 'NY open';
