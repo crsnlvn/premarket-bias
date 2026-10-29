@@ -31,6 +31,8 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
   background:radial-gradient(42% 32% at 12% 30%,var(--blob1),transparent 70%),radial-gradient(48% 36% at 95% 4%,var(--blob2),transparent 70%),
              radial-gradient(40% 30% at 90% 78%,var(--blob3),transparent 70%)}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;display:block}
+#fx[hidden]{display:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;letter-spacing:inherit}
 input,textarea,select{font:inherit;color:var(--text)}
 :focus-visible{outline:2px solid var(--text);outline-offset:2px}
@@ -233,10 +235,15 @@ body.compact .note{font-size:14.5px}
 .tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .2s}
 .tg.on{background:var(--up)}
 .tg.on::after{transform:translateX(20px)}
+.rng{display:grid;gap:4px}
+.rng label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--dim);margin-top:8px}
+.rng output{color:var(--text);font-variant-numeric:tabular-nums}
+.rng input[type=range]{width:100%;height:28px;accent-color:var(--text)}
 .reset{width:100%;margin-top:20px;padding:13px;border-radius:999px;color:var(--down);font-size:15px;font-weight:600;background:var(--bar)}
 </style>
 </head>
 <body>
+<canvas id="fx" aria-hidden="true" hidden></canvas>
 <div class="wrap" id="wrap">
   <header>
     <div class="brand"><span class="live" id="live"></span></div>
@@ -312,7 +319,10 @@ const SECTIONS = {
   calendar:'Today\'s releases', earnings:'Mega-cap earnings', freshness:'Data sources', method:'How it works'
 };
 const DEFAULTS = {theme:'classic', up:null, down:null, bg:'auto', size:'m', density:'comfortable', market:'NQ', reasons:true,
-  order:Object.keys(SECTIONS), hidden:[]};
+  order:Object.keys(SECTIONS), hidden:[],
+  fx:'blackhole', fxTint:'style', fxSpeed:1, fxAmount:1, fxSize:1, fxGlow:1};
+const FX_STYLES = {off:'Off', blackhole:'Black hole', petals:'Petals', ravens:'Ravens', symbiote:'Symbiote', stars:'Starfall', embers:'Embers', aurora:'Aurora'};
+const FX_TINTS = {style:'Its own', call:'Follows the call', '#cdbfff':'Lavender', '#bfe3ff':'Ice', '#ffb3c7':'Rose', '#ffd27a':'Gold', '#ffffff':'White'};
 // new look: carry over everything from the old settings except colors and background
 const OLD = store.get('prefs2', null) || (({theme,up,down,bg,...rest}) => rest)(store.get('prefs',{}));
 let P = {...DEFAULTS, ...OLD};
@@ -322,7 +332,9 @@ P.order = P.order.filter(k=>SECTIONS[k]);
 const save = () => store.set('prefs2', P);
 
 const sysDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
-function modeNow(){ return P.bg==='auto' ? (sysDark && !sysDark.matches ? 'light' : 'dark') : BGS[P.bg].mode; }
+function modeNow(){
+  if(P.fx && P.fx!=='off') return 'dark';   // the animated scenes are night skies, so the glass goes dark with them
+  return P.bg==='auto' ? (sysDark && !sysDark.matches ? 'light' : 'dark') : BGS[P.bg].mode; }
 function shade(hex, amt){ // mix a color toward black so it reads on light glass
   const n=parseInt(hex.slice(1),16), f=c=>Math.round(c*(1-amt)).toString(16).padStart(2,'0');
   return '#'+f(n>>16&255)+f(n>>8&255)+f(n&255);
@@ -342,6 +354,7 @@ function applyPrefs(){
   document.querySelector('meta[name=theme-color]').content = b.bg;
   document.body.classList.toggle('compact', P.density==='compact');
   $('#wrap').style.zoom = {s:.9, m:1, l:1.12}[P.size] || 1;
+  try { FX.config(P, CALL); } catch(e) {}
 }
 if(sysDark) (sysDark.addEventListener ? sysDark.addEventListener('change',()=>{ if(P.bg==='auto') applyPrefs(); }) : sysDark.addListener(()=>{ if(P.bg==='auto') applyPrefs(); }));
 
@@ -754,6 +767,265 @@ function wireJournal(){
     if(Array.isArray(x)){ const ids=new Set(J.map(e=>e.id)); J=J.concat(x.filter(e=>!ids.has(e.id))); store.set('journal',J); toast('Imported '+x.length+' entries'); render(); } }catch(err){ toast('That file is not a journal export'); } }); };
 }
 
+
+/* ───────── animated background ───────── */
+// Canvas scenes drawn behind the glass. Settings live in P.fx*; nothing here touches the report data.
+const FX = (() => {
+  const cv = document.getElementById('fx'), cx = cv.getContext('2d');
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const S = {style:'off', tint:'style', speed:1, amount:1, size:1, glow:1, call:'Bearish'};
+const CALL = {Bearish:'#ff6b8b', Bullish:'#5ef2b0'};
+const DEF = {petals:'#d8ccff', ravens:'#d9dbe3', symbiote:'#ffffff', blackhole:'#ffb36b', embers:'#ff9a4d', aurora:'#7ef0d0', stars:'#dfe6ff', off:'#ffffff'};
+const tint = () => S.tint==='style' ? DEF[S.style] : S.tint==='call' ? CALL[S.call] : S.tint;
+const rgb = h => { const n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255]; };
+const mix = (a,b,t) => a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+const css = (c,a=1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+const R = Math.random, TAU = Math.PI*2;
+let W=0,H=0,DPR=1, scene=null, sprites={};
+function off(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+function glowSprite(col, r){
+  const c = off(r*2,r*2), g = c.getContext('2d'), gr = g.createRadialGradient(r,r,0,r,r,r);
+  gr.addColorStop(0, css(mix(col,[255,255,255],.6),1)); gr.addColorStop(.25, css(col,.55)); gr.addColorStop(1, css(col,0));
+  g.fillStyle = gr; g.fillRect(0,0,r*2,r*2); return c;
+}
+function petalSprite(col){
+  const s=64, c=off(s,s), g=c.getContext('2d'); g.translate(s/2,s/2);
+  g.shadowColor = css(col,.9); g.shadowBlur = 14;
+  const gr = g.createLinearGradient(0,-20,0,20); gr.addColorStop(0, css(mix(col,[255,255,255],.75),.95)); gr.addColorStop(1, css(col,.55));
+  g.fillStyle = gr; g.beginPath(); g.moveTo(0,-20); g.bezierCurveTo(15,-13,12,11,0,20); g.bezierCurveTo(-12,11,-15,-13,0,-20); g.fill();
+  g.shadowBlur = 0; g.strokeStyle = css(mix(col,[255,255,255],.9),.35); g.lineWidth = 1; g.beginPath(); g.moveTo(0,-16); g.quadraticCurveTo(2,0,0,16); g.stroke();
+  return c;
+}
+function starSprite(col){
+  const s=48, c=off(s,s), g=c.getContext('2d'); g.translate(s/2,s/2);
+  g.drawImage(glowSprite(col,10),-10,-10);
+  g.fillStyle = css(mix(col,[255,255,255],.8),1);
+  for(const rot of [0, Math.PI/2]){ g.save(); g.rotate(rot); g.beginPath(); g.moveTo(0,-22); g.lineTo(2,0); g.lineTo(0,22); g.lineTo(-2,0); g.closePath(); g.fill(); g.restore(); }
+  return c;
+}
+function n(base){ return Math.max(4, Math.round(base * S.amount * (W*H)/(400*560))); }
+
+const SCENES = {
+  petals:{
+    init(){ const c=rgb(tint()); sprites={p:petalSprite(c), s:starSprite(c), d:glowSprite(c,8)};
+      this.p = Array.from({length:n(34)},()=>({x:R()*W,y:R()*H,z:.35+R()*.65,vx:6+R()*12,vy:10+R()*14,r:R()*TAU,vr:(R()-.5)*1.4,f:R()*TAU,vf:.6+R()*1.4}));
+      this.s = Array.from({length:n(18)},()=>({x:R()*W,y:R()*H,ph:R()*TAU,f:.6+R()*1.6,z:.4+R()*.8}));
+      this.d = Array.from({length:n(70)},()=>({x:R()*W,y:R()*H,z:.2+R()*.8,ph:R()*TAU})); },
+    bg(){ const g=cx.createRadialGradient(W*.75,H*.25,0,W*.6,H*.4,H); g.addColorStop(0,'#141026'); g.addColorStop(1,'#040308'); return g; },
+    frame(dt,t){
+      cx.fillStyle=this.bg(); cx.fillRect(0,0,W,H); cx.globalCompositeOperation='lighter';
+      for(const d of this.d){ d.y -= 3*d.z*dt*S.speed; if(d.y<-10) d.y=H+10;
+        cx.globalAlpha = (.25+.35*Math.sin(t*1.3+d.ph)**2)*d.z*S.glow; const r=2+3*d.z*S.size; cx.drawImage(sprites.d,d.x-r,d.y-r,r*2,r*2); }
+      for(const s of this.s){ const a = Math.max(0,Math.sin(t*s.f*S.speed+s.ph))**6; if(a<.02) continue;
+        cx.globalAlpha = a*S.glow; const r = 14*s.z*S.size*(.6+.4*a); cx.drawImage(sprites.s,s.x-r,s.y-r,r*2,r*2); }
+      for(const p of this.p){ const k=S.speed*dt;
+        p.x += p.vx*p.z*k; p.y += p.vy*p.z*k + Math.sin(t*.7+p.f)*6*p.z*k; p.r += p.vr*k; p.f += p.vf*k;
+        if(p.x>W+40) p.x=-40; if(p.y>H+40){ p.y=-40; p.x=R()*W; }
+        const sc = p.z*.75*S.size;
+        cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.scale(Math.cos(p.f)*sc, sc);
+        cx.globalAlpha = Math.min(1,(.35+.65*p.z)*S.glow); cx.drawImage(sprites.p,-32,-32); cx.restore(); }
+      cx.globalAlpha=1; cx.globalCompositeOperation='source-over'; }
+  },
+  ravens:{
+    init(){ const c=rgb(tint()); this.c=c;
+      this.b = Array.from({length:Math.max(2,Math.round(5*S.amount))},()=>this.bird(R()*W));
+      this.f = Array.from({length:Math.round(5*S.amount)},()=>({x:R()*W,y:R()*H,r:R()*TAU,vr:(R()-.5)*2,ph:R()*TAU}));
+      this.m = Array.from({length:6},()=>({x:R()*W,y:R()*H,r:120+R()*160,vx:3+R()*6})); },
+    bird(x){ const z=.3+R()*.7; return {x:x??-220, y:H*(.12+R()*.78), z, v:30+R()*34, ph:R()*TAU, fs:4.2+R()*2.4, bob:R()*TAU, tilt:(R()-.5)*.5}; },
+    // A crow outline facing right, unit length ~1. Wing points are written for the wing fully raised (y up = negative)
+    // and scaled by the flap, so the same outline sweeps from up-stroke to down-stroke.
+    // Crow seen from below, flying toward +x. f (0..1) is how open the wings are; the tips sweep back as they close.
+    shape(f){
+      const sub = pts => { let a=0; for(let i=0;i<pts.length;i++){ const p=pts[i], q=pts[(i+1)%pts.length]; a += p[0]*q[1]-q[0]*p[1]; }
+        if(a<0) pts.reverse(); cx.moveTo(pts[0][0],pts[0][1]); for(const p of pts) cx.lineTo(p[0],p[1]); cx.closePath(); };
+      sub([[.5,0],[.43,-.04],[.37,-.075],[.28,-.085],[.14,-.1],[-.14,-.09],[-.28,-.06],[-.52,-.13],[-.6,-.03],[-.6,.03],[-.52,.13],
+           [-.28,.06],[-.14,.09],[.14,.1],[.28,.085],[.37,.075],[.43,.04]]);
+      const wingPts = [[.12,-.08],[.15,-.36],[.1,-.7],[.02,-1.04],[-.04,-.95],[-.07,-1.02],[-.11,-.92],[-.14,-.98],[-.18,-.86],[-.21,-.9],[-.23,-.62],[-.2,-.3],[-.13,-.08]];
+      for(const side of [-1,1]) sub(wingPts.map(([x,y]) => { const r=Math.abs(y); return [x - (1-f)*.18*r*r, side*y*(.3+.7*f)]; }));
+    },
+    draw(b,t){
+      const s = (60+130*b.z)*S.size, f = .22+.78*(.5+.5*Math.sin(b.ph)), O = 10000;
+      const shade = mix([6,6,9], this.c, (1-b.z)*.5), blur = ((1-b.z)*7 + .4)*DPR;
+      cx.save(); cx.shadowColor = css(shade, .62+.38*b.z); cx.shadowBlur = blur; cx.shadowOffsetX = O*DPR;
+      cx.translate(b.x - O, b.y + Math.sin(t*1.3+b.bob)*7*b.z + (f-.5)*s*.05); cx.rotate(b.tilt + Math.sin(t*.8+b.bob)*.05); cx.scale(s, s);
+      cx.fillStyle = '#000'; cx.beginPath(); this.shape(f); cx.fill('nonzero');
+      cx.restore(); },
+    frame(dt,t){
+      const c=this.c, g=cx.createLinearGradient(0,0,W,H*.6);
+      g.addColorStop(0, css(mix([6,6,9],c,.04))); g.addColorStop(.55, css(mix([28,28,34],c,.12))); g.addColorStop(1, css(mix([88,88,96],c,.3)));
+      cx.fillStyle=g; cx.fillRect(0,0,W,H);
+      for(const m of this.m){ m.x += m.vx*dt*S.speed; if(m.x-m.r>W) m.x=-m.r;
+        const gr=cx.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r); gr.addColorStop(0,css(mix([200,200,210],c,.4),.07*S.glow)); gr.addColorStop(1,css(c,0));
+        cx.fillStyle=gr; cx.fillRect(m.x-m.r,m.y-m.r,m.r*2,m.r*2); }
+      this.b.sort((a,b)=>a.z-b.z);
+      for(const b of this.b){ b.x += b.v*b.z*dt*S.speed; b.ph += b.fs*dt*Math.max(.35,S.speed);
+        if(b.x>W+260) Object.assign(b,this.bird(-260)); this.draw(b,t); }
+      for(const f of this.f){ f.y += 14*dt*S.speed; f.x += Math.sin(t+f.ph)*10*dt*S.speed; f.r += f.vr*dt*S.speed; if(f.y>H+20){f.y=-20;f.x=R()*W;}
+        cx.save(); cx.translate(f.x,f.y); cx.rotate(f.r); cx.fillStyle=css([10,10,14],.6); cx.beginPath(); cx.ellipse(0,0,7*S.size,1.8*S.size,0,0,TAU); cx.fill(); cx.restore(); } }
+  },
+  embers:{
+    init(){ const c=rgb(tint()); this.c=c; sprites={e:glowSprite(c,16)};
+      this.e = Array.from({length:n(60)},()=>this.ember(true));
+      this.sm = Array.from({length:5},()=>({x:R()*W,y:H*(.4+R()*.7),r:140+R()*140,v:6+R()*8})); },
+    ember(any){ return {x:R()*W, y:any?R()*H:H+10, z:.3+R()*.7, v:18+R()*40, ph:R()*TAU, life:R()}; },
+    frame(dt,t){
+      const c=this.c, g=cx.createLinearGradient(0,H,0,0); g.addColorStop(0,css(mix([10,6,4],c,.12))); g.addColorStop(1,'#030203');
+      cx.fillStyle=g; cx.fillRect(0,0,W,H);
+      for(const m of this.sm){ m.y -= m.v*dt*S.speed; if(m.y+m.r<0) m.y=H+m.r;
+        const gr=cx.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r); gr.addColorStop(0,css([120,110,110],.05*S.glow)); gr.addColorStop(1,'rgba(0,0,0,0)');
+        cx.fillStyle=gr; cx.fillRect(m.x-m.r,m.y-m.r,m.r*2,m.r*2); }
+      cx.globalCompositeOperation='lighter';
+      for(const e of this.e){ e.y -= e.v*e.z*dt*S.speed; e.x += Math.sin(t*1.6+e.ph)*14*e.z*dt*S.speed;
+        if(e.y<-20) Object.assign(e,this.ember(false));
+        const fade = Math.min(1, e.y/(H*.9)); const fl = .55+.45*Math.sin(t*9+e.ph*7);
+        cx.globalAlpha = Math.max(0,fade)*fl*e.z*S.glow; const r=(4+9*e.z)*S.size; cx.drawImage(sprites.e,e.x-r,e.y-r,r*2,r*2); }
+      cx.globalAlpha=1; cx.globalCompositeOperation='source-over'; }
+  },
+  symbiote:{
+    init(){ const c=rgb(tint()); this.c=c; const N=n(30);
+      this.t = Array.from({length:N},(_,i)=>{ const side=i%4, u=R();
+        const [x,y,a] = side===0?[u*W,-6,Math.PI/2]: side===1?[W+6,u*H,Math.PI]: side===2?[u*W,H+6,-Math.PI/2]:[-6,u*H,0];
+        const spike = R()<.45;
+        return {x,y,a:a+(R()-.5)*.9, L:(spike?40+R()*70:90+R()*170), w:(spike?3+R()*4:8+R()*12), spike,
+                ph:R()*TAU, ph2:R()*TAU, ws:.6+R()*1.1, gs:.3+R()*.5, curl:(R()-.5)*2.4}; }); },
+    tendril(d,t){
+      const N=22, grow=.55+.45*Math.sin(t*d.gs+d.ph), L=d.L*S.size*grow, seg=L/N;
+      let x=d.x, y=d.y, a=d.a; const C=[], Wd=[];
+      for(let i=0;i<=N;i++){
+        C.push([x,y]); const f=i/N; Wd.push(d.w*S.size*Math.pow(1-f, d.spike?1.6:1.15));
+        a += (Math.sin(i*.42+t*d.ws+d.ph2)*.16 + d.curl*.03*f) * (d.spike?.5:1);
+        x += Math.cos(a)*seg; y += Math.sin(a)*seg; }
+      const Lf=[], Rt=[];
+      for(let i=0;i<=N;i++){ const p=C[i], q=C[Math.min(N,i+1)], o=C[Math.max(0,i-1)];
+        const dx=q[0]-o[0], dy=q[1]-o[1], m=Math.hypot(dx,dy)||1, nx=-dy/m, ny=dx/m;
+        Lf.push([p[0]+nx*Wd[i], p[1]+ny*Wd[i]]); Rt.push([p[0]-nx*Wd[i], p[1]-ny*Wd[i], nx, ny]); }
+      cx.fillStyle='#030304'; cx.beginPath(); cx.moveTo(Lf[0][0],Lf[0][1]);
+      for(const p of Lf) cx.lineTo(p[0],p[1]); for(let i=N;i>=0;i--) cx.lineTo(Rt[i][0],Rt[i][1]); cx.closePath(); cx.fill();
+      // wet highlight running along one side
+      const hc = mix([255,255,255], this.c, .25);
+      cx.lineCap='round';
+      for(let i=1;i<N-1;i++){ const p=C[i], q=C[i+1], k=.45;
+        cx.strokeStyle=css(hc, (1-i/N)*.75*S.glow); cx.lineWidth=Math.max(.6, Wd[i]*.18);
+        cx.beginPath(); cx.moveTo(p[0]+(Lf[i][0]-p[0])*k, p[1]+(Lf[i][1]-p[1])*k); cx.lineTo(q[0]+(Lf[i+1][0]-q[0])*k, q[1]+(Lf[i+1][1]-q[1])*k); cx.stroke(); } },
+    frame(dt,t){
+      const c=this.c, T=t*S.speed, g=cx.createRadialGradient(W/2,H*.45,0,W/2,H*.45,Math.max(W,H)*.75);
+      g.addColorStop(0, css(mix([46,46,54],c,.18))); g.addColorStop(.6, css(mix([20,20,24],c,.08))); g.addColorStop(1,'#050506');
+      cx.fillStyle=g; cx.fillRect(0,0,W,H);
+      const v=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.72);   // goo pooled at the edges
+      v.addColorStop(0,'rgba(3,3,4,0)'); v.addColorStop(1,'rgba(3,3,4,.92)'); cx.fillStyle=v; cx.fillRect(0,0,W,H);
+      for(const d of this.t) this.tendril(d,T); }
+  },
+  blackhole:{
+    // Sky (stars + a dusty galaxy band) is painted once to an offscreen canvas; only the disk moves.
+    init(){ const c=rgb(tint()); this.c=c;
+      const sky=off(Math.ceil(W*DPR),Math.ceil(H*DPR)), g=sky.getContext('2d'); g.scale(DPR,DPR);
+      g.fillStyle='#020205'; g.fillRect(0,0,W,H);
+      g.save(); g.translate(W*.5,H*.42); g.rotate(-.55);                          // galaxy band: many faint dust puffs
+      for(let i=0;i<260;i++){ const x=(R()-.5)*W*1.8, y=(R()+R()+R()-1.5)*H*.12, r=20+R()*70;
+        const warm = R()<.5, col = warm?[150,120,110]:[110,120,160], gr=g.createRadialGradient(x,y,0,x,y,r);
+        gr.addColorStop(0,css(col,.035)); gr.addColorStop(1,css(col,0)); g.fillStyle=gr; g.fillRect(x-r,y-r,r*2,r*2); }
+      for(let i=0;i<70;i++){ const x=(R()-.5)*W*1.6, y=(R()-.5)*H*.08, r=8+R()*26, gr=g.createRadialGradient(x,y,0,x,y,r);  // dark dust lanes
+        gr.addColorStop(0,'rgba(0,0,0,.35)'); gr.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle=gr; g.fillRect(x-r,y-r,r*2,r*2); }
+      g.restore();
+      for(let i=0;i<n(260);i++){ const x=R()*W, y=R()*H, m=R()**3, r=.35+m*1.3, t=R();
+        g.fillStyle = css(t<.2?[255,214,180]:t<.4?[190,210,255]:[235,235,245], .25+.75*m); g.beginPath(); g.arc(x,y,r,0,TAU); g.fill(); }
+      this.sky=sky; this.tw=Array.from({length:n(30)},()=>({x:R()*W,y:R()*H,ph:R()*TAU,f:.4+R()*1.2}));
+      sprites={d:glowSprite([255,240,225],6)};
+      this.cxh=W*.58; this.cyh=H*.72; this.rs=Math.min(W,H)*.1*S.size;
+      this.p = Array.from({length:Math.round(1500*S.amount)},()=>{ const r=this.rs*(2.3+Math.pow(R(),1.6)*4.2); return {r, a:R()*TAU, h:(R()-.5)*this.rs*.12, b:.4+R()*.6}; }); },
+    temp(f){ // f: 0 inner hot → 1 outer cool; blended toward the chosen tint
+      const hot=[255,246,232], mid=[255,170,92], cool=[170,52,30], base = f<.35 ? mix(hot,mid,f/.35) : mix(mid,cool,(f-.35)/.65);
+      return mix(base, this.c, S.tint==='style'?0:.55); },
+    frame(dt,t){
+      cx.drawImage(this.sky,0,0,W,H);
+      cx.globalCompositeOperation='lighter';
+      for(const s of this.tw){ cx.globalAlpha=(.2+.8*Math.sin(t*s.f+s.ph)**2)*.7; cx.drawImage(sprites.d,s.x-3,s.y-3,6,6); }
+      const X=this.cxh, Y=this.cyh, rs=this.rs, tilt=.2, rin=rs*2.3, rout=rs*6.5;
+      // soft glow of the whole disk
+      const halo=cx.createRadialGradient(X,Y,rs,X,Y,rout*1.25); halo.addColorStop(0,css(this.temp(.3),.16*S.glow)); halo.addColorStop(1,css(this.temp(.8),0));
+      cx.globalAlpha=1; cx.fillStyle=halo; cx.fillRect(X-rout*1.3,Y-rout*1.3,rout*2.6,rout*2.6);
+      const pass = front => {
+        for(const p of this.p){
+          if(!front) p.a += dt*S.speed*1.6*Math.pow(rin/p.r,1.5);
+          const sa=Math.sin(p.a), ca=Math.cos(p.a); if((sa>0)!==front) continue;
+          const f=(p.r-rin)/(rout-rin), dop=1+.75*ca;                     // left side (cos>0 after flip) comes toward us: brighter
+          const x=X-ca*p.r, y=Y+sa*p.r*tilt+p.h, len=Math.min(.35, 6/p.r*(1+S.speed));
+          cx.strokeStyle=css(this.temp(f), Math.min(1,(.12+.42*(1-f))*p.b*dop*S.glow)); cx.lineWidth=(1.5-.8*f)*Math.max(.6,S.size*.8);
+          cx.beginPath(); cx.ellipse(X,Y+p.h,p.r,p.r*tilt,0,p.a-len,p.a); cx.stroke();
+          if(!front && f<.7){                       // the same far-side gas, lensed into a bow over the shadow
+            const rr=rs*1.32+f*rs*1.15, rx=rr*1.16, phi=TAU-Math.acos(Math.max(-1,Math.min(1,-ca)));
+            cx.strokeStyle=css(this.temp(f*.9), Math.min(1,(.07+.3*(1-f))*p.b*dop*S.glow)); cx.lineWidth=1-.4*f;
+            cx.beginPath(); cx.ellipse(X,Y,rx,rr,0,phi-len*.8,phi); cx.stroke();
+            if(f<.35){ cx.strokeStyle=css(this.temp(f), .05*p.b*S.glow);     // faint second image under the hole
+              cx.beginPath(); cx.ellipse(X,Y,rx*.92,rr*.8,0,TAU-phi-len*.6,TAU-phi); cx.stroke(); } }
+        } };
+      pass(false);
+      cx.globalCompositeOperation='source-over'; cx.globalAlpha=1;
+      const sh=cx.createRadialGradient(X,Y,rs*.9,X,Y,rs*1.25); sh.addColorStop(0,'#000'); sh.addColorStop(1,'rgba(0,0,0,0)');
+      cx.fillStyle=sh; cx.beginPath(); cx.arc(X,Y,rs*1.25,0,TAU); cx.fill();
+      cx.globalCompositeOperation='lighter';
+      cx.strokeStyle=css(this.temp(.05),.07*S.glow); cx.lineWidth=5; cx.beginPath(); cx.arc(X,Y,rs*1.05,0,TAU); cx.stroke();   // photon ring: soft glow
+      cx.strokeStyle=css(this.temp(0),.32*S.glow); cx.lineWidth=.9; cx.beginPath(); cx.arc(X,Y,rs*1.03,0,TAU); cx.stroke();
+      pass(true);
+      cx.globalCompositeOperation='source-over'; cx.globalAlpha=1; }
+  },
+  aurora:{
+    init(){ const c=rgb(tint()); this.c=[c, mix(c,[120,120,255],.55), mix(c,[255,120,200],.4)]; },
+    frame(dt,t){
+      cx.fillStyle='#02040a'; cx.fillRect(0,0,W,H); cx.globalCompositeOperation='lighter';
+      const T = t*.18*S.speed, step = 4;
+      this.c.forEach((c,k)=>{ const base = H*(.22+k*.17), amp = 34*S.size;
+        for(let x=0;x<W;x+=step){
+          const y = base + Math.sin(x*.012+T*(1+k*.3)+k)*amp + Math.sin(x*.031-T*1.7+k*2)*amp*.45;
+          const h = (130+80*Math.sin(x*.02+T*2+k))*S.size*(.6+.4*S.amount);
+          const a = (.22+.14*Math.sin(x*.05+T*3+k))*S.glow;
+          const gr = cx.createLinearGradient(0,y-h,0,y); gr.addColorStop(0,css(c,0)); gr.addColorStop(.8,css(c,a)); gr.addColorStop(1,css(c,0));
+          cx.fillStyle=gr; cx.fillRect(x,y-h,step,h); } });
+      cx.globalCompositeOperation='source-over'; }
+  },
+  stars:{
+    init(){ const c=rgb(tint()); this.c=c; sprites={d:glowSprite(c,8), s:starSprite(c)};
+      this.s = Array.from({length:n(160)},()=>({x:R()*W,y:R()*H,z:R(),ph:R()*TAU,f:.5+R()*2}));
+      this.sh = null; this.next = 1+R()*3; },
+    frame(dt,t){
+      const g=cx.createRadialGradient(W*.5,H*1.1,0,W*.5,H*.6,H*1.1); g.addColorStop(0,css(mix([12,14,30],this.c,.12))); g.addColorStop(1,'#010207');
+      cx.fillStyle=g; cx.fillRect(0,0,W,H); cx.globalCompositeOperation='lighter';
+      for(const s of this.s){ s.y += (2+6*s.z)*dt*S.speed; if(s.y>H+4){s.y=-4;s.x=R()*W;}
+        cx.globalAlpha = (.25+.75*Math.sin(t*s.f+s.ph)**2)*(.3+.7*s.z)*S.glow; const r=(1+2.6*s.z)*S.size; cx.drawImage(sprites.d,s.x-r,s.y-r,r*2,r*2); }
+      this.next -= dt*S.speed*S.amount;
+      if(!this.sh && this.next<0){ this.sh={x:R()*W*.8+W*.2,y:R()*H*.4,vx:-(260+R()*160),vy:120+R()*80,life:0}; this.next=2+R()*5; }
+      if(this.sh){ const s=this.sh; s.life+=dt*S.speed; s.x+=s.vx*dt*S.speed; s.y+=s.vy*dt*S.speed;
+        const a=Math.max(0,1-s.life/1.1)*S.glow; const gr=cx.createLinearGradient(s.x,s.y,s.x-s.vx*.25,s.y-s.vy*.25);
+        gr.addColorStop(0,css(mix(this.c,[255,255,255],.7),a)); gr.addColorStop(1,css(this.c,0));
+        cx.strokeStyle=gr; cx.lineWidth=2*S.size; cx.lineCap='round'; cx.beginPath(); cx.moveTo(s.x,s.y); cx.lineTo(s.x-s.vx*.25,s.y-s.vy*.25); cx.stroke();
+        cx.globalAlpha=a; cx.drawImage(sprites.s,s.x-12,s.y-12,24,24); if(s.life>1.1) this.sh=null; }
+      cx.globalAlpha=1; cx.globalCompositeOperation='source-over'; }
+  },
+  off:{ init(){}, frame(){ const g=cx.createLinearGradient(0,0,W,H); g.addColorStop(0,'#0b0d16'); g.addColorStop(1,'#05060b'); cx.fillStyle=g; cx.fillRect(0,0,W,H); } }
+};
+
+  let raf = 0, last = 0, t = 0, running = false, built = '';
+  function size(){ DPR = Math.min(window.devicePixelRatio||1, 2); W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); cx.setTransform(DPR,0,0,DPR,0,0); }
+  function build(){ size(); scene = SCENES[S.style]; scene.init(); built = [S.style, tint(), S.amount, S.size, W, H].join('|'); }
+  function loop(now){
+    const dt = Math.min(.05, (now-last)/1000) * (reduce ? .25 : 1); last = now; t += dt;
+    scene.frame(dt, t); raf = requestAnimationFrame(loop);
+  }
+  function start(){ if(running || document.hidden) return; running = true; last = performance.now(); raf = requestAnimationFrame(loop); }
+  function stop(){ running = false; cancelAnimationFrame(raf); }
+  function config(p, call){
+    Object.assign(S, {style:p.fx||'off', tint:p.fxTint||'style', speed:+p.fxSpeed||1, amount:+p.fxAmount||1, size:+p.fxSize||1, glow:+p.fxGlow||1, call:call||'Bearish'});
+    if(S.style==='off' || !SCENES[S.style]){ stop(); cv.hidden = true; return; }
+    cv.hidden = false;
+    if([S.style, tint(), S.amount, S.size, window.innerWidth, window.innerHeight].join('|') !== built) build();
+    start();
+  }
+  document.addEventListener('visibilitychange', () => { if(document.hidden) stop(); else if(S.style!=='off') start(); });
+  let rt = 0; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if(S.style!=='off') build(); }, 200); });
+  return { config };
+})();
+
 /* ───────── settings sheet ───────── */
 function seg(key, opts, label){
   return `<div class="st"><h4>${label}</h4><div class="seg">${Object.entries(opts).map(([v,t])=>
@@ -767,7 +1039,12 @@ function openSettings(){
     <div class="st"><h4>Colors</h4><div class="seg">${Object.entries(THEMES).map(([k,v])=>
       `<button data-k="theme" data-v="${k}" class="${P.theme===k&&!P.up&&!P.down?'on':''}"><span class="sw"><i style="background:${v.up}"></i><i style="background:${v.down}"></i></span>${v.name}</button>`).join('')}</div>
       <div class="colors"><label>Bullish <input type="color" id="cUp" value="${P.up||t.up}"></label><label>Bearish <input type="color" id="cDown" value="${P.down||t.down}"></label></div></div>
-    ${seg('bg', Object.fromEntries(Object.entries(BGS).map(([k,v])=>[k,v.name])), 'Background')}
+    ${seg('fx', FX_STYLES, 'Animated background')}
+    ${P.fx!=='off' ? `<div class="st"><h4>Animation color</h4><div class="seg">${Object.entries(FX_TINTS).map(([v,t])=>
+      `<button data-k="fxTint" data-v="${v}" class="${P.fxTint===v?'on':''}">${v.startsWith('#')?`<span class="sw"><i style="background:${v}"></i></span>`:''}${t}</button>`).join('')}</div></div>
+    <div class="st rng">${[['fxSpeed','Speed',.1,2.5],['fxAmount','Amount',.2,2.5],['fxSize','Size',.5,2],['fxGlow','Brightness',.2,1.8]].map(([k,l,mn,mx])=>
+      `<label for="r-${k}"><span>${l}</span><output id="o-${k}">${Math.round(P[k]*100)}%</output></label><input type="range" id="r-${k}" data-r="${k}" min="${mn}" max="${mx}" step="0.05" value="${P[k]}">`).join('')}</div>` : ''}
+    ${seg('bg', Object.fromEntries(Object.entries(BGS).map(([k,v])=>[k,v.name])), P.fx!=='off' ? 'Background (when animation is off)' : 'Background')}
     ${seg('size', {s:'Small', m:'Medium', l:'Large'}, 'Text size')}
     ${seg('density', {comfortable:'Comfortable', compact:'Compact'}, 'Layout')}
     ${seg('reasons', {true:'Show data', false:'Bars only'}, 'Vote detail')}
@@ -792,6 +1069,8 @@ $('#sheet').addEventListener('click', e=>{
   if(b.dataset.tg){ const k=b.dataset.tg; P.hidden = P.hidden.includes(k) ? P.hidden.filter(x=>x!==k) : [...P.hidden,k]; return changed(); }
 });
 $('#sheet').addEventListener('input', e=>{
+  const k = e.target.dataset && e.target.dataset.r;
+  if(k){ P[k] = +e.target.value; const o=$('#o-'+k); if(o) o.textContent = Math.round(P[k]*100)+'%'; save(); try{ FX.config(P, CALL); }catch(err){} return; }
   if(e.target.id==='cUp'){ P.up=e.target.value; save(); applyPrefs(); if(ROOT) render(); }
   if(e.target.id==='cDown'){ P.down=e.target.value; save(); applyPrefs(); if(ROOT) render(); }
 });
