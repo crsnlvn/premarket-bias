@@ -9,7 +9,7 @@
  },
  "mode": "point-in-time",
  "as_of": "2026-10-28T18:00:00-04:00",
- "generated": "2026-10-29T01:19:55-04:00",
+ "generated": "2026-10-29T01:37:15-04:00",
  "events": [
   {
    "time": "8:30 AM",
@@ -131,18 +131,17 @@
    "name": "Nasdaq-100 futures",
    "bias": {
     "bias": "Bullish",
-    "score": 0.063,
-    "raw_score": 0.124,
+    "score": 0.114,
+    "raw_score": 0.191,
     "dampened": [
-     "high-impact release later today",
-     "mega-cap earnings"
+     "high-impact release later today"
     ],
-    "own_score": 0.093,
-    "conviction": "Very low",
-    "ups": 4,
-    "downs": 2,
-    "total": 12,
-    "overall": "For: Day session, VIX today, 2-year / Fed path. Against: After-hours reaction, Mega-cap earnings. Close to a coin flip. Let price confirm. ES agrees. On deck: Advance GDP q/q 8:30 AM, Core PCE Price Index m/m 8:30 AM. Reassess after.",
+    "own_score": 0.148,
+    "conviction": "Low",
+    "ups": 2,
+    "downs": 1,
+    "total": 8,
+    "overall": "For: VIX today, 2-year / Fed path. Against: Fed pressure (official data). ES agrees. On deck: Advance GDP q/q 8:30 AM, Core PCE Price Index m/m 8:30 AM. Reassess after.",
     "invalidation": "Futures reversing through today's 4 PM close in Asia",
     "macro_share": 100
    },
@@ -193,15 +192,6 @@
      "group": "Macro"
     },
     {
-     "key": "crypto",
-     "label": "Crypto risk appetite",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.5,
-     "text": "Bitcoin +0.6% since yesterday's 4 PM. No signal.",
-     "group": "Macro"
-    },
-    {
      "key": "term",
      "label": "VIX term structure",
      "score": 0,
@@ -209,33 +199,6 @@
      "weight": 1.0,
      "text": "VIX \u00f7 VIX3M at yesterday's close = 0.90. A flat-ish curve. Mild caution.",
      "group": "Volatility"
-    },
-    {
-     "key": "day",
-     "label": "Day session",
-     "score": 1,
-     "raw": 1,
-     "weight": 1.0,
-     "text": "NQ +0.90% from yesterday's 4 PM to today's 4 PM. A strong cash session tends to carry into Globex.",
-     "group": "Session"
-    },
-    {
-     "key": "afterhours",
-     "label": "After-hours reaction",
-     "score": -1,
-     "raw": -1,
-     "weight": 1.25,
-     "text": "NQ -1.02% from 4 PM to the 6 PM cutoff. After-hours selling, often an earnings miss, sets a heavy tone.",
-     "group": "Session"
-    },
-    {
-     "key": "lasthour",
-     "label": "Last-hour trend",
-     "score": 1,
-     "raw": 1,
-     "weight": 0.75,
-     "text": "NQ +0.59% in the final hour (3 to 4 PM). Buyers into the bell, the late-day flow that tends to persist (Baltussen et al.).",
-     "group": "Session"
     },
     {
      "key": "vixday",
@@ -247,13 +210,13 @@
      "group": "Volatility"
     },
     {
-     "key": "earnings",
-     "label": "Mega-cap earnings",
+     "key": "fedpressure",
+     "label": "Fed pressure (official data)",
      "score": -1,
      "raw": -1,
-     "weight": 1.25,
-     "text": "MSFT: EPS 4.89 vs 4.72 est (beat +4%), stock +5.9%; GOOGL: EPS 2.12 vs 3.01 est (miss -30%), stock -11.2%. The market is selling the results, and mega-caps drag the index.",
-     "group": "News"
+     "weight": 0.75,
+     "text": "Unemployment rate 4.2% (in range); Initial jobless claims 194.0K (hot); Payrolls (3-mo avg change) 50.7K (cool); CPI y/y 4.0% (hot); Core CPI y/y 2.8% (hot); PPI m/m 1.3% (hot). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
+     "group": "Macro"
     }
    ],
    "changed": null,
@@ -274,7 +237,7 @@
      "when": "after close",
      "date": "2026-10-28",
      "eps_est": 4.71,
-     "eps": null,
+     "eps": 4.13,
      "surprise": null
     },
     {
@@ -282,7 +245,7 @@
      "when": "after close",
      "date": "2026-10-28",
      "eps_est": 2.94,
-     "eps": null,
+     "eps": 2.87,
      "surprise": null
     }
    ],
@@ -293,20 +256,19 @@
    "name": "S&P 500 futures",
    "bias": {
     "bias": "Bullish",
-    "score": 0.077,
-    "raw_score": 0.151,
+    "score": 0.136,
+    "raw_score": 0.227,
     "dampened": [
-     "high-impact release later today",
-     "mega-cap earnings"
+     "high-impact release later today"
     ],
-    "own_score": 0.182,
-    "conviction": "Very low",
-    "ups": 6,
-    "downs": 2,
-    "total": 16,
-    "overall": "For: Day session, VIX today, 2-year / Fed path. Against: After-hours reaction, Mega-cap earnings. Close to a coin flip. Let price confirm. Dealers long gamma: expect chop and fades. NQ agrees. On deck: Advance GDP q/q 8:30 AM, Core PCE Price Index m/m 8:30 AM. Reassess after.",
+    "own_score": 0.27,
+    "conviction": "Low",
+    "ups": 4,
+    "downs": 1,
+    "total": 12,
+    "overall": "For: VIX today, 2-year / Fed path, Gamma flip. Against: Fed pressure (official data). Dealers long gamma: expect chop and fades. NQ agrees. On deck: Advance GDP q/q 8:30 AM, Core PCE Price Index m/m 8:30 AM. Reassess after.",
     "invalidation": "A 15-minute close below the gamma flip at 7,746",
-    "macro_share": 85
+    "macro_share": 77
    },
    "signals": [
     {
@@ -355,15 +317,6 @@
      "group": "Macro"
     },
     {
-     "key": "crypto",
-     "label": "Crypto risk appetite",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.5,
-     "text": "Bitcoin +0.6% since yesterday's 4 PM. No signal.",
-     "group": "Macro"
-    },
-    {
      "key": "term",
      "label": "VIX term structure",
      "score": 0,
@@ -371,33 +324,6 @@
      "weight": 1.0,
      "text": "VIX \u00f7 VIX3M at yesterday's close = 0.90. A flat-ish curve. Mild caution.",
      "group": "Volatility"
-    },
-    {
-     "key": "day",
-     "label": "Day session",
-     "score": 1,
-     "raw": 1,
-     "weight": 1.0,
-     "text": "ES +0.57% from yesterday's 4 PM to today's 4 PM. A strong cash session tends to carry into Globex.",
-     "group": "Session"
-    },
-    {
-     "key": "afterhours",
-     "label": "After-hours reaction",
-     "score": -1,
-     "raw": -1,
-     "weight": 1.25,
-     "text": "ES -0.47% from 4 PM to the 6 PM cutoff. After-hours selling, often an earnings miss, sets a heavy tone.",
-     "group": "Session"
-    },
-    {
-     "key": "lasthour",
-     "label": "Last-hour trend",
-     "score": 1,
-     "raw": 1,
-     "weight": 0.75,
-     "text": "ES +0.37% in the final hour (3 to 4 PM). Buyers into the bell, the late-day flow that tends to persist (Baltussen et al.).",
-     "group": "Session"
     },
     {
      "key": "vixday",
@@ -409,13 +335,13 @@
      "group": "Volatility"
     },
     {
-     "key": "earnings",
-     "label": "Mega-cap earnings",
+     "key": "fedpressure",
+     "label": "Fed pressure (official data)",
      "score": -1,
      "raw": -1,
-     "weight": 1.25,
-     "text": "MSFT: EPS 4.89 vs 4.72 est (beat +4%), stock +5.9%; GOOGL: EPS 2.12 vs 3.01 est (miss -30%), stock -11.2%. The market is selling the results, and mega-caps drag the index.",
-     "group": "News"
+     "weight": 0.75,
+     "text": "Unemployment rate 4.2% (in range); Initial jobless claims 194.0K (hot); Payrolls (3-mo avg change) 50.7K (cool); CPI y/y 4.0% (hot); Core CPI y/y 2.8% (hot); PPI m/m 1.3% (hot). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
+     "group": "Macro"
     },
     {
      "key": "flip",
@@ -564,7 +490,7 @@
     },
     {
      "px": 7531.32,
-     "gex": -114698810044.57243
+     "gex": -114698810044.5724
     },
     {
      "px": 7546.85,
@@ -608,7 +534,7 @@
     },
     {
      "px": 7702.14,
-     "gex": -38714639321.35701
+     "gex": -38714639321.35702
     },
     {
      "px": 7717.66,
@@ -620,11 +546,11 @@
     },
     {
      "px": 7748.72,
-     "gex": 2858147664.6612587
+     "gex": 2858147664.6612573
     },
     {
      "px": 7764.25,
-     "gex": 17767022011.95592
+     "gex": 17767022011.955917
     },
     {
      "px": 7779.78,
@@ -636,11 +562,11 @@
     },
     {
      "px": 7810.84,
-     "gex": 61171603226.44789
+     "gex": 61171603226.44788
     },
     {
      "px": 7826.36,
-     "gex": 74045204438.10242
+     "gex": 74045204438.1024
     },
     {
      "px": 7841.89,
@@ -668,7 +594,7 @@
     },
     {
      "px": 7935.06,
-     "gex": 121970151971.9237
+     "gex": 121970151971.92372
     },
     {
      "px": 7950.59,
@@ -704,7 +630,7 @@
     },
     {
      "px": 8074.82,
-     "gex": 111430637496.30656
+     "gex": 111430637496.30655
     },
     {
      "px": 8090.35,
@@ -728,7 +654,7 @@
     },
     {
      "px": 8167.99,
-     "gex": 98435513717.08275
+     "gex": 98435513717.08273
     },
     {
      "px": 8183.52,
@@ -753,7 +679,7 @@
      "when": "after close",
      "date": "2026-10-28",
      "eps_est": 4.71,
-     "eps": null,
+     "eps": 4.13,
      "surprise": null
     },
     {
@@ -761,7 +687,7 @@
      "when": "after close",
      "date": "2026-10-28",
      "eps_est": 2.94,
-     "eps": null,
+     "eps": 2.87,
      "surprise": null
     },
     {
@@ -779,58 +705,48 @@
  },
  "divergence": null,
  "notes": [
-  "NQ: dealer positioning skipped, option snapshot is from Oct 29, after this session. The read is macro only.",
-  "Too few headlines before the cutoff (23) to score news tone",
-  "Official macro data (FRED) unavailable, Fed-pressure gauge skipped",
-  "Too few headlines before the cutoff (23) to score news tone",
-  "Official macro data (FRED) unavailable, Fed-pressure gauge skipped"
+  "NQ: dealer positioning skipped, option snapshot is from Oct 29, after this session. The read is macro only."
  ],
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-29T01:23:27-04:00",
+   "fetched": "2026-10-29T01:37:41-04:00",
    "data_time": "2026-10-28T18:00:00-04:00",
    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 6:00 PM ET"
   },
   "Economic calendar": {
    "ok": true,
-   "fetched": "2026-10-29T01:23:27-04:00",
+   "fetched": "2026-10-29T01:37:41-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 28": {
    "ok": true,
-   "fetched": "2026-10-29T01:23:30-04:00",
+   "fetched": "2026-10-29T01:37:42-04:00",
    "data_time": null,
    "detail": "222 companies"
   },
   "Earnings Oct 29": {
    "ok": true,
-   "fetched": "2026-10-29T01:23:33-04:00",
+   "fetched": "2026-10-29T01:37:43-04:00",
    "data_time": null,
    "detail": "317 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-29T01:23:34-04:00",
-   "data_time": "2026-10-29T01:04:17-04:00",
+   "fetched": "2026-10-29T01:37:44-04:00",
+   "data_time": "2026-10-29T01:26:08-04:00",
    "detail": "16,412 contracts"
-  },
-  "News headlines": {
-   "ok": true,
-   "fetched": "2026-10-29T01:23:37-04:00",
-   "data_time": null,
-   "detail": "5 of 6 feeds live \u00b7 100 headlines"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-29T01:23:36-04:00",
+   "fetched": "2026-10-29T01:37:45-04:00",
    "data_time": "2026-10-28T22:49:46-04:00",
    "detail": "28,948 contracts"
   },
   "CBOE SPY options": {
    "ok": true,
-   "fetched": "2026-10-29T01:23:37-04:00",
+   "fetched": "2026-10-29T01:37:45-04:00",
    "data_time": "2026-10-28T21:31:27-04:00",
    "detail": "12,374 contracts"
   }
