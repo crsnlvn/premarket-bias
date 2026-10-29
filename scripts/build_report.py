@@ -365,6 +365,7 @@ def _num(v):
 _FRED: dict = {}
 FRED_CACHE = OUT / "fred_cache.json"
 FRED_ERR: list[str] = []
+DEAD: set[str] = set()   # hosts that failed to connect this run: skip them instead of waiting again
 BROWSER_UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
                             "(KHTML, like Gecko) Version/17.5 Safari/605.1.15", "Accept": "text/csv,text/plain,*/*"}
 
@@ -383,8 +384,10 @@ BLS_IDS = {"UNRATE": "LNS14000000", "PAYEMS": "CES0000000001", "CPIAUCSL": "CUSR
 
 
 def bls(series):
+    if "bls" in DEAD:
+        return []
     try:
-        r = requests.get(f"https://api.bls.gov/publicAPI/v1/timeseries/data/{BLS_IDS[series]}", headers=BROWSER_UA, timeout=30)
+        r = requests.get(f"https://api.bls.gov/publicAPI/v1/timeseries/data/{BLS_IDS[series]}", headers=BROWSER_UA, timeout=(5, 12))
         r.raise_for_status()
         js = r.json()
         rows = []
@@ -400,6 +403,8 @@ def bls(series):
     except Exception as e:  # noqa: BLE001
         FRED_ERR.append(f"BLS {series}: {type(e).__name__}")
         print(f"bls {series}: {type(e).__name__} {e}", file=sys.stderr)
+        if isinstance(e, (requests.ConnectionError, requests.Timeout)):
+            DEAD.add("bls")
         return []
 
 
@@ -412,11 +417,33 @@ def fred(series):
     if series in _FRED:
         return _FRED[series]
     out = []
-    if not FIXTURES:
+    key = os.environ.get("FRED_API_KEY", "").strip()
+    if key and not FIXTURES and "fredapi" not in DEAD:     # official FRED API first (free key, GitHub secret)
+        try:
+            r = requests.get("https://api.stlouisfed.org/fred/series/observations",
+                             params={"series_id": series, "api_key": key, "file_type": "json",
+                                     "observation_start": (datetime.now(ET).date() - timedelta(days=1500)).isoformat()},
+                             headers=BROWSER_UA, timeout=(5, 15))
+            r.raise_for_status()
+            for o in r.json().get("observations", []):
+                try:
+                    out.append((date.fromisoformat(o["date"]), float(o["value"])))
+                except (ValueError, KeyError):
+                    continue
+            out.sort()
+        except Exception as e:  # noqa: BLE001
+            FRED_ERR.append(f"FRED API {series}: {type(e).__name__} {str(e)[:60].replace(key, '***')}")
+            print(f"fred api {series}: {type(e).__name__}", file=sys.stderr)
+            if isinstance(e, (requests.ConnectionError, requests.Timeout)) or getattr(getattr(e, "response", None), "status_code", 0) in (400, 401, 403):
+                DEAD.add("fredapi")
+            out = []
+    if not FIXTURES and not out:
         for url in (f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}",
                     f"https://fred.stlouisfed.org/data/{series}.txt"):
+            if "fred" in DEAD:
+                break
             try:
-                r = requests.get(url, headers=BROWSER_UA, timeout=30)
+                r = requests.get(url, headers=BROWSER_UA, timeout=(5, 12))
                 r.raise_for_status()
                 lines = r.text.strip().splitlines()
                 if url.endswith(".txt"):
@@ -437,6 +464,8 @@ def fred(series):
             except Exception as e:  # noqa: BLE001
                 FRED_ERR.append(f"{series}: {type(e).__name__} {str(e)[:80]}")
                 print(f"fred {series} {url}: {type(e).__name__} {e}", file=sys.stderr)
+                if isinstance(e, (requests.ConnectionError, requests.Timeout)):
+                    DEAD.add("fred")
         if not out and series in BLS_IDS:
             out = bls(series)
         cache = _fred_cache()
