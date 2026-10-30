@@ -1,5 +1,5 @@
 // App shell is cached for offline open; the report is always fetched fresh first.
-const CACHE = 'bias-v41';
+const CACHE = 'bias-v42';
 const SHELL = ['./', 'index.html', 'fonts/plexmono-400.woff2', 'fonts/plexmono-500.woff2', 'fonts/plexsans-400.woff2', 'fonts/plexsans-600.woff2', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-180.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate', e => {

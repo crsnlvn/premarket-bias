@@ -650,12 +650,13 @@ const SECTIONS = {
 const DEFAULTS = {theme:'classic', up:null, down:null, bg:'calm', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
   order:Object.keys(SECTIONS), hidden:[],
   fx:'off', fxTint:'style', fxSpeed:1, fxAmount:1, fxSize:1, fxGlow:1, fxSet:false};
+const BG_CHOICES = {calm:'Calm', vivid:'Vivid', dark:'Dark', light:'Light', midnight:'Midnight', black:'Black'};
 const FX_STYLES = {off:'Off', blackhole:'Black hole', petals:'Petals', ravens:'Ravens', symbiote:'Symbiote', stars:'Starfall', embers:'Embers', aurora:'Aurora'};
 const FX_TINTS = {style:'Its own', call:'Follows the call', '#cdbfff':'Lavender', '#bfe3ff':'Ice', '#ffb3c7':'Rose', '#ffd27a':'Gold', '#ffffff':'White'};
 // new look: carry over everything from the old settings except colors and background
 const OLD = store.get('prefs2', null) || (({theme,up,down,bg,...rest}) => rest)(store.get('prefs',{}));
 let P = {...DEFAULTS, ...OLD};
-if(!BGS[P.bg]) P.bg = 'quant';
+if(!BG_CHOICES[P.bg]) P.bg = 'calm';
 if(!P.bgSet || !P.cSet){ P.bg = 'calm'; P.cSet = true; P.bgSet = false; }   // calm (flat, three colors) is the default look; any background can still be picked in Settings
 if(!P.fxSet) P.fx = 'off';   // default look is plain glass; an animation only runs once someone picks one
 for(const k of Object.keys(SECTIONS)) if(!P.order.includes(k)) P.order.push(k);
@@ -1718,12 +1719,12 @@ function openSettings(){
     <div class="st"><h4>Colors</h4><div class="seg">${Object.entries(THEMES).map(([k,v])=>
       `<button data-k="theme" data-v="${k}" class="${P.theme===k&&!P.up&&!P.down?'on':''}"><span class="sw"><i style="background:${v.up}"></i><i style="background:${v.down}"></i></span>${v.name}</button>`).join('')}</div>
       <div class="colors"><label>Bullish <input type="color" id="cUp" value="${P.up||t.up}"></label><label>Bearish <input type="color" id="cDown" value="${P.down||t.down}"></label></div></div>
+    ${seg('bg', BG_CHOICES, P.fx!=='off' ? 'Background color (when animation is off)' : 'Background color')}
     ${seg('fx', FX_STYLES, 'Animated background')}
     ${P.fx!=='off' ? `<div class="st"><h4>Animation color</h4><div class="seg">${Object.entries(FX_TINTS).map(([v,t])=>
       `<button data-k="fxTint" data-v="${v}" class="${P.fxTint===v?'on':''}">${v.startsWith('#')?`<span class="sw"><i style="background:${v}"></i></span>`:''}${t}</button>`).join('')}</div></div>
     <div class="st rng">${[['fxSpeed','Speed',.1,2.5],['fxAmount','Amount',.2,2.5],['fxSize','Size',.5,2],['fxGlow','Brightness',.2,1.8]].map(([k,l,mn,mx])=>
       `<label for="r-${k}"><span>${l}</span><output id="o-${k}">${Math.round(P[k]*100)}%</output></label><input type="range" id="r-${k}" data-r="${k}" min="${mn}" max="${mx}" step="0.05" value="${P[k]}">`).join('')}</div>` : ''}
-    ${seg('bg', Object.fromEntries(Object.entries(BGS).map(([k,v])=>[k,v.name])), P.fx!=='off' ? 'Background (when animation is off)' : 'Background')}
     ${seg('size', {s:'Small', m:'Medium', l:'Large'}, 'Text size')}
     ${seg('density', {comfortable:'Comfortable', compact:'Compact'}, 'Layout')}
     ${seg('reasons', {true:'Show data', false:'Bars only'}, 'Vote detail')}
