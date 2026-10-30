@@ -1,5 +1,5 @@
 // App shell is cached for offline open; the report is always fetched fresh first.
-const CACHE = 'bias-v60';
+const CACHE = 'bias-v61';
 const SHELL = ['./', 'index.html', 'fonts/plexmono-400.woff2', 'fonts/plexmono-500.woff2', 'fonts/plexsans-400.woff2', 'fonts/plexsans-600.woff2', 'manifest.webmanifest', 'icons/icon-b-192.png', 'icons/icon-b-180.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
@@ -10,7 +10,7 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   if (new URL(e.request.url).origin !== self.location.origin) return;   // news images etc. go straight to the network
   e.respondWith(
-    fetch(e.request).then(r => {
+    fetch(e.request.url, {cache: 'no-cache'}).then(r => {   // revalidate with the server so updates show on the next open
       const copy = r.clone();
       caches.open(CACHE).then(c => c.put(e.request.url.split('?')[0], copy));
       return r;
