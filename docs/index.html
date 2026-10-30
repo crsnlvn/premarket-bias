@@ -273,6 +273,12 @@ body.compact .note{font-size:14.5px}
 .rng input[type=range]{width:100%;height:28px;accent-color:var(--text)}
 .reset{width:100%;margin-top:20px;padding:13px;border-radius:999px;color:var(--down);font-size:15px;font-weight:600;background:var(--bar)}
 
+/* colour-only themes: same layout as Calm, different paint */
+:root[data-mode="wc"] body::before{inset:0;background:radial-gradient(120% 55% at 85% -5%,var(--blob1),transparent 62%),radial-gradient(90% 40% at 0% 100%,color-mix(in srgb,var(--blob1) 35%,transparent),transparent 70%)}
+:root[data-mode="qc"] body::before{display:none}
+:root[data-mode="qc"] .g,:root[data-mode="qc"] .card,:root[data-mode="qc"] .tabbar,:root[data-mode="qc"] .glass,:root[data-mode="qc"] .sheet,:root[data-mode="qc"] .big>div,:root[data-mode="qc"] .pop{
+  -webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}
+:root[data-mode="qc"] .live{box-shadow:none}
 /* ───────── calm: flat, easy on the eyes, three colors ───────── */
 :root[data-mode="calm"] body::before{display:none}
 :root[data-mode="calm"] .g,:root[data-mode="calm"] .card,:root[data-mode="calm"] .hero,:root[data-mode="calm"] .tabbar,:root[data-mode="calm"] .glass,
@@ -602,8 +608,8 @@ const THEMES = {
 // glass backgrounds: a base color plus two ambient glows (the third glow follows the call)
 const BGS = {
   calm:{name:'Calm', mode:'calm', bg:'#16171D', blob2:'transparent', blob3:'transparent'},
-  widget:{name:'Glass widgets', mode:'widget', bg:'#000000', blob2:'transparent', blob3:'transparent'},
-  quant:{name:'Quant desk', mode:'quant', bg:'#0B0C0E', blob2:'transparent', blob3:'transparent'},
+  widget:{name:'Green glow', mode:'wc', bg:'#000000', blob2:'transparent', blob3:'transparent'},
+  quant:{name:'Terminal', mode:'qc', bg:'#0B0C0E', blob2:'transparent', blob3:'transparent'},
   vivid:{name:'Vivid', mode:'vivid', bg:'#0a0614', blob2:'transparent', blob3:'transparent'},
   auto:{name:'Auto'},
   dark:{name:'Dark', mode:'dark', bg:'#05070d', blob2:'rgba(60,110,255,.42)', blob3:'rgba(0,200,170,.2)'},
@@ -612,6 +618,12 @@ const BGS = {
   black:{name:'Black', mode:'dark', bg:'#000000', blob2:'rgba(60,110,255,.22)', blob3:'rgba(0,200,170,.1)'},
 };
 const MODE = {
+  wc:{text:'#ffffff', sub:'rgba(255,255,255,.78)', dim:'rgba(235,235,245,.58)', faint:'rgba(235,235,245,.42)', glass:'rgba(255,255,255,.07)',
+    edge:'rgba(255,255,255,.1)', hi:'rgba(255,255,255,.08)', sel:'rgba(255,255,255,.16)', row:'rgba(255,255,255,.07)', track:'rgba(255,255,255,.06)',
+    bar:'rgba(255,255,255,.08)', shadow:'rgba(0,0,0,.4)', solid:'rgba(28,28,30,.94)', amber:'#FF9F0A'},
+  qc:{text:'#D9DCE1', sub:'#B4B9C1', dim:'#8A9099', faint:'#6E747E', glass:'#111316',
+    edge:'#22262C', hi:'transparent', sel:'#1E2227', row:'#1A1D22', track:'#0E1012',
+    bar:'#1C1F24', shadow:'transparent', solid:'#121417', amber:'#FFB000'},
   calm:{text:'#ECEDF2', sub:'rgba(236,237,242,.76)', dim:'rgba(236,237,242,.56)', faint:'rgba(236,237,242,.53)', glass:'#1E2028',
     edge:'rgba(255,255,255,.07)', hi:'rgba(255,255,255,.04)', sel:'rgba(122,162,247,.16)', row:'rgba(255,255,255,.06)', track:'#14151A',
     bar:'rgba(255,255,255,.07)', shadow:'rgba(0,0,0,.18)', solid:'#1E2028', amber:'#7AA2F7'},
@@ -669,11 +681,13 @@ function applyPrefs(){
   if(mode==='vivid' && !P.down && P.theme==='classic') down = '#ff5c8a';   // reads cleaner on the pink
   let accent = null;
   if(mode==='calm'){ if(P.theme==='classic'){ if(!P.up) up = '#4FD1A1'; if(!P.down) down = '#F2778F'; } accent = '#7AA2F7'; }
+  if(mode==='wc' && P.theme==='classic'){ if(!P.up) up = '#3EE07A'; if(!P.down) down = '#FF453A'; }
+  if(mode==='qc' && P.theme==='classic'){ if(!P.up) up = '#3DDC97'; if(!P.down) down = '#FF5C5C'; }
   if(mode==='widget' && P.theme==='classic'){ if(!P.up) up = '#3EE07A'; if(!P.down) down = '#FF453A'; }
   if(mode==='quant' && P.theme==='classic'){ if(!P.up) up = '#3DDC97'; if(!P.down) down = '#FF5C5C'; }
   r.setProperty('--up', up); r.setProperty('--down', down); r.setProperty('--accent', accent || up);
   const glow = CALL==='Bearish' ? down : CALL==='Bullish' ? up : null;
-  r.setProperty('--blob1', (mode==='vivid'||mode==='calm') ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:mode==='widget'?24:50}%, transparent)` : 'transparent');
+  r.setProperty('--blob1', (mode==='vivid'||mode==='calm') ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:(mode==='widget'||mode==='wc')?24:50}%, transparent)` : 'transparent');
   document.documentElement.dataset.mode = mode;
   document.querySelector('meta[name=theme-color]').content = b.bg;
   document.body.classList.toggle('compact', P.density==='compact');
