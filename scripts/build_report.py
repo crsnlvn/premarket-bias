@@ -1406,6 +1406,36 @@ def analyse_positioning(cfg, q, target, as_of, live):
                     key = (round(k / cfg["bin"]) * cfg["bin"], "call" if cp > 0 else "put")
                     sflow[key] = sflow.get(key, 0) + p
 
+    big, strikes = [], None
+    for c in chains:
+        if live:
+            prem = c["VOL"] * c["MID"] * 100
+            for i in np.argsort(-prem)[:12]:
+                if prem[i] <= 0:
+                    break
+                big.append({"chain": c["sym"], "strike": float(c["K"][i]), "side": "call" if c["CP"][i] > 0 else "put",
+                            "days": round(float(c["T"][i]) * 365, 1), "volume": int(c["VOL"][i]), "oi": int(c["OI"][i]),
+                            "premium_m": round(float(prem[i]) / 1e6, 2), "mid": round(float(c["MID"][i]), 2)})
+        if strikes is None:
+            T0 = float(c["T"].min())
+            m0 = np.abs(c["T"] - T0) < 1e-9
+            S = px / c["ratio"]
+            K0, CP0, OI0 = c["K"][m0], c["CP"][m0], c["OI"][m0]
+            ks = sorted({float(k) for k in K0 if abs(k / S - 1) < 0.04})
+            if ks:
+                rows = []
+                for k in ks:
+                    sel = K0 == k
+                    rows.append({"strike": k, "fut": round(k * c["ratio"], 1),
+                                 "call_oi": int(OI0[sel & (CP0 > 0)].sum()), "put_oi": int(OI0[sel & (CP0 < 0)].sum())})
+                allk = sorted(set(float(k) for k in K0))
+                pay = [sum(float(o) * max(0.0, x - float(k)) if cp > 0 else float(o) * max(0.0, float(k) - x)
+                           for k, cp, o in zip(K0, CP0, OI0)) for x in allk]
+                mp = allk[int(np.argmin(pay))] if allk else None
+                strikes = {"chain": c["sym"], "days": round(T0 * 365, 2), "spot": round(S, 2), "rows": rows,
+                           "max_pain": mp, "max_pain_fut": round(mp * c["ratio"], 1) if mp else None}
+    big.sort(key=lambda b: -b["premium_m"])
+
     flip = find_flip(grid, gex_now, px)
     near = {k: v for k, v in levels.items() if abs(k / px - 1) < 0.06}
     above = {k: v for k, v in near.items() if k >= px} or near
@@ -1423,7 +1453,7 @@ def analyse_positioning(cfg, q, target, as_of, live):
         majors=[{"level": k, "net_gex": near[k][0] - near[k][1]} for k in sorted(majors)],
         dealer_delta=tot["D"], gross_delta=tot["gross"],
         charm_hedge_flow=-(tot["Dc"] - tot["D"]), vanna_per_volpt=tot["vanna"],
-        flow=flow if live else None,
+        flow=flow if live else None, big_trades=big[:20], strikes=strikes,
         top_flow=[{"level": k[0], "side": k[1], "premium": v}
                   for k, v in sorted(sflow.items(), key=lambda kv: kv[1], reverse=True)[:5]],
         profile=[{"px": round(float(x), 2), "gex": float(y)} for x, y in zip(grid[::6], gex_now[::6])],
@@ -2169,6 +2199,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                 "calls_m": round(pos["flow"]["call"] / 1e6, 1), "puts_m": round(pos["flow"]["put"] / 1e6, 1),
                 "top": pos["top_flow"]},
             "profile": pos["profile"] if pos else [],
+            "big_trades": pos.get("big_trades") if pos else None, "strikes": pos.get("strikes") if pos else None,
             "earnings": [e for e in earnings if e["symbol"] in cfg["megacaps"]],
             "scorecard": None, "outcome": None,
         }
@@ -2766,6 +2797,122 @@ def move_ladder(read):
     return out
 
 
+# ─────────────────────────────── market tools ───────────────────────────────
+# Approximate index weights (%), for sizing each stock's move in index points. They drift; treat as rough.
+NDX_W = {"NVDA": 9.0, "MSFT": 8.0, "AAPL": 7.8, "AMZN": 5.4, "AVGO": 4.9, "META": 3.7, "TSLA": 3.1, "GOOGL": 2.9,
+         "GOOG": 2.7, "NFLX": 1.4, "COST": 1.4, "PLTR": 1.3, "AMD": 1.2, "CSCO": 1.0, "TMUS": 0.9, "LIN": 0.8,
+         "INTU": 0.8, "PEP": 0.7, "QCOM": 0.7, "ISRG": 0.7, "TXN": 0.7, "BKNG": 0.7, "ADBE": 0.6, "AMGN": 0.6,
+         "AMAT": 0.6, "MU": 0.7, "LRCX": 0.6, "SHOP": 0.6, "GILD": 0.5, "PANW": 0.5, "HON": 0.5, "KLAC": 0.5,
+         "INTC": 0.5, "CMCSA": 0.5, "APP": 0.6, "CRWD": 0.5, "ADI": 0.5, "MELI": 0.4, "VRTX": 0.4, "SBUX": 0.4}
+SPX_W = {"NVDA": 7.2, "MSFT": 6.3, "AAPL": 6.2, "AMZN": 4.0, "META": 2.9, "AVGO": 2.7, "GOOGL": 2.2, "GOOG": 1.8,
+         "TSLA": 2.1, "BRK-B": 1.6, "JPM": 1.5, "LLY": 1.2, "V": 1.0, "NFLX": 0.9, "XOM": 0.9, "MA": 0.8}
+MEGA = ["NVDA", "MSFT", "AAPL", "AMZN", "AVGO", "META", "GOOGL", "TSLA", "NFLX", "AMD", "PLTR", "BRK-B", "JPM", "LLY"]
+WORLD = [("^N225", "Nikkei 225", "Tokyo"), ("^HSI", "Hang Seng", "Hong Kong"), ("000001.SS", "Shanghai", "Shanghai"),
+         ("^KS11", "KOSPI", "Seoul"), ("^AXJO", "ASX 200", "Sydney"), ("^NSEI", "Nifty 50", "Mumbai"),
+         ("^TASI.SR", "Tadawul", "Riyadh"), ("^GDAXI", "DAX", "Frankfurt"), ("^FTSE", "FTSE 100", "London"),
+         ("^FCHI", "CAC 40", "Paris"), ("^STOXX50E", "Euro Stoxx 50", "Frankfurt"), ("^GSPC", "S&P 500", "New York"),
+         ("^NDX", "Nasdaq 100", "New York"), ("^DJI", "Dow", "New York"), ("^RUT", "Russell 2000", "New York"),
+         ("^GSPTSE", "TSX", "Toronto"), ("^BVSP", "Bovespa", "Sao Paulo")]
+VOLS = [("^VIX9D", "9 days"), ("^VIX", "30 days"), ("^VIX3M", "3 months"), ("^VIX6M", "6 months")]
+
+
+def _batch_quotes(tickers, now):
+    """Last price (incl. pre/after-hours) and the prior regular close for many tickers in one pull."""
+    out = {}
+    try:
+        import yfinance as yf
+        df = yf.download(tickers, period="5d", interval="15m", prepost=True, group_by="ticker",
+                         auto_adjust=False, progress=False, threads=True)
+        dl = yf.download(tickers, period="10d", interval="1d", group_by="ticker", auto_adjust=False,
+                         progress=False, threads=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"batch quotes: {type(e).__name__} {e}", file=sys.stderr)
+        return out
+    for t in tickers:
+        try:
+            h = df[t].dropna(subset=["Close"])
+            d = dl[t].dropna(subset=["Close"])
+            if h.empty or d.empty:
+                continue
+            h.index = h.index.tz_convert(ET) if h.index.tz else h.index.tz_localize("UTC").tz_convert(ET)
+            last, ts = float(h["Close"].iloc[-1]), h.index[-1]
+            days = [i.date() if hasattr(i, "date") else i for i in d.index]
+            # prior close = the last daily close before the session the latest print belongs to
+            ref = [v for dd, v in zip(days, d["Close"]) if dd < ts.date()]
+            if ts.time() >= time(16, 0) and days and days[-1] == ts.date():   # after-hours: compare to today's close
+                ref = [float(d["Close"].iloc[-1])]
+            if not ref:
+                continue
+            prev = float(ref[-1])
+            out[t] = {"last": round(last, 4), "prev": round(prev, 4), "chg": round(pct(last, prev), 2),
+                      "ts": ts.isoformat(timespec="minutes")}
+        except Exception:  # noqa: BLE001
+            continue
+    return out
+
+
+def drivers():
+    """What's moving NQ: rolling correlation of its daily returns with the main macro drivers."""
+    nq = dict(daily_closes("NQ=F", 120))
+    res = []
+    for t, name, kind in (("^TNX", "10-year yield", "chg"), ("DX-Y.NYB", "US dollar", "pct"), ("CL=F", "Crude oil", "pct"),
+                          ("BTC-USD", "Bitcoin", "pct"), ("^VIX", "VIX", "pct"), ("JPY=X", "USD/JPY", "pct")):
+        o = dict(daily_closes(t, 120))
+        ds = sorted(set(nq) & set(o))
+        if len(ds) < 25:
+            continue
+        a = np.diff(np.log([nq[d] for d in ds]))
+        b = np.diff([o[d] for d in ds]) if kind == "chg" else np.diff(np.log([o[d] for d in ds]))
+        c20 = float(np.corrcoef(a[-20:], b[-20:])[0, 1])
+        c60 = float(np.corrcoef(a[-60:], b[-60:])[0, 1]) if len(a) >= 60 else None
+        res.append({"name": name, "c20": round(c20, 2), "c60": None if c60 is None else round(c60, 2)})
+    res.sort(key=lambda r: -abs(r["c20"]))
+    return res
+
+
+def market_tools(now, reads):
+    tickers = sorted(set(NDX_W) | set(SPX_W) | {t for t, _, _ in WORLD} | {t for t, _ in VOLS} | {"^SKEW"})
+    q = _batch_quotes(tickers, now)
+    fut = {}
+    for r in reads:
+        for sym, m in (r or {}).get("markets", {}).items():
+            fut.setdefault(sym, (m.get("levels") or {}).get("price"))
+    mega = {}
+    for sym, W in (("NQ", NDX_W), ("ES", SPX_W)):
+        px = fut.get(sym)
+        rows = []
+        for t in MEGA:
+            if t in W and t in q:
+                rows.append({"ticker": t, "chg": q[t]["chg"], "last": q[t]["last"], "weight": W[t],
+                             "pts": round(px * W[t] / 100 * q[t]["chg"] / 100, 1) if px else None})
+        mega[sym] = {"rows": rows, "total_pts": round(sum(r["pts"] or 0 for r in rows), 1)}
+    heat = [{"ticker": t, "weight": w, "chg": q[t]["chg"]} for t, w in sorted(NDX_W.items(), key=lambda kv: -kv[1]) if t in q]
+    world = [{"ticker": t, "name": n, "city": c, "last": q[t]["last"], "chg": q[t]["chg"], "ts": q[t]["ts"]}
+             for t, n, c in WORLD if t in q]
+    curve = []
+    for t, lbl in VOLS:
+        rows = daily_closes(t, 15)
+        if t in q or rows:
+            curve.append({"ticker": t.lstrip("^"), "term": lbl, "now": q.get(t, {}).get("last") or (rows[-1][1] if rows else None),
+                          "week_ago": rows[-6][1] if len(rows) >= 6 else None})
+    skew = q.get("^SKEW")
+    trades, strikes = {}, {}
+    for r in reads:
+        for sym, m in (r or {}).get("markets", {}).items():
+            if m.get("big_trades") and sym not in trades:
+                trades[sym] = m["big_trades"]
+            if m.get("strikes") and sym not in strikes:
+                strikes[sym] = m["strikes"]
+    try:
+        drv = drivers()
+    except Exception:  # noqa: BLE001
+        traceback.print_exc(); drv = []
+    stamp("Market tools", bool(q), now.isoformat(), f"{len(q)} of {len(tickers)} tickers")
+    return {"generated": now.isoformat(timespec="seconds"), "megacaps": mega, "heatmap": heat, "world": world,
+            "vol_curve": curve, "skew": skew and {"now": skew["last"], "prev": skew["prev"]},
+            "big_trades": trades, "strikes": strikes, "drivers": drv}
+
+
 def resolve_overnight(now):
     """
     The evening whose overnight (London) call is showing, its evidence cut, and whether it's still live.
@@ -2827,6 +2974,11 @@ def main():
             report["ladder"] = move_ladder(current if current and current.get("markets") else preopen)
         except Exception:  # noqa: BLE001
             traceback.print_exc()
+        try:
+            (OUT / "tools.json").write_text(json.dumps(market_tools(now, [current, preopen]), indent=1, default=float))
+        except Exception:  # noqa: BLE001
+            traceback.print_exc()
+            note("Market tools failed")
         try:
             (OUT / "news.json").write_text(json.dumps(fetch_news(now), indent=1))
         except Exception:  # noqa: BLE001
