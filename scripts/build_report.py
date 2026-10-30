@@ -1201,6 +1201,75 @@ def gap_fade_signal(cfg, q):
                 "A big overnight loss tends to bounce in the first half hour." if sc > 0 else "No big gap to fade."), "Macro")
 
 
+NEWS_CACHE = {}
+NEG_WORDS = set("""
+fall falls fell falling drop drops dropped plunge plunges plunged plummet plummets slump slumps slumped tumble tumbles tumbled
+sink sinks sank slide slides slid sell-off selloff selloffs rout routs crash crashes crashed decline declines declined loss
+losses lose loses losing lost weak weaker weakness warn warns warned warning cut cuts downgrade downgrades downgraded miss
+misses missed disappoint disappoints disappointing disappointed fear fears worry worries worried concern concerns risk risks
+recession slowdown slowing slows contraction layoffs layoff job-cuts default defaults bankruptcy turmoil volatile volatility
+uncertainty uncertain tariff tariffs sanctions war attack strike strikes shutdown inflation hotter hawkish stagflation
+bubble overvalued crisis panic pressure pressured headwind headwinds probe investigation lawsuit fine fined halt halted
+retreat retreats retreated lower lowest lows slash slashes slashed weakest worst tank tanks tanked spook spooked jitters
+""".split())
+POS_WORDS = set("""
+rise rises rose rising gain gains gained jump jumps jumped surge surges surged soar soars soared rally rallies rallied
+climb climbs climbed rebound rebounds rebounded recover recovers recovered recovery advance advances advanced beat beats
+upgrade upgrades upgraded strong stronger strength record records high highs higher boost boosts boosted optimism optimistic
+upbeat growth grow grows expand expands expansion cooling cooler dovish easing ease eases stimulus deal deals agreement truce
+ceasefire approval approve approves approved profit profits profitable outperform outperforms bullish tailwind tailwinds
+""".split())
+MARKET_WORDS = set("""
+stock stocks market markets futures nasdaq s&p dow index indexes equities wall shares fed powell rates rate yields yield treasury
+treasuries bond bonds inflation cpi jobs payrolls economy economic gdp recession earnings tech chip chips ai nvidia apple
+microsoft amazon meta alphabet google tesla broadcom amd oil crude dollar tariff tariffs china trade vix volatility
+""".split())
+
+
+def news_signal(as_of, view):
+    """
+    The tone of market headlines over the last 12 hours, scored with a financial word list (in the spirit
+    of Loughran & McDonald, JF 2011, whose dictionary was built because general sentiment words misread
+    finance text). Pessimistic media tone predicts downward pressure on the market the next day
+    (Tetlock, "Giving Content to Investor Sentiment", JF 2007), especially in hard times (Garcia,
+    "Sentiment during Recessions", JF 2013). Live reads only.
+    """
+    import re as _re
+    if FIXTURES:
+        return None
+    if "items" not in NEWS_CACHE:
+        try:
+            NEWS_CACHE.update(fetch_news(as_of, limit=80))
+        except Exception:  # noqa: BLE001
+            NEWS_CACHE["items"] = []
+    lo = as_of - timedelta(hours=12)
+    pos = neg = n = 0
+    worst = []
+    for it in NEWS_CACHE.get("items", []):
+        if not it.get("ts"):
+            continue
+        t = datetime.fromisoformat(it["ts"])
+        if not (lo <= t <= as_of):
+            continue
+        words = _re.findall(r"[a-z&\-]+", (it["title"] + " " + (it.get("summary") or "")).lower())
+        if not MARKET_WORDS & set(words):
+            continue
+        p_, n_ = sum(w in POS_WORDS for w in words), sum(w in NEG_WORDS for w in words)
+        n += 1; pos += p_; neg += n_
+        worst.append((p_ - n_, it["title"]))
+    if n < 6 or pos + neg == 0:
+        return None
+    tone = (pos - neg) / (pos + neg)
+    sc = -1 if tone < -0.25 else 1 if tone > 0.15 else 0   # headlines lean negative on a normal day
+    worst.sort()
+    pick = worst[0][1] if sc <= 0 else worst[-1][1]
+    return sig("news", "News tone", sc, 0.75,
+               f"{n} market headlines in the last 12 hours, tone {tone:+.2f} ({neg} negative vs {pos} positive words). "
+               f"{'Most negative' if sc <= 0 else 'Most positive'}: “{pick[:110]}”. " +
+               ("Coverage is pessimistic, which has preceded downward pressure." if sc < 0 else
+                "Coverage is upbeat." if sc > 0 else "Mixed coverage."), "Macro")
+
+
 def stock_bond_corr(as_of, n=20):
     """Correlation of NQ's daily returns with 10-year yield changes over the last n sessions."""
     nq = {d: v for d, v in daily_closes("NQ=F", 90) if d < as_of.date()}
@@ -1845,20 +1914,6 @@ def intraday_dealer_signals(cfg, pos, as_of, sess):
                      f"Same-day option volume since the open, weighted by gamma: put/call {r:.2f}. " +
                      ("Put-heavy: a weaker next hour and a higher chance of a dip." if sc < 0 else
                       "Call-heavy: a firmer next hour." if sc > 0 else "Balanced."), "Dealer positioning"))
-    if as_of.time() >= time(15, 0):
-        # End-of-day hedging: when dealers are short gamma, their rebalancing pushes the day's move further
-        # into the close; when long gamma, it leans against it (Barbon, Beckmeyer, Buraschi & Moerke, SSRN 3925725).
-        # The one vote that uses today's own price move.
-        h = fetch_bars(cfg["future"], datetime.combine(as_of.date(), time(9, 30), ET), as_of)
-        if h is not None:
-            r = pct(float(h["Close"].iloc[-1]), float(h["Open"].iloc[0]))
-            short = pos["net_gex"] < 0
-            sc = 0 if abs(r) < 0.3 else int(np.sign(r)) * (1 if short else -1)
-            S.append(sig("eodgamma", "End-of-day gamma hedging", sc, 0.5,
-                         f"Futures {r:+.2f}% since the open, dealers {'short' if short else 'long'} gamma. " +
-                         ("Too small a move to force much hedging." if sc == 0 else
-                          "Short-gamma hedging tends to push the day's move further into the close." if short else
-                          "Long-gamma hedging tends to lean against the day's move into the close."), "Dealer positioning"))
     return S
 
 
@@ -2280,8 +2335,8 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
             win.append(gap_fade_signal(cfg, quotes))
         if view in ("now", "overnight") and live:
             win.append(megacap_signal(cfg, sym, as_of))
-        if view == "now":
-            win.append(intraday_momentum_signal(cfg, pos, as_of, sess))
+        if live:
+            win.append(news_signal(as_of, view))
         base = base + [x for x in win if x]
         if view in ("now", "overnight"):
             base = apply_bond_regime(base, bond_corr)
@@ -3130,7 +3185,7 @@ def main():
             traceback.print_exc()
             note("Market tools failed")
         try:
-            (OUT / "news.json").write_text(json.dumps(fetch_news(now), indent=1))
+            (OUT / "news.json").write_text(json.dumps(NEWS_CACHE if NEWS_CACHE.get("items") else fetch_news(now), indent=1))
         except Exception:  # noqa: BLE001
             traceback.print_exc()
             note("News feeds failed")
