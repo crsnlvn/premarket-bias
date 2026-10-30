@@ -94,37 +94,34 @@ OPEN_MOVE_END = time(10, 0)   # pre-open call is graded on the opening move, 9:3
 
 
 # Carson's windows, in Central time (ET minus one hour; both shift for daylight saving together):
-#   Now (evening)  5 PM → 8 PM CT  = Globex reopen to the Asia open
-#   Overnight      8 PM → 8 AM CT  = Asia open to the US pre-market
+#   Now (Asia)     5 PM → 2 AM CT  = Globex reopen through Asia, called before the reopen
+#   Overnight      2 AM → 8 AM CT  = London open to the US pre-market, locked at 1:50 AM CT
 #   Pre-open       8:30 → 9 AM CT  = the first half hour of New York
-EVE_START = time(18, 0)    # 5 PM CT
-ON_START = time(21, 0)     # 8 PM CT
+#   Now (NY)       9 AM → 3 PM CT  = the rest of New York, called before 9
+ON_START = time(3, 0)      # 2 AM CT, London open
 ON_END = time(9, 0)        # 8 AM CT
-ON_CUT = time(20, 50)      # the overnight call locks ten minutes before the Asia open
-ASIA_CALL = time(20, 30)   # Now switches to calling the Asia session half an hour before it opens
+ON_CUT = time(2, 50)       # the overnight call locks ten minutes before London
+NY_NOW_START = time(10, 0)  # 9 AM CT, when the pre-open call's window ends
 
 
 def current_session(now: datetime):
     """
-    Which futures session is trading right now, as (name, start, end, ny_date), in ET.
-    Evening 6 → 9 PM (5 → 8 PM CT), Asia 9 PM → 2 AM, London 2 AM → 9:30 AM, NY 9:30 AM → 4 PM.
-    Between 4 and 6 PM (Sunday too) it calls the coming evening session before it opens, so the
-    call is in place for the reopen move. ny_date is the NY day the session
-    feeds into. None when futures are shut.
+    Which session the Now call is for, as (name, start, end, ny_date), in ET.
+    Asia 6 PM → 3 AM ET (5 PM → 2 AM CT), built from 4 PM ET so it's in place for the reopen;
+    London 3 → 9:30 AM ET; NY 10 AM → 4 PM ET (built from 9:30). ny_date is the NY day the
+    session feeds into. None when futures are shut.
     """
     wd, t, d = now.weekday(), now.time(), now.date()
     at = lambda day, hh, mm=0: datetime.combine(day, time(hh, mm), ET)  # noqa: E731
     if wd == 5 or (wd == 6 and t < time(16)) or (wd == 4 and t >= time(16)):
-        return None   # Sunday from 4 PM ET: the evening call builds ahead of the 5 PM CT reopen
+        return None   # Sunday from 4 PM ET: the Asia call builds ahead of the 5 PM CT reopen
     if time(9, 30) <= t < time(16):
-        return "NY", at(d, 9, 30), at(d, 16), d
-    if time(16) <= t < ASIA_CALL:
-        return "Evening", at(d, 18), at(d, 21), next_weekday(d)
-    if t >= ASIA_CALL:   # from 7:30 PM CT the Asia call is built ahead of the 8 PM CT open
-        return "Asia", at(d, 21), at(d + timedelta(days=1), 2), next_weekday(d)
-    if t < time(2):
-        return "Asia", at(d - timedelta(days=1), 21), at(d, 2), d
-    return "London", at(d, 2), at(d, 9, 30), d
+        return "NY", at(d, 10), at(d, 16), d
+    if t >= time(16):
+        return "Asia", at(d, 18), at(d + timedelta(days=1), 3), next_weekday(d)
+    if t < ON_START:
+        return "Asia", at(d - timedelta(days=1), 18), at(d, 3), d
+    return "London", at(d, 3), at(d, 9, 30), d
 
 def resolve_session(now: datetime):
     """Which morning are we reading, and is the data live or rewound?"""
@@ -1570,20 +1567,23 @@ def vol_crush_signal(events, q, as_of):
                 "Vol is little changed after the print."), "Volatility")
 
 
-def overnight_signals(cfg, q):
-    """Evening read for the 8 PM → 8 AM CT window, built from data up to 7:50 PM CT."""
-    S = [s for s in macro_signals(cfg, q) if s["key"] not in ("global", "volpre")]   # overseas closes are stale in the evening
+def overnight_signals(cfg, q, target=None):
+    """London-open read for 2 AM → 8 AM CT, built from data up to 1:50 AM CT: macro since the evening's
+    4 PM close, including Asia's session."""
+    S = [s for s in macro_signals(cfg, q) if s["key"] != "volpre"]   # VXX doesn't trade before 4 AM ET
     for s_ in S:
         if s_["key"] == "yen":   # carry unwinds hit hardest in Asia hours
             s_["weight"] = 1.0
         if s_["key"] == "yuan":
             s_["weight"] = 0.75
-    v = q.get("^VIX")
-    if v and v.get("fresh", True):
-        c = pct(v["last"], v["prev"])
+        if s_["key"] == "global":
+            s_["text"] = s_["text"].replace("going into the open", "going into London")
+    rows = [r for r in daily_closes("^VIX", 10) if target is None or r[0] <= target]
+    if len(rows) >= 2:
+        c = pct(rows[-1][1], rows[-2][1])
         sc = 1 if c < -4 else -1 if c > 4 else 0
         S.append(sig("vixday", "VIX today", sc, 1.0,
-                     f"VIX {v['last']:.2f} ({c:+.1f}% on the day). " +
+                     f"VIX closed {rows[-1][1]:.2f} ({c:+.1f}% on the day). " +
                      ("Fear came out of the market today." if sc > 0 else "Fear rose into the close." if sc < 0
                       else "Vol is little changed."), "Volatility"))
     return S
@@ -1829,8 +1829,6 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
     # pre-open: anything later today (positioning into it starts at the open);
     # now / overnight: only releases that land before the session being called ends
     end = sess[2].isoformat() if sess else None
-    if view == "overnight":
-        end = datetime.combine(next_weekday(as_of.date()), ON_END, ET).isoformat()
     upcoming = [e for e in events if e["impact"] == "High" and e["ts"] > as_of.isoformat()
                 and (end is None or e["ts"] <= end)]
     ref = next((s for s in signals if s["key"] == "refunding"), None)
@@ -1888,7 +1886,7 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
             "Neutral": f"A break of {pos['put_wall']:,.0f} or {pos['call_wall']:,.0f}",
         }[bias]
     elif view == "overnight":
-        invalid = "Futures reversing through the 8 PM CT price once Asia opens"
+        invalid = "Futures reversing through the 2 AM CT price once London opens"
     elif view == "now" and sess:
         invalid = f"Price reversing through the {sess[0]} session open"
     elif cfg["future"] in ("NQ=F", "ES=F"):
@@ -1946,7 +1944,7 @@ def next_weekday(d):
 def grade_window(kind, d):
     """(start, end) of the move each session's call is graded on, in ET."""
     if kind == "overnight":   # Asia open to the US pre-market: 8 PM → 8 AM CT
-        return datetime.combine(d, ON_START, ET), datetime.combine(next_weekday(d), ON_END, ET)
+        return datetime.combine(next_weekday(d), ON_START, ET), datetime.combine(next_weekday(d), ON_END, ET)
     return datetime.combine(d, time(9, 30), ET), datetime.combine(d, OPEN_MOVE_END, ET)
 
 
@@ -1966,7 +1964,8 @@ def grade_history(hist_dir, kind):
         rep = json.loads(f.read_text())
         changed = False
         for sym, m in rep.get("markets", {}).items():
-            if not m.get("bias") or (m.get("outcome") and m["outcome"].get("end") == t1.isoformat()):
+            if not m.get("bias") or (m.get("outcome") and m["outcome"].get("end") == t1.isoformat()
+                                     and m["outcome"].get("start") == t0.isoformat()):
                 continue   # already graded on the current window (an old window gets re-graded)
             try:
                 age = (now.date() - d).days
@@ -2070,9 +2069,8 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     NOTES.clear(); SOURCES.clear()
     print(f"[{view}] session {target} · evidence cut at {as_of:%Y-%m-%d %H:%M} ET", file=sys.stderr)
     marks = None
-    if view == "overnight":
-        marks = {"close": datetime.combine(target, time(16, 0), ET)}
-    quotes = fetch_quotes(MACRO_TICKERS, target, as_of, marks)
+    # overnight: changes run from the evening's 4 PM close to the cut, so Asia's session counts
+    quotes = fetch_quotes(MACRO_TICKERS, next_weekday(target) if view == "overnight" else target, as_of, marks)
     events = fetch_calendar(target if view != "overnight" else next_weekday(target))
     if view == "overnight":   # tonight's reporters plus tomorrow morning's
         earnings = [e for e in fetch_earnings(target) if e["when"] == "after close"] + \
@@ -2089,14 +2087,15 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     for sym, cfg in MARKETS.items():
         pos, why = None, None
         try:
-            pos, why = analyse_positioning(cfg, quotes, target, as_of, live and view != "overnight")
+            pos, why = analyse_positioning(cfg, quotes, next_weekday(target) if view == "overnight" else target,
+                                           as_of, live and view != "overnight")
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()
             why = f"positioning failed ({type(e).__name__})"
         if why:
             note(f"{sym}: dealer positioning skipped, {why}. The read is macro only.")
         if view == "overnight":
-            base = overnight_signals(cfg, quotes)
+            base = overnight_signals(cfg, quotes, target)
         elif view == "now" and sess:
             # no intraday price-action signals: the call comes from macro, positioning and news
             base = macro_signals(cfg, quotes)
@@ -2127,7 +2126,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
         pre[sym] = (pos, apply_learning(base, mult) + dealer)
 
     if view == "overnight":
-        hours = 6.5          # ~12h of Globex carries roughly one cash session of variance
+        hours = 3.5          # 2 to 8 AM CT carries about half a cash session of variance
     elif view == "now" and sess:
         hours = (sess[2] - as_of).total_seconds() / 3600
     else:
@@ -2176,7 +2175,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     return {
         "view": view, "session": "overnight" if view == "overnight" else "ny", "date": target.isoformat(),
         "window": {"name": sess[0], "start": sess[1].isoformat(), "end": sess[2].isoformat()} if sess else
-                  {"name": "Asia to pre-market", "start": datetime.combine(target, ON_START, ET).isoformat(),
+                  {"name": "London to pre-market", "start": datetime.combine(next_weekday(target), ON_START, ET).isoformat(),
                    "end": datetime.combine(next_weekday(target), ON_END, ET).isoformat()} if view == "overnight" else
                   {"name": "NY open", "start": datetime.combine(target, time(9, 30), ET).isoformat(),
                    "end": datetime.combine(target, OPEN_MOVE_END, ET).isoformat()},
@@ -2195,9 +2194,10 @@ def finish(read, hist, kind):
     """Save a session read to history, grade it if its window has passed, attach its record."""
     path = hist / f"{read['date']}.json"
     old = json.loads(path.read_text()) if path.exists() else None
-    t1 = grade_window(kind, date.fromisoformat(read["date"]))[1].isoformat()
+    t0, t1 = [x.isoformat() for x in grade_window(kind, date.fromisoformat(read["date"]))]
     for sym, m in read["markets"].items():            # keep an existing grade on re-runs
-        if old and (old.get("markets", {}).get(sym, {}).get("outcome") or {}).get("end") == t1:
+        oo = (old.get("markets", {}).get(sym, {}).get("outcome") or {}) if old else {}
+        if oo.get("end") == t1 and oo.get("start") == t0:
             m["outcome"] = old["markets"][sym]["outcome"]
     path.write_text(json.dumps(read, indent=1, default=float))
     grade_history(hist, kind)
@@ -2222,7 +2222,7 @@ def reuse_locked(hist, day, cut, now):
     except Exception:  # noqa: BLE001
         return None
     at_cut = old.get("as_of") == cut.isoformat(timespec="seconds")
-    late = now.date() > day and old.get("as_of", "") < cut.isoformat()
+    late = now > cut + timedelta(minutes=40) and old.get("as_of", "") < cut.isoformat()
     if not (at_cut or late):
         return None
     if old.get("mode") == "live":
@@ -2626,17 +2626,19 @@ def sunday_gap(now):
 
 
 def resolve_overnight(now):
-    """The evening whose overnight call is showing, its evidence cut, and whether it's still live.
-    From 4 PM ET the coming night's call is a live preview; it locks at 7:50 PM CT. Sunday evening
-    gets its own call (Globex reopens at 5 PM CT); Friday has none, since futures shut for the weekend."""
+    """
+    The evening whose overnight (London) call is showing, its evidence cut, and whether it's still live.
+    The call for the next morning previews from 4 PM ET and locks at 2:50 AM ET (1:50 AM CT).
+    Sunday evening gets one (for Monday); Friday has none, since futures shut for the weekend.
+    """
     forced = os.environ.get("REPORT_DATE", "").strip()
     if forced:
         d = date.fromisoformat(forced)
-        return d, datetime.combine(d, ON_CUT, ET), False
+        return d, datetime.combine(next_weekday(d), ON_CUT, ET), False
     d = now.date()
     while d.weekday() in (4, 5) or now < datetime.combine(d, time(16, 0), ET):
         d -= timedelta(days=1)
-    cut = datetime.combine(d, ON_CUT, ET)
+    cut = datetime.combine(next_weekday(d), ON_CUT, ET)
     return (d, now, True) if now < cut else (d, cut, False)
 
 
@@ -2671,7 +2673,9 @@ def main():
     if backfill and (on_day.weekday() == 4 or (hist_on / f"{on_day.isoformat()}.json").exists()):
         overnight = {"skip": True}
     if overnight is None:
-        overnight = finish(build_view(on_day, on_cut, on_live, now, "overnight", hist_on), hist_on, "overnight")
+        t0, t1 = grade_window("overnight", on_day)
+        overnight = finish(build_view(on_day, on_cut, on_live, now, "overnight", hist_on,
+                                      ("London to pre-market", t0, t1, next_weekday(on_day))), hist_on, "overnight")
 
     report = {"generated": now.isoformat(timespec="seconds"), "red": red_folder(now),
               "ny": {"preopen": preopen, "now": current}, "overnight": overnight, "gap": sunday_gap(now),

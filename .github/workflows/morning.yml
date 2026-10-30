@@ -9,6 +9,7 @@ on:
     # Before the 5 PM CT Globex reopen, Sunday to Thursday: builds the evening Now call and the Sunday
     # gap call ahead of the open (20-22 UTC covers 3:20 to 5:50 PM ET in standard time, 4:20 to 6:50 PM in daylight)
     - cron: "20,50 20,21,22 * * 0-4"
+    - cron: "52 6,7 * * 1-5"   # locks the overnight (London) call at 1:50 AM CT, in both daylight and standard time
   workflow_dispatch:
     inputs:
       date:

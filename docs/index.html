@@ -825,14 +825,14 @@ function closeGlass(){ $('#glass').classList.remove('on'); if(!$('#sheet').class
 
 function setView(v, quiet){
   if(v==='overnight'){
-    if(!(ROOT && ROOT.overnight)){ toast('No overnight read yet. It previews from 3 PM CT and locks at 7:50 PM CT.'); return false; }
+    if(!(ROOT && ROOT.overnight)){ toast('No overnight read yet. It previews from 3 PM CT and locks at 1:50 AM CT.'); return false; }
     SESSION='overnight';
   } else {
     if(v==='now' && ROOT && ROOT.ny && !ROOT.ny.now){ toast('No Now read yet. It shows up after the next run.'); return false; }
     SESSION='ny'; VIEW=v;
   }
   render(); window.scrollTo({top:0});
-  if(!quiet) toast(v==='now' ? 'Now: rest of the current session (evening: 5 to 8 PM CT)' : v==='overnight' ? 'Overnight: 8 PM to 8 AM CT' : 'Pre-open: the 8:30 to 9:00 CT move');
+  if(!quiet) toast(v==='now' ? 'Now: Asia 5 PM to 2 AM CT, New York 9 AM to 3 PM CT' : v==='overnight' ? 'Overnight: London, 2 to 8 AM CT' : 'Pre-open: the 8:30 to 9:00 CT move');
   return true;
 }
 $$('#vt button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
@@ -864,7 +864,7 @@ function stampsHTML(D){
   </div>`;
 }
 function modeLine(D){
-  if(SESSION==='overnight') return D && D.mode==='live' ? 'Live preview, locks at 7:50 PM CT. Graded 8 PM to 8 AM CT.' : 'Locked at 7:50 PM CT. Graded 8 PM to 8 AM CT.';
+  if(SESSION==='overnight') return D && D.mode==='live' ? 'Live preview, locks at 1:50 AM CT. Graded 2 to 8 AM CT.' : 'Locked at 1:50 AM CT. Graded 2 to 8 AM CT.';
   if(VIEW==='now') return `Built from data up to ${tET(new Date(D.as_of))}. Graded when the session ends.`;
   return D.mode==='point-in-time' ? 'Built from data up to 8:25 CT, nothing later. Graded at 9:00 CT.' : 'Live preview until it locks at 8:25 CT. Graded at 9:00 CT.';
 }
@@ -939,19 +939,19 @@ function nextAt(h, mi, days){   // next time NY reads h:mi on one of the allowed
 }
 const WD = ['Mon','Tue','Wed','Thu','Fri'], SUN_THU = ['Sun','Mon','Tue','Wed','Thu'];
 // 24h strip in New York hours, starting at the 5 PM CT reopen (18 ET); widths are display weights
-const SEGS = [['evening',18,21,4.4],['overnight',21,33,7.4],['P',33,34,1.8],['new_york',34,40,6],['closed',40,42,1.6]];
+const SEGS = [['asia',18,27,6.2],['overnight',27,33,5],['P',33,34,1.8],['new_york',34,40,6],['closed',40,42,1.6]];
 function stripPos(hr){   // hours since midnight ET → percent across the strip
   let x = hr < 18 ? hr+24 : hr; const tot = SEGS.reduce((a,s)=>a+s[3],0); let acc=0;
   for(const [,a,b,w] of SEGS){ if(x<=b) return (acc + (x-a)/(b-a)*w)/tot*100; acc+=w; }
   return 100;
 }
-// phases in ET minutes: evening 6–9 PM ET (5–8 PM CT), overnight 9 PM–9 AM ET (8 PM–8 AM CT),
-// pre-open 9–10 AM ET (8–9 AM CT, locks 8:25 CT), NY 10 AM–4 PM ET, break 4–6 PM ET
+// phases in ET minutes: Asia 6 PM–3 AM ET (5 PM–2 AM CT, Now), London 3–9 AM ET (2–8 AM CT, Overnight),
+// pre-open 9–10 AM ET (8–9 AM CT, locks 8:25 CT), NY 10 AM–4 PM ET (Now), break 4–6 PM ET
 function phaseNow(){
   const p = etParts(new Date()), t = (+p.hour%24)*60 + +p.minute, wd = p.weekday;
   if(wd==='Sat' || (wd==='Sun' && t<1080) || (wd==='Fri' && t>=1020)) return {k:'weekend', t, p};
-  if(t>=1080 && t<1260) return {k:'evening', t, p};
-  if(t>=1260 || t<540) return {k:'overnight', t, p};
+  if(t>=1080 || t<180) return {k:'asia', t, p};
+  if(t<540) return {k:'overnight', t, p};
   if(t<600) return {k:'preopen', t, p};
   if(t<960) return {k:'now', t, p};
   return {k:'closed', t, p};
@@ -962,29 +962,29 @@ function pageClock(){
   const now = new Date(), ph = phaseNow(), t = ph.t;
   const c = Object.fromEntries(CTF.formatToParts(now).map(x=>[x.type,x.value]));
   const h24 = +c.hour%24, h12 = h24%12 || 12, ampm = h24<12 ? 'AM' : 'PM';
-  const sess = {evening:'Evening session', overnight: (t>=1260||t<120)?'Asia session':'London session', preopen: t<570?'Pre-market':'NY open', now:'New York session', closed:'Daily break', weekend:'Weekend'}[ph.k];
+  const sess = {asia:'Asia session', overnight:'London session', preopen: t<570?'Pre-market':'NY open', now:'New York session', closed:'Daily break', weekend:'Weekend'}[ph.k];
   const U = {
-    evening:['Now', 'Now covers 5 to 8 PM CT: the Globex reopen into the Asia open. The overnight call locks at 7:50 PM and takes over at 8.', [['now','Open Now',1],['overnight','Overnight preview',0]]],
-    overnight:['Overnight', `Overnight covers 8 PM to 8 AM CT: the Asia open into the US pre-market. Switch to Pre-open at 8 AM.${t>=487&&t<540?' Pre-open is already previewing.':''}`, [['overnight','Open Overnight',1],['now','Now',0]]],
+    asia:['Now', 'Now covers Asia, 5 PM to 2 AM CT. It was called before the reopen. The overnight (London) call previews alongside and locks at 1:50 AM.', [['now','Open Now',1],['overnight','Overnight preview',0]]],
+    overnight:['Overnight', `Overnight covers London to the pre-market, 2 to 8 AM CT. Switch to Pre-open at 8 AM.${t>=487&&t<540?' Pre-open is already previewing.':''}`, [['overnight','Open Overnight',1],['now','Now',0]]],
     preopen:['Pre-open', t<565 ? `The open call is a preview until it locks at 8:25 CT, then covers 8:30 to 9:00. New York opens in ${dur(etAt(now,0,9,30)-now)}.` : 'The open call locked at 8:25 CT and covers 8:30 to 9:00. Switch to Now at 9.', [['preopen','Open Pre-open',1]]],
-    now:['Now', 'Covers the rest of New York until 3 PM CT. The open call was graded at 9:00.', [['now','Open Now',1]]],
-    closed:['Break', 'New York is done. Futures reopen at 5 PM CT, and Now already shows the call for 5 to 8 PM. The overnight preview is building too.', [['now','Open Now',1],['overnight','Overnight preview',0]]],
+    now:['Now', 'Covers New York from 9 AM to 3 PM CT, called before 9. The open call was graded at 9:00.', [['now','Open Now',1]]],
+    closed:['Break', 'New York is done. Futures reopen at 5 PM CT, and Now already shows the Asia call for 5 PM to 2 AM. The overnight (London) preview is building too.', [['now','Open Now',1],['overnight','Overnight preview',0]]],
     weekend:['Weekend', 'Futures reopen Sunday at 5 PM CT. Now and the overnight preview build from then.', [['record','See the record',1]]],
   }[ph.k];
-  const rows = [['5 – 8 PM','Now','Evening open','evening'],['8 PM – 8 AM','Overnight','Asia to pre-market','overnight'],
+  const rows = [['5 PM – 2 AM','Now','Asia','asia'],['2 – 8 AM','Overnight','London to pre-market','overnight'],
     ['8 – 8:25 AM','Pre-open','Preview','prev'],['8:25 – 9 AM','Pre-open','Locked call','lock'],
     ['9 AM – 3 PM','Now','Rest of NY','now'],['3 – 5 PM','—','Break','closed']];
   const onRow = r => r[3]===ph.k || (r[3]==='prev' && ph.k==='preopen' && t<565) || (r[3]==='lock' && ph.k==='preopen' && t>=565) || (r[3]==='closed' && ph.k==='weekend');
   const nexts = [['Pre-open locks',nextAt(9,25,WD)],['NY open',nextAt(9,30,WD)],['Switch to Now',nextAt(10,0,WD)],['NY close',nextAt(16,0,WD)],
-    ['Globex reopens',nextAt(18,0,SUN_THU)],['Overnight locks',nextAt(20,50,SUN_THU)],['Asia open',nextAt(21,0,SUN_THU)]];
+    ['Globex reopens',nextAt(18,0,SUN_THU)],['Overnight locks',nextAt(2,50,WD)],['London open',nextAt(3,0,WD)]];
   const ev = upcoming(readFor(),1)[0]; if(ev) nexts.push([ev.title, new Date(ev.ts)]);
   nexts.sort((a,b)=>a[1]-b[1]);
   const left = ms => { const s=Math.max(0,Math.floor(ms/1000)), d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60), sec=s%60;
     return d ? `${d}d ${h}h` : h ? `${h}h ${String(m).padStart(2,'0')}m` : `${m}m ${String(sec).padStart(2,'0')}s`; };
   const p = ph.p, hr = (+p.hour%24) + (+p.minute)/60 + (+p.second)/3600;
-  const curSeg = {evening:0, overnight:1, preopen:2, now:3}[ph.k] ?? 4;
-  const names = ['Now','Overnight','Pre','New York','Off'];
-  const ax = [['5 PM',18],['8 PM',21],['8 AM',9],['3 PM',16]];
+  const curSeg = {asia:0, overnight:1, preopen:2, now:3}[ph.k] ?? 4;
+  const names = ['Now · Asia','Overnight','Pre','Now · NY','Off'];
+  const ax = [['5 PM',18],['2 AM',3],['8 AM',9],['3 PM',16]];
   return `<div class="ckp">
     <div class="card ckc"><div class="ckk">Chicago · ${c.weekday}, ${c.month} ${c.day}</div>
       <div class="cktime"><b>${h12}:${c.minute}</b><span><em>:${c.second}</em><small>${ampm} CT</small></span></div>
@@ -999,7 +999,7 @@ function pageClock(){
     <div class="card ckc ckrows">${rows.map(r=>`<div class="ckr${onRow(r)?' on':''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2]}</em></div>`).join('')}</div>
     <div class="card ckc"><div class="ckk" style="margin-bottom:4px">Coming up</div>
       ${nexts.map(([n,d],i)=>`<div class="ckn"><span>${esc(n)}</span><b${i?'':' style="color:var(--accent)"'}>${left(d-now)}</b></div>`).join('')}</div>
-    <p class="ckfoot">Pre-open refreshes every 15 minutes from about 7 AM CT and locks at the 8:25 read. Now and Overnight update hourly; Overnight is a live preview from 3 PM CT until it locks at 7:50 PM. Times are Central and handle daylight saving.</p>
+    <p class="ckfoot">Pre-open refreshes every 15 minutes from about 7 AM CT and locks at the 8:25 read. Now and Overnight update hourly; Overnight is a live preview from 3 PM CT until it locks at 1:50 AM. Times are Central and handle daylight saving.</p>
   </div>`;
 }
 let CLK = null;
@@ -1061,7 +1061,7 @@ function gexHTML(m){
 const TAPE = [['ES=F','S&P fut'],['ZN=F','10Y fut'],['DX-Y.NYB','Dollar'],['CL=F','Oil'],['VXX','Vol'],['BTC-USD','Bitcoin']];
 function wExtra(D, m, b, on){
   const Dl=m.dealer||{}, R=m.expected_range, up='var(--up)', dn='var(--down)', ph=phaseNow(), L=m.levels||{};
-  const useNow = {evening:['Now','ON at 8 PM'], overnight:['Overnight','Pre at 8 AM'], preopen:['Pre-open','Now at 9:00'], now:['Now','until 3 PM'], closed:['Now','opens 5 PM'], weekend:['Closed','Sun 5 PM']}[ph.k];
+  const useNow = {asia:['Now','ON at 2 AM'], overnight:['Overnight','Pre at 8 AM'], preopen:['Pre-open','Now at 9:00'], now:['Now','until 3 PM'], closed:['Now','opens 5 PM'], weekend:['Closed','Sun 5 PM']}[ph.k];
   const cells = [];
   if(Dl.net_gex_bn!=null){ const lg=Dl.net_gex_bn>0; cells.push(['dealers','Dealers', lg?'Long γ':'Short γ', lg?'damped':'can run', '']); }
   if(R) cells.push(['range','Move', '±'+fmt(R.move,0), '1σ range', '']);
@@ -1080,7 +1080,7 @@ function wExtra(D, m, b, on){
 }
 function wToday(D, m, b, stale){
   const L=m.levels||{}, sc=m.scorecard||{}, up='var(--up)', dn='var(--down)', cc=C(b.bias), bull=b.bias==='Bullish';
-  const where = SESSION==='overnight' ? 'Overnight · 8 PM to 8 AM CT' : VIEW==='now' && D.window ? `${esc(D.window.name)} · until ${tCT(new Date(D.window.end))}` : 'NY open · 8:30–9:00 CT';
+  const where = SESSION==='overnight' ? 'Overnight · 2 to 8 AM CT' : VIEW==='now' && D.window ? `${esc(D.window.name)} · until ${tCT(new Date(D.window.end))}` : 'NY open · 8:30–9:00 CT';
   const lock = SESSION==='ny' && VIEW!=='now' ? (D.mode==='point-in-time' ? 'locked '+hm(new Date(D.as_of)).replace(/^0/,'') : 'preview, updating') : 'as of '+hm(new Date(D.as_of)).replace(/^0/,'');
   const sigs = m.signals.filter(s=>s.directional!==false && s.weight>0 && s.score);
   const ups = sigs.filter(s=>s.score>0).sort((a,c)=>c.weight-a.weight), dns = sigs.filter(s=>s.score<0).sort((a,c)=>c.weight-a.weight);
@@ -1162,7 +1162,7 @@ function rankBand(b){
 }
 function qToday(D, m, b, stale){
   const L=m.levels||{}, Dl=m.dealer||{}, sc=m.scorecard||{}, up='var(--up)', dn='var(--down)';
-  const span = SESSION==='overnight' ? ['overnight_bias', '20:00–08:00 CT'] : VIEW==='now' && D.window ? [String(D.window.name||'session').toLowerCase().replace(/\W+/g,'_')+'_bias', hmC(new Date(D.window.start))+'–'+hmC(new Date(D.window.end))+' CT'] : ['open_bias', '08:30–09:00 CT'];
+  const span = SESSION==='overnight' ? ['overnight_bias', '02:00–08:00 CT'] : VIEW==='now' && D.window ? [String(D.window.name||'session').toLowerCase().replace(/\W+/g,'_')+'_bias', hmC(new Date(D.window.start))+'–'+hmC(new Date(D.window.end))+' CT'] : ['open_bias', '08:30–09:00 CT'];
   const nx = upcoming(D,1)[0];
   const hit = sc.hits+sc.misses ? `<span>hit <b>${sc.pct}%/${sc.hits+sc.misses}</b></span>` : '';
   const regime = Dl.net_gex_bn!=null ? `<span>regime <b>${Dl.net_gex_bn>0?'long-γ':'short-γ'}</b></span>` : '';
@@ -1222,7 +1222,7 @@ function qToday(D, m, b, stale){
 function pageToday(D){
   const m = D.markets[SYM], b = m.bias;
   const stale = SESSION==='ny' && VIEW!=='now' && D.date!==todayET();
-  const window_ = SESSION==='overnight' ? `Asia to pre-market, ${dayOf(D.date)} 8 PM to 8 AM CT`
+  const window_ = SESSION==='overnight' ? `London to pre-market, ${dayOf((D.window&&D.window.start||D.date).slice(0,10))}, 2 to 8 AM CT`
     : VIEW==='now' && D.window ? `${esc(D.window.name)} session, until ${tCT(new Date(D.window.end))}` : `NY open, ${dayOf(D.date)}, 8:30 to 9:00 CT`;
   const md = modeNow();
   if(md==='widget') return wToday(D, m, b, stale);
@@ -1235,7 +1235,7 @@ function pageToday(D){
       <div class="card rows"><div class="r"><span>${dayOf(c.prev_date)}</span><span style="color:${C(c.prev_bias)}">${c.prev_bias} ${c.prev_score>0?'+':''}${c.prev_score.toFixed(2)}</span></div>
       <div class="r"><span>Change</span><span>${c.delta>0?'+':''}${c.delta.toFixed(2)}</span></div></div></section>`; }
   if(m.outcome && VIEW!=='now'){ const o=m.outcome, col=o.result==='hit'?'var(--up)':o.result==='miss'?'var(--down)':'var(--dim)';
-    const a=SESSION==='overnight'?['8 PM CT','8 AM CT']:['8:30 open','9:00'];
+    const a=SESSION==='overnight'?['2 AM CT','8 AM CT']:['8:30 open','9:00'];
     S.outcome = `<section><h2>Result <span class="pill" style="color:${col}">${o.result==='hit'?'Right':o.result==='miss'?'Wrong':'Not graded'}</span></h2>
       <div class="card rows"><div class="r"><span>${a[0]}</span><span>${fmt(o.open)}</span></div><div class="r"><span>${a[1]}</span><span>${fmt(o.noon)}</span></div>
       <div class="r"><span>Move</span><span style="color:${o.move>=0?'var(--up)':'var(--down)'}">${o.move>0?'+':''}${fmt(o.move)} pts</span></div></div></section>`; }
@@ -1254,7 +1254,7 @@ function pageToday(D){
       return `<div class="r"><span>${esc(k)}${v.detail?`<small>${esc(v.detail)}</small>`:''}</span>
         <span style="color:${v.ok?'var(--text)':'var(--down)'}">${v.ok?tLocal(t):'Failed'}<small>${v.ok?(v.data_time?'data as of ':'pulled ')+tET(t):'retries next run'}</small></span></div>`;}).join('')}</div></section>`;
   S.method = `<section class="foot">
-    <p><b>Pre-open</b> calls 8:30 to 9:00 AM CT from 8:25 data. <b>Now</b> calls the rest of the live session from macro and options, updated hourly: the evening session 5 to 8 PM CT, then Asia (8 PM to 1 AM), London (1 to 8:30 AM) and New York (8:30 AM to 3 PM). <b>Overnight</b> calls 8 PM to 8 AM CT, Asia open to the US pre-market: a live preview from 3 PM CT, locked at 7:50 PM CT.</p>
+    <p><b>Pre-open</b> calls 8:30 to 9:00 AM CT from 8:25 data. <b>Now</b> calls the session ahead from macro and options, updated hourly: Asia 5 PM to 2 AM CT (built from 3 PM, before the reopen) and New York 9 AM to 3 PM CT (built before 9). <b>Overnight</b> calls London to the pre-market, 2 to 8 AM CT: a live preview from 3 PM CT, locked at 1:50 AM CT.</p>
     <p>Every vote is macro or options: rates, the Fed path, the dollar, oil, credit, global equities, volatility, official economic data, and dealer positioning. Each call is graded on its own window and tunes its own weights. Not financial advice.</p></section>`;
   for(const k of P.order) if(!P.hidden.includes(k) && S[k]) h += S[k];
   if(D.notes && D.notes.length) h += `<section><h2>Data notes</h2><div class="card pad err">${D.notes.map(esc).join('<br>')}</div></section>`;
@@ -1359,7 +1359,7 @@ function pageMacro(D0){
 
 /* ───────── RECORD ───────── */
 function pageRecord(D){
-  const sc=(D.markets[SYM]||{}).scorecard, sess=SESSION==='overnight'?'overnight calls, graded 8 PM to 8 AM CT':VIEW==='now'?'Now calls, each graded to its session close':'pre-open calls, graded 8:30 to 9:00 CT';
+  const sc=(D.markets[SYM]||{}).scorecard, sess=SESSION==='overnight'?'overnight calls, graded 2 to 8 AM CT':VIEW==='now'?'Now calls, each graded to its session close':'pre-open calls, graded 8:30 to 9:00 CT';
   let h = `<div class="ptitle">Record</div><div class="psub">${esc(SYM)} ${sess}, on the futures move.</div>`;
   if(!sc || (!sc.hits && !sc.misses && !(sc.recent||[]).length))
     return h+`<section><div class="card pad" style="color:var(--dim);font-size:14px;line-height:1.55">Nothing graded yet. Calls are graded when their window ends. To fill this in faster, rebuild past dates in GitHub: Actions, Morning bias report, Run workflow, then enter a date.</div></section>`;
@@ -1490,7 +1490,7 @@ function pageResearch(D){
         <div class="rsb"><p><b>Measures:</b> ${what}</p><p><b>Why it works:</b> ${why}</p><p><b>Fails when:</b> ${fails}</p><p class="paper">${paper}</p>${s?`<p><b>Right now:</b> ${esc(s.text)}</p>`:''}</div></details>`;}).join('')}</div></section>`;
   }
   h += `<section><h2>How it works</h2><div class="card pad foot" style="font-size:13.5px;color:var(--sub)">
-    <p><b>Point-in-time.</b> Each read uses only data from before its cutoff: 8:25 AM CT for the open call, 7:50 PM CT for overnight. So the record is a fair test, not hindsight.</p>
+    <p><b>Point-in-time.</b> Each read uses only data from before its cutoff: 8:25 AM CT for the open call, 1:50 AM CT for overnight. So the record is a fair test, not hindsight.</p>
     <p><b>Scoring.</b> Signals score +1, 0 or −1 times their weight, and the total is scaled to −1…+1. Every call picks a side: above zero reads Bullish, below zero Bearish. Conviction shows how strong the lean is: Very low under 0.08 (close to a coin flip), Low under 0.30, Medium 0.30–0.50, High above 0.50. NQ and ES are blended 65/35 with each other.</p>
     <p><b>Event days.</b> With a high-impact release later the same day (FOMC, CPI, jobs) the score is multiplied by 0.6 and conviction is capped at Low. Mega-cap earnings that night or last night multiply it by 0.85.</p>
     <p><b>Dealer positioning.</b> Gamma flip, walls, charm and vanna vote alongside macro at lighter weights, and also set the regime (range vs trend) and the levels.</p>
