@@ -63,7 +63,7 @@ MARKETS = {
 # indices, which are only used at their prior close (known before the open).
 MACRO_TICKERS = ["NQ=F", "ES=F", "ZN=F", "ZT=F", "DX-Y.NYB", "CL=F", "HYG",
                  "BTC-USD", "VXX", "^N225", "^GDAXI", "^HSI",
-                 "^VIX", "^VIX3M", "^VXN", "^TNX", "JPY=X"]
+                 "^VIX", "^VIX3M", "^VXN", "^TNX", "JPY=X", "CNH=X"]
 GLOBAL = {"^N225": "Nikkei", "^GDAXI": "DAX", "^HSI": "Hang Seng"}
 PEER_WEIGHT = 0.35   # NQ and ES are ~0.9 correlated day to day
 
@@ -493,7 +493,7 @@ def fred(series):
                 FRED_CACHE.write_text(json.dumps(cache))
             except Exception:  # noqa: BLE001
                 pass
-        elif series in cache:
+        elif not out and series in cache:
             out = [(date.fromisoformat(d), v) for d, v in cache[series]]
     _FRED[series] = out
     return out
@@ -720,7 +720,9 @@ def vrp_signal(cfg, q, target):
 
 
 # ─────────────── Fed funds futures, pre-Fed positioning, VIX futures roll, Treasury auctions ───────────────
-FOMC_DATES = [date(2026, 1, 28), date(2026, 3, 18), date(2026, 4, 29), date(2026, 6, 17), date(2026, 7, 29),
+FOMC_DATES = [date(2025, 1, 29), date(2025, 3, 19), date(2025, 5, 7), date(2025, 6, 18), date(2025, 7, 30),
+              date(2025, 9, 17), date(2025, 10, 29), date(2025, 12, 10),
+              date(2026, 1, 28), date(2026, 3, 18), date(2026, 4, 29), date(2026, 6, 17), date(2026, 7, 29),
               date(2026, 9, 16), date(2026, 10, 28), date(2026, 12, 9)]   # decision days; the calendar adds later ones
 ZQ_CODES = "FGHJKMNQUVXZ"
 
@@ -1035,6 +1037,97 @@ def move_signal(as_of):
                ("Bond volatility is jumping, which tends to spill into stocks." if sc < 0 else
                 "Bond volatility is draining out, a calmer backdrop for stocks." if sc > 0 else "Bond vol is steady."),
                "Volatility")
+
+
+def fomc_cycle_signal(day):
+    """
+    The FOMC cycle. Since 1994 the equity premium has been earned almost entirely in even weeks of the
+    cycle counted from each Fed meeting (week 0 = the day before to 3 days after, then weeks 2, 4, 6),
+    when the Fed's informal communication clusters; odd weeks have been flat
+    (Cieslak, Morse & Vissing-Jorgensen, "Stock Returns over the FOMC Cycle", JF 2019).
+    Even weeks lean bullish; odd weeks don't vote.
+    """
+    days = sorted(set(FOMC_DATES) | {date.fromisoformat(e["ts"][:10]) for e in WEEK_EVENTS
+                                     if e.get("impact") == "High" and any(w in e.get("title", "") for w in ("FOMC", "Federal Funds Rate"))})
+    past = [d for d in days if d <= day]
+    fut = [d for d in days if d > day]
+    if not past:
+        return None
+    if fut and int(np.busday_count(day, fut[0])) == 1:
+        k, ref = -1, fut[0]
+    else:
+        k, ref = int(np.busday_count(past[-1], day)), past[-1]
+    week = (k + 1) // 5
+    if week > 7:
+        return None
+    even = week % 2 == 0
+    return sig("fomccycle", "FOMC cycle week", 1 if even else 0, 0.4,
+               f"Week {week} of the cycle from the {ref:%b %-d} Fed meeting. " +
+               ("Even weeks are when stocks have earned their returns since 1994." if even else
+                "Odd weeks have historically been flat, so no vote."), "Macro")
+
+
+NYSE_HOLIDAYS = {date(2026, 1, 1), date(2026, 1, 19), date(2026, 2, 16), date(2026, 4, 3), date(2026, 5, 25), date(2026, 6, 19),
+                 date(2026, 7, 3), date(2026, 9, 7), date(2026, 11, 26), date(2026, 12, 25),
+                 date(2027, 1, 1), date(2027, 1, 18), date(2027, 2, 15), date(2027, 3, 26), date(2027, 5, 31), date(2027, 6, 18),
+                 date(2027, 7, 5), date(2027, 9, 6), date(2027, 11, 25), date(2027, 12, 24)}
+
+
+def pre_holiday_signal(day):
+    """The trading day before a US market holiday has averaged several times a normal day's return
+    (Ariel, "High Stock Returns before Holidays", JFE 1990)."""
+    nxt = next_weekday(day)
+    if nxt not in NYSE_HOLIDAYS:
+        return None
+    return sig("preholiday", "Pre-holiday", 1, 0.4,
+               f"Markets are shut {nxt:%A %b %-d}. The session before a holiday has historically been one of the strongest of the year.",
+               "Macro")
+
+
+def refunding_day(day):
+    """Treasury's quarterly refunding statement: a Wednesday in the first week of Feb, May, Aug and Nov at 8:30 ET."""
+    if day.month not in (2, 5, 8, 11) and not (day.month in (1, 4, 7, 10) and day.day >= 28):
+        return False
+    if day.weekday() != 2:
+        return False
+    for e in WEEK_EVENTS:
+        if "refunding" in e.get("title", "").lower():
+            return e["ts"][:10] == day.isoformat()
+    return day.month in (2, 5, 8, 11) and day.day <= 7
+
+
+def refunding_signal(day):
+    """
+    Quarterly refunding: how much Treasury will borrow at which maturities. Bigger long-end supply than
+    expected lifts the term premium and yields (the November 2023 statement set off a big rally by
+    doing the opposite). There's no free consensus to score it against, so it doesn't vote: it marks
+    the day and caps conviction like any other high-impact release.
+    """
+    if not refunding_day(day):
+        return None
+    return sig("refunding", "Treasury refunding", 0, 0.4,
+               "Treasury's quarterly refunding statement is out at 8:30 ET today. Long-end supply surprises move yields, "
+               "so treat the open with care.", "Macro")
+
+
+def copper_gold_signal(as_of):
+    """
+    Copper over gold: copper prices growth, gold prices fear. A rising ratio has tracked rising growth
+    expectations and yields (a widely used practitioner gauge, e.g. Gundlach). Its 10-session change votes.
+    """
+    cu = dict(r for r in daily_closes("HG=F", 40) if r[0] < as_of.date())
+    au = dict(r for r in daily_closes("GC=F", 40) if r[0] < as_of.date())
+    both = sorted(set(cu) & set(au))
+    if len(both) < 12:
+        return None
+    r1, r0 = cu[both[-1]] / au[both[-1]], cu[both[-11]] / au[both[-11]]
+    c = pct(r1, r0)
+    sc = 1 if c > 3 else -1 if c < -3 else 0
+    return sig("copgold", "Copper vs gold", sc, 0.4,
+               f"Copper/gold ratio {c:+.1f}% over 10 sessions. " +
+               ("Copper is beating gold: markets are pricing more growth." if sc > 0 else
+                "Gold is beating copper: markets are pricing fear over growth." if sc < 0 else "No clear growth signal."),
+               "Macro")
 
 
 def market_regime(q, as_of):
@@ -1426,6 +1519,16 @@ def macro_signals(cfg, q):
                      ("The yen is ripping higher: carry trades are being unwound, which forces risk selling." if sc < 0 else
                       "The yen is weakening: carry trades are on, a risk-on backdrop." if sc > 0 else "The yen is steady."),
                      "Macro"))
+    # Yuan: a sharp drop in China's currency has preceded Asia-led global selloffs (the August 2015 and
+    # January 2016 devaluations); a firmer yuan is a mild support.
+    c = chg(q, "CNH=X")
+    if c is not None:
+        sc = -1 if c > 0.4 else 1 if c < -0.3 else 0
+        S.append(sig("yuan", "Chinese yuan (USD/CNH)", sc, 0.4,
+                     f"USD/CNH {q['CNH=X']['last']:.4f} ({c:+.2f}%). " +
+                     ("The yuan is sliding: China stress tends to hit Asia first, then everyone." if sc < 0 else
+                      "The yuan is firming, a mild support for Asia and risk." if sc > 0 else "The yuan is steady."),
+                     "Macro"))
     # volatility
     vx = chg(q, "VXX")
     if vx is not None:
@@ -1473,6 +1576,8 @@ def overnight_signals(cfg, q):
     for s_ in S:
         if s_["key"] == "yen":   # carry unwinds hit hardest in Asia hours
             s_["weight"] = 1.0
+        if s_["key"] == "yuan":
+            s_["weight"] = 0.75
     v = q.get("^VIX")
     if v and v.get("fresh", True):
         c = pct(v["last"], v["prev"])
@@ -1728,6 +1833,9 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
         end = datetime.combine(next_weekday(as_of.date()), ON_END, ET).isoformat()
     upcoming = [e for e in events if e["impact"] == "High" and e["ts"] > as_of.isoformat()
                 and (end is None or e["ts"] <= end)]
+    ref = next((s for s in signals if s["key"] == "refunding"), None)
+    if ref and not any("refunding" in e.get("title", "").lower() for e in upcoming) and             (view == "overnight" or as_of.time() < time(8, 30)):
+        upcoming.append({"title": "Treasury refunding", "time": "8:30 AM", "ts": "", "impact": "High"})
     mega = [e for e in earnings if e["symbol"] in cfg["megacaps"]]
     damp = []
     if upcoming:
@@ -1850,7 +1958,7 @@ def grade_history(hist_dir, kind):
     except Exception:  # noqa: BLE001
         return
     now = datetime.now(ET)
-    for f in sorted(hist_dir.glob("20*.json"))[-40:]:
+    for f in sorted(hist_dir.glob("20*.json"))[-90:]:
         d = date.fromisoformat(f.stem)
         t0, t1 = grade_window(kind, d)
         if now < t1 + timedelta(minutes=5):
@@ -1994,13 +2102,15 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
             base = macro_signals(cfg, quotes)
         else:
             base = macro_signals(cfg, quotes)
+        day = next_weekday(target) if view == "overnight" else target   # the session being called
         extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of),
                              None if view == "overnight" else vol_crush_signal(events, quotes, as_of),
                              policy_gap_signal(as_of), stress_signal(as_of), macro_z_signal(as_of),
                              None if view == "overnight" else fomc_drift_signal(events, as_of),
                              vrp_signal(cfg, quotes, target), fedwatch_signal(as_of), fed_leak_signal(as_of),
                              vix_roll_signal(as_of), auction_signal(as_of), funding_signal(as_of),
-                             month_end_signal(as_of), move_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
+                             month_end_signal(as_of), move_signal(as_of), copper_gold_signal(as_of),
+                             fomc_cycle_signal(day), pre_holiday_signal(day), refunding_signal(day)) if x] + liquidity_signals(cfg, as_of)
         drift = next((x for x in extra if x["key"] == "fomcdrift" and x["score"]), None)
         od = fed_odds(as_of, next_fomc(as_of)) if drift else None
         if od and od["certainty"] >= 0.9:
@@ -2558,6 +2668,8 @@ def main():
     # Overnight: 8 PM → 8 AM CT. A live preview from 4 PM ET, locked at 7:50 PM CT
     on_day, on_cut, on_live = resolve_overnight(now)
     overnight = None if on_live or backfill else reuse_locked(hist_on, on_day, on_cut, now)
+    if backfill and (on_day.weekday() == 4 or (hist_on / f"{on_day.isoformat()}.json").exists()):
+        overnight = {"skip": True}
     if overnight is None:
         overnight = finish(build_view(on_day, on_cut, on_live, now, "overnight", hist_on), hist_on, "overnight")
 
@@ -2572,6 +2684,8 @@ def main():
             if "ny" in old:
                 report = old
                 for sess, hist in (("ny", hist_ny), ("overnight", hist_on)):
+                    if not old.get(sess):
+                        continue
                     r = old[sess]["preopen"] if sess == "ny" else old[sess]
                     for sym in r["markets"]:
                         r["markets"][sym]["scorecard"] = record_stats(hist, sym)
@@ -2581,10 +2695,35 @@ def main():
     report["now"] = report["ny"]["now"]
     latest.write_text(json.dumps(report, indent=1, default=float))
     for name, v in (("NY PRE-OPEN", preopen), ("NY NOW", current), ("OVERNIGHT", overnight)):
-        if v:
+        if v and "markets" in v:
             print(name, v["date"], json.dumps({s: f"{m['bias']['bias']} {m['bias']['score']:+.2f}"
                                                for s, m in v["markets"].items()}))
 
 
+def backfill_range():
+    """
+    REPORT_BACKFILL=YYYY-MM-DD:YYYY-MM-DD rebuilds every weekday in the range point-in-time, skipping
+    days that already have a live record (those keep their options data). Yahoo keeps 5-minute bars for
+    about 60 days, so older mornings can't be graded on the 30-minute window and are skipped.
+    """
+    a, b = [date.fromisoformat(x) for x in os.environ["REPORT_BACKFILL"].split(":")]
+    a = max(a, datetime.now(ET).date() - timedelta(days=55))
+    d = a
+    while d <= b:
+        if d.weekday() < 5 and not (OUT / "history" / f"{d.isoformat()}.json").exists():
+            os.environ["REPORT_DATE"] = d.isoformat()
+            _FRED.clear()                     # each day asks ALFRED for its own vintage
+            try:
+                main()
+            except Exception:  # noqa: BLE001
+                traceback.print_exc()
+                print(f"backfill {d}: failed", file=sys.stderr)
+        d += timedelta(days=1)
+    os.environ["REPORT_DATE"] = ""
+
+
 if __name__ == "__main__":
-    main()
+    if os.environ.get("REPORT_BACKFILL", "").strip():
+        backfill_range()
+    else:
+        main()

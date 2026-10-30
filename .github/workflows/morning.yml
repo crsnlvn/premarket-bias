@@ -15,6 +15,10 @@ on:
         description: "Rebuild a past morning (YYYY-MM-DD). Leave blank for today."
         required: false
         default: ""
+      backfill:
+        description: "Rebuild a range of past mornings (YYYY-MM-DD:YYYY-MM-DD), last ~55 days. Days with a live record are kept."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -26,7 +30,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -38,6 +42,7 @@ jobs:
       - name: Build report
         env:
           REPORT_DATE: ${{ github.event.inputs.date }}
+          REPORT_BACKFILL: ${{ github.event.inputs.backfill }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python scripts/build_report.py
       - name: Publish
