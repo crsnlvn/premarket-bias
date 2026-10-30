@@ -2746,6 +2746,9 @@ def move_ladder(read):
         cfg = MARKETS[sym]
         px = (m.get("levels") or {}).get("price")
         v = q.get(cfg["vol_index"], {}).get("last")
+        if not v:   # the vol index hasn't printed since yesterday's close
+            rows = daily_closes(cfg["vol_index"], 10)
+            v = rows[-1][1] if rows else None
         if not px or not v:
             continue
         day = px * v / 100 / math.sqrt(252)
