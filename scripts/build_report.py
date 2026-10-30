@@ -573,6 +573,97 @@ def liquidity_signals(cfg, as_of):
     return S
 
 
+def _zchg(rows, step=5, window=250):
+    """Latest step-period change as a z-score against the trailing window of step-period changes."""
+    if len(rows) < step + 30:
+        return None, None
+    v = np.array([x for _, x in rows[-(window + step):]], dtype=float)
+    ch = v[step:] - v[:-step]
+    sd = ch[:-1].std()
+    return (None, ch[-1]) if sd <= 0 else (float((ch[-1] - ch[:-1].mean()) / sd), float(ch[-1]))
+
+
+def policy_gap_signal(as_of):
+    """
+    2-year Treasury minus the effective Fed funds rate: how far the market's Fed path sits from
+    today's policy rate. In machine-learning yield-curve forecasts these Treasury-minus-Fed-funds
+    spreads were the most important rate predictors (Kang 2026, arXiv 2608.07536). A gap that
+    widens over a week means a more hawkish path is being priced: a headwind for duration-heavy tech.
+    """
+    y2, ff = _upto(fred("DGS2"), as_of, 1), _upto(fred("EFFR"), as_of, 1)
+    if len(y2) < 7 or not ff:
+        return None
+    g = [(d, v - _at(ff, d)) for d, v in y2[-7:] if _at(ff, d) is not None]
+    if len(g) < 6:
+        return None
+    lvl, d5 = g[-1][1], (g[-1][1] - g[-6][1]) * 100
+    sc = -1 if d5 > 8 else 1 if d5 < -8 else 0
+    c3 = _upto(fred("T10Y3M"), as_of, 1)
+    curve = f" The 10Y minus 3M curve is {c3[-1][1]:+.2f}%." if c3 else ""
+    return sig("policygap", "Policy gap (2Y − Fed funds)", sc, 0.75,
+               f"2-year yield minus Fed funds {lvl*100:+.0f} bp, {d5:+.0f} bp over 5 sessions. " +
+               ("The market is pricing a tighter Fed path." if sc < 0 else
+                "The market is pricing in more cuts." if sc > 0 else "The priced Fed path is steady.") + curve, "Macro")
+
+
+def stress_signal(as_of):
+    """St. Louis Fed Financial Stress Index (weekly, 18 market series). Rising stress = risk-off."""
+    r = _upto(fred("STLFSI4"), as_of, 6)
+    if len(r) < 5:
+        return None
+    lvl, d = r[-1][1], r[-1][1] - r[-5][1]
+    sc = -1 if d > 0.25 else 1 if d < -0.25 else 0
+    return sig("stress", "Financial stress", sc, 0.5,
+               f"St. Louis Fed stress index {lvl:+.2f} ({'above' if lvl > 0 else 'below'} normal), {d:+.2f} over 4 weeks. " +
+               ("Stress is building." if sc < 0 else "Stress is easing." if sc > 0 else "Stress is steady."), "Macro")
+
+
+def macro_z_signal(as_of):
+    """
+    A rule-based reading of FRED macro z-scores, read twice and averaged, after Wang, Dai, Ma & Geng
+    (2026, arXiv 2606.08283): a hawkish lens (inflation expectations, real rates, the priced Fed path,
+    the dollar) and a dovish lens (credit spreads, financial stress). Averaging the two lenses was what
+    the paper's 'debate' setup added: it cancels one lens's bias rather than inventing new signal.
+    Each input is its 5-session change scored against the past year of 5-session changes.
+    """
+    def z(series, lag=1, step=5):
+        return _zchg(_upto(fred(series), as_of, lag), step)[0]
+    gap = None
+    y2, ff = _upto(fred("DGS2"), as_of, 1), _upto(fred("EFFR"), as_of, 1)
+    if len(y2) > 40 and ff:
+        g = [(d, v - _at(ff, d)) for d, v in y2 if _at(ff, d) is not None]
+        gap = _zchg(g)[0]
+    hawk_in = {"5Y inflation expectations": z("T5YIE"), "Real 10Y yield": z("DFII10"),
+               "Priced Fed path": gap, "Dollar": z("DTWEXBGS", lag=7)}
+    dove_in = {"High-yield spreads": z("BAMLH0A0HYM2"), "Financial stress": z("STLFSI4", lag=6, step=4)}
+    hv = [v for v in hawk_in.values() if v is not None]
+    dv = [v for v in dove_in.values() if v is not None]
+    if not hv or not dv:
+        return None
+    hawk = -float(np.clip(np.mean(hv), -3, 3))     # rising inflation/rates/dollar = bad for stocks
+    dove = -float(np.clip(np.mean(dv), -3, 3))     # widening spreads / rising stress = bad for stocks
+    both = (hawk + dove) / 2
+    sc = 1 if both > 0.5 else -1 if both < -0.5 else 0
+    word = lambda x: "bullish" if x > 0.5 else "bearish" if x < -0.5 else "neutral"
+    top = max({**hawk_in, **dove_in}.items(), key=lambda kv: abs(kv[1]) if kv[1] is not None else -1)
+    return sig("macroz", "Macro z-score (hawk + dove)", sc, 0.5,
+               f"Hawkish lens {hawk:+.1f}σ ({word(hawk)}), dovish lens {dove:+.1f}σ ({word(dove)}), "
+               f"together {both:+.1f}σ. Biggest mover: {top[0]} ({top[1]:+.1f}σ over 5 sessions).", "Macro")
+
+
+def market_regime(q, as_of):
+    """
+    Calm or stressed, from the St. Louis Fed stress index and the VIX curve. Signals don't work
+    equally well in every environment (Koa, Liu & Li 2026, arXiv 2610.26456), so the Record learns
+    weights separately for each regime once it has enough graded calls in it.
+    """
+    stl = _upto(fred("STLFSI4"), as_of, 6)
+    v, v3 = q.get("^VIX"), q.get("^VIX3M")
+    ts = v["prev"] / v3["prev"] if v and v3 and v3.get("prev") else None
+    stressed = (stl and stl[-1][1] > 0) or (ts is not None and ts >= 1.0)
+    return "stressed" if stressed else "calm"
+
+
 def fed_pressure_signal(as_of):
     """Where the official data sits vs the Fed's comfort zones: net hawkish or dovish."""
     votes, parts = [], []
@@ -1111,20 +1202,27 @@ def label_of(x):
     return "Bearish" if x < 0 else "Bullish"
 
 
-def learned_multipliers(hist_dir: Path, sym: str, before: str, limit: int = 120) -> dict:
+def learned_multipliers(hist_dir: Path, sym: str, before: str, limit: int = 120, regime: str | None = None) -> dict:
     """
     Scale each signal's weight by how often it has actually pointed the right way.
     Shrunk toward 50% (10 phantom right + 10 phantom wrong) so a lucky streak can't
     swing it, and only applied once a signal has LEARN_MIN_N real graded samples.
+    With a regime, a signal uses its record from that regime alone once it has enough
+    samples there, and its all-weather record until then.
     """
     if not hist_dir.exists():
         return {}
-    out = {}
-    for row in record_stats(hist_dir, sym, before, limit)["signals"]:
-        if row["n"] < LEARN_MIN_N:
-            continue
-        rate = (row["right"] + 10) / (row["n"] + 20)
-        out[row["key"]] = round(min(1.5, max(0.25, 1 + 2 * (rate - 0.5))), 2)
+    def fit(rows):
+        out = {}
+        for row in rows:
+            if row["n"] < LEARN_MIN_N:
+                continue
+            rate = (row["right"] + 10) / (row["n"] + 20)
+            out[row["key"]] = round(min(1.5, max(0.25, 1 + 2 * (rate - 0.5))), 2)
+        return out
+    out = fit(record_stats(hist_dir, sym, before, limit)["signals"])
+    if regime:
+        out.update(fit(record_stats(hist_dir, sym, before, limit, regime)["signals"]))
     return out
 
 
@@ -1326,7 +1424,7 @@ def grade_history(hist_dir, kind):
             f.write_text(json.dumps(rep, indent=1))
 
 
-def record_stats(hist_dir, sym, before: str | None = None, limit: int = 120):
+def record_stats(hist_dir, sym, before: str | None = None, limit: int = 120, regime: str | None = None):
     """Hit rate overall, by call, by conviction, and which signals actually pointed the right way."""
     rows, attrib = [], {}
     files = [f for f in sorted(hist_dir.glob("20*.json")) if before is None or f.stem < before]
@@ -1334,6 +1432,8 @@ def record_stats(hist_dir, sym, before: str | None = None, limit: int = 120):
         m = json.loads(f.read_text()).get("markets", {}).get(sym, {})
         o = m.get("outcome")
         if not o:
+            continue
+        if regime and m.get("bias", {}).get("regime") != regime:
             continue
         rows.append({"date": f.stem, "bias": m["bias"]["bias"], "conviction": m["bias"]["conviction"],
                      "score": m["bias"]["score"], "move": o["move"], "result": o["result"]})
@@ -1417,6 +1517,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     prior_files = [f for f in sorted(hist.glob("20*.json")) if f.stem < target.isoformat()]
     prior = json.loads(prior_files[-1].read_text()) if prior_files else None
 
+    regime = market_regime(quotes, as_of)
     pre = {}
     for sym, cfg in MARKETS.items():
         pos, why = None, None
@@ -1435,11 +1536,12 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
         else:
             base = macro_signals(cfg, quotes)
         extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of),
-                             None if view == "overnight" else vol_crush_signal(events, quotes, as_of)) if x] + liquidity_signals(cfg, as_of)
+                             None if view == "overnight" else vol_crush_signal(events, quotes, as_of),
+                             policy_gap_signal(as_of), stress_signal(as_of), macro_z_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
         base = base + extra
         # learn only from sessions graded before this one, so every read stays point-in-time
         key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
-        mult = learned_multipliers(hist, sym, key, 1000 if view == "now" else 120)
+        mult = learned_multipliers(hist, sym, key, 1000 if view == "now" else 120, regime)
         pre[sym] = (pos, apply_learning(base, mult) + (dealer_signals(cfg, pos, quotes, events, as_of) if pos else []))
 
     if view == "overnight":
@@ -1458,6 +1560,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
         cuts, n_hist = conviction_cuts(sym, stamp_key)
         bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer, view, sess, prior_call.get(sym), cuts)
         bias["conv_cuts"] = [round(c, 3) for c in cuts]; bias["conv_basis"] = n_hist
+        bias["regime"] = regime
         pin = pin_risk(pos, as_of)
         if pin:
             bias["pin"] = pin
