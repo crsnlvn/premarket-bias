@@ -2847,14 +2847,20 @@ def _batch_quotes(tickers, now):
             last, ts = float(h["Close"].iloc[-1]), h.index[-1]
             days = [i.date() if hasattr(i, "date") else i for i in d.index]
             # prior close = the last daily close before the session the latest print belongs to
-            ref = [v for dd, v in zip(days, d["Close"]) if dd < ts.date()]
+            refd = [(dd, v) for dd, v in zip(days, d["Close"]) if dd < ts.date()]
             if ts.time() >= time(16, 0) and days and days[-1] == ts.date():   # after-hours: compare to today's close
-                ref = [float(d["Close"].iloc[-1])]
+                refd = [(days[-1], float(d["Close"].iloc[-1]))]
+            ref = [v for _, v in refd]
             if not ref:
                 continue
             prev = float(ref[-1])
             out[t] = {"last": round(last, 4), "prev": round(prev, 4), "chg": round(pct(last, prev), 2),
                       "ts": ts.isoformat(timespec="minutes")}
+            if not t.endswith("=F") and refd:   # sparkline: everything since the prior close (after-hours + today)
+                seg = h[h.index >= datetime.combine(refd[-1][0], time(15, 45), ET)]["Close"]
+                if len(seg) > 60:
+                    seg = seg.iloc[np.linspace(0, len(seg) - 1, 60).astype(int)]
+                out[t]["spark"] = [round(float(v), 4) for v in seg]
             if t.endswith("=F"):   # sparkline: this futures session, from the last 5 PM CT reopen
                 start = datetime.combine(ts.date() - timedelta(days=0 if ts.time() >= time(18) else 1), time(18), ET)
                 while start.weekday() == 5 or (start.weekday() == 4 and ts.weekday() != 4):
@@ -2900,11 +2906,11 @@ def market_tools(now, reads):
         rows = []
         for t in MEGA:
             if t in W and t in q:
-                rows.append({"ticker": t, "chg": q[t]["chg"], "last": q[t]["last"], "weight": W[t],
+                rows.append({"ticker": t, "chg": q[t]["chg"], "last": q[t]["last"], "weight": W[t], "spark": q[t].get("spark", []),
                              "pts": round(px * W[t] / 100 * q[t]["chg"] / 100, 1) if px else None})
         mega[sym] = {"rows": rows, "total_pts": round(sum(r["pts"] or 0 for r in rows), 1)}
     heat = [{"ticker": t, "weight": w, "chg": q[t]["chg"]} for t, w in sorted(NDX_W.items(), key=lambda kv: -kv[1]) if t in q]
-    world = [{"ticker": t, "name": n, "city": c, "last": q[t]["last"], "chg": q[t]["chg"], "ts": q[t]["ts"]}
+    world = [{"ticker": t, "name": n, "city": c, "last": q[t]["last"], "chg": q[t]["chg"], "ts": q[t]["ts"], "spark": q[t].get("spark", [])}
              for t, n, c in WORLD if t in q]
     curve = []
     for t, lbl in VOLS:

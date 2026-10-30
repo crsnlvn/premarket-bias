@@ -237,6 +237,11 @@ details.rs[open] summary em{transform:rotate(90deg)}
 .fcard svg{margin-bottom:8px}
 .fcard .fp{font-size:17px;font-weight:600}
 .fcard .fx{font-size:14px;margin-top:2px}
+.mrow2{display:grid;grid-template-columns:minmax(0,1fr) 72px auto;align-items:center;gap:12px;padding:12px var(--pad);border-top:1px solid var(--row)}
+.mrow2:first-child{border-top:0}
+.mrow2 .mt{display:flex;flex-direction:column;gap:2px}.mrow2 .mt small{font-size:12px}
+.mrow2 .ms{display:flex;justify-content:center}
+.mrow2 .mvl{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:14px;white-space:nowrap;min-width:70px}.mrow2 .mvl b{font-size:15.5px}
 .hp{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:12px 16px;border-top:1px solid var(--row);color:var(--text)}
 .hp:first-child{border-top:0}
 .hpi{width:20px;height:20px;color:var(--dim);flex:none;margin-top:2px}.hpi svg{width:20px;height:20px}
@@ -1576,7 +1581,7 @@ function pageMega(){
   if(!T) return h; const M = (T.megacaps||{})[SYM]; if(!M || !M.rows.length) return empty(h,'No quotes yet.');
   const rows = M.rows.slice().sort((a,b)=>Math.abs(b.pts||0)-Math.abs(a.pts||0));
   return h + futStrip(T) + `<section><div class="card pad"><div class="lbl" style="color:var(--dim);font-size:13px">Combined</div><div class="num" style="font-size:34px;font-weight:700;color:${colr(M.total_pts)}">${sgT(M.total_pts,0)} pts</div><div style="color:var(--sub);font-size:13.5px">What these ${rows.length} stocks alone are worth to ${esc(SYM)} right now.</div></div></section>
-    <section><div class="card rows">${rows.map(r=>`<div class="r"><span><b style="font-weight:600">${esc(r.ticker)}</b> <small style="color:var(--dim)">${fmt(r.weight,1)}%</small></span><span class="num"><span style="color:${colr(r.chg)}">${sgT(r.chg,2)}%</span> · <b style="color:${colr(r.pts)}">${r.pts==null?'—':sgT(r.pts,0)+' pts'}</b></span></div>`).join('')}</div></section>
+    <section><div class="card">${rows.map(r=>`<div class="mrow2"><span class="mt"><b style="font-weight:600">${esc(r.ticker)}</b><small style="color:var(--dim)">${fmt(r.weight,1)}% weight</small></span><span class="ms">${spark(r.spark,colr(r.chg))}</span><span class="num mvl"><span style="color:${colr(r.chg)}">${sgT(r.chg,2)}%</span><b style="color:${colr(r.pts)}">${r.pts==null?'—':sgT(r.pts,0)+' pts'}</b></span></div>`).join('')}</div></section>
     <section class="foot"><p>Index weights are approximate and drift over time. Points = futures price × weight × the stock's move.</p></section>` + toolFoot(T);
 }
 
@@ -1665,7 +1670,7 @@ function pageWorld(){
   const [h, T] = toolsOr('World markets', 'Major indices around the world, in the order the trading day travels: Asia, Europe, the Americas. Change is from each market\'s last close.');
   if(!T) return h; const W=T.world||[]; if(!W.length) return empty(h,'No quotes yet.');
   return h + `<section><div class="card rows">${W.map(w=>{ const o=mktOpen(w.city);
-    return `<div class="r"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background:${o?'var(--up)':'var(--line2)'}"></span><b style="font-weight:600">${esc(w.name)}</b> <small style="color:var(--dim)">${esc(w.city)}${o?' · open':''}</small></span><span class="num" style="color:${colr(w.chg)}">${sgT(w.chg,2)}%</span></div>`; }).join('')}</div></section>
+    return `<div class="r"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background:${o?'var(--up)':'var(--line2)'}"></span><b style="font-weight:600">${esc(w.name)}</b> <small style="color:var(--dim)">${esc(w.city)}${o?' · open':''}</small></span><span style="display:flex;align-items:center;gap:12px">${spark(w.spark,colr(w.chg))}<span class="num" style="color:${colr(w.chg)};min-width:62px;text-align:right">${sgT(w.chg,2)}%</span></span></div>`; }).join('')}</div></section>
     <section class="foot"><p>Green dot = open now (regular hours, holidays not shown).</p></section>` + toolFoot(T);
 }
 
