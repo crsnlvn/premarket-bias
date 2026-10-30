@@ -1149,7 +1149,11 @@ def megacap_signal(cfg, sym, as_of):
     idx = sum(w * c for _, w, c in parts) / 100          # % move these names alone put on the index
     sc = -1 if idx < -0.35 else 1 if idx > 0.35 else 0
     top = sorted(parts, key=lambda p_: -abs(p_[1] * p_[2]))[:3]
-    return sig("megacap", "Megacaps (earnings & pre-market)", sc, 1.25,
+    # After overnight earnings from the biggest firms, index futures keep drifting the same way for about
+    # seven hours, most after bad news and early in the quarter's earnings season (Ogneva, Xia & Ye,
+    # SSRN 3837800; Chan & Marsh, SSRN 3535598 on the early announcers).
+    w = 1.25 * (1.3 if sc < 0 else 1.0) * (1.2 if as_of.month in (1, 4, 7, 10) else 1.0)
+    return sig("megacap", "Megacaps (earnings & pre-market)", sc, round(w, 3),
                f"The biggest {sym} stocks alone are worth {idx:+.2f}% on the index: " +
                ", ".join(f"{t} {c:+.1f}%" for t, _, c in top) + ". " +
                ("Heavyweights are selling off, a direct drag on the index." if sc < 0 else
@@ -1242,7 +1246,8 @@ def news_signal(as_of, view):
             NEWS_CACHE.update(fetch_news(as_of, limit=80))
         except Exception:  # noqa: BLE001
             NEWS_CACHE["items"] = []
-    lo = as_of - timedelta(hours=12)
+    lo = (datetime.combine(prev_weekday(as_of.date()), time(16, 0), ET) if view == "preopen"
+          else as_of - timedelta(hours=12))
     pos = neg = n = 0
     worst = []
     for it in NEWS_CACHE.get("items", []):
@@ -1263,11 +1268,18 @@ def news_signal(as_of, view):
     sc = -1 if tone < -0.25 else 1 if tone > 0.15 else 0   # headlines lean negative on a normal day
     worst.sort()
     pick = worst[0][1] if sc <= 0 else worst[-1][1]
-    return sig("news", "News tone", sc, 0.75,
-               f"{n} market headlines in the last 12 hours, tone {tone:+.2f} ({neg} negative vs {pos} positive words). "
+    # Overnight news tone carries into the open, bad news more than good (Gan, Alexeev & Yeung, SSRN 4184707).
+    # After a sharp drop, bad news is largely priced and reversal dominates (Baek, Lee & Kim, SSRN 6516494).
+    w, extra_ = (1.0 if sc < 0 else 0.75), ""
+    rows = [r for r in daily_closes("NQ=F", 10) if r[0] < as_of.date()]
+    if sc < 0 and len(rows) >= 2 and pct(rows[-1][1], rows[-2][1]) <= -2:
+        w, extra_ = 0.5, f" The market already fell {pct(rows[-1][1], rows[-2][1]):.1f}% last session, so bad news is largely priced: half weight."
+    span = "since yesterday's close" if view == "preopen" else "in the last 12 hours"
+    return sig("news", "News tone", sc, w,
+               f"{n} market headlines {span}, tone {tone:+.2f} ({neg} negative vs {pos} positive words). "
                f"{'Most negative' if sc <= 0 else 'Most positive'}: “{pick[:110]}”. " +
                ("Coverage is pessimistic, which has preceded downward pressure." if sc < 0 else
-                "Coverage is upbeat." if sc > 0 else "Mixed coverage."), "Macro")
+                "Coverage is upbeat." if sc > 0 else "Mixed coverage.") + extra_, "Macro")
 
 
 def stock_bond_corr(as_of, n=20):
@@ -1304,6 +1316,32 @@ def apply_bond_regime(signals, corr):
             s_["weight"] = round(s_["weight"] * 0.5, 3)
             s_["text"] += f" Stocks and yields aren't moving in step right now (correlation {corr:+.2f}), so it counts half."
     return signals
+
+
+def vix_shock_signal(as_of):
+    """
+    A standardised VIX shock (yesterday's VIX change ÷ its 20-day standard deviation) means opposite things
+    by regime: in high-volatility markets (VIX above its long-run median, about 19) a spike has been followed by
+    rebounds as forced selling reverses; in calm markets it has been followed by further weakness
+    (Patel, SSRN 6987520; extreme shocks = beyond ±1.66σ, the top decile).
+    """
+    rows = [r for r in daily_closes("^VIX", 45) if r[0] < as_of.date()]
+    if len(rows) < 23:
+        return None
+    v = np.array([x for _, x in rows])
+    dv = np.diff(v)
+    sd = float(np.std(dv[-21:-1], ddof=1)) or 1.0
+    z = float(dv[-1]) / sd
+    if abs(z) < 1.66:
+        return sig("vixshock", "VIX shock", 0, 0.3, f"VIX {v[-1]:.1f}, a {z:+.1f}σ move yesterday: no shock.", "Volatility")
+    high = v[-1] > 19
+    sc = (1 if z > 0 else -1) * (1 if high else -1)
+    return sig("vixshock", "VIX shock", sc, 0.3,
+               f"VIX jumped {z:+.1f}σ yesterday to {v[-1]:.1f}, in a {'high' if high else 'low'}-volatility market. " +
+               (("A spike when fear is already high has been followed by rebounds as forced selling reverses." if z > 0 else
+                 "Fear collapsing from a high level: the rebound has usually already happened.") if high else
+                ("A spike out of calm has been followed by further weakness." if z > 0 else
+                 "Vol dropping in a calm market has been followed by firmer prices.")), "Volatility")
 
 
 def market_regime(q, as_of):
@@ -1553,18 +1591,22 @@ def analyse_positioning(cfg, q, target, as_of, live):
     for c in chains:
         r = c["ratio"]
         S = px / r
-        gex_now += dealer_gex(grid / r, c)
-        alive = c["T"] - dT > 1e-6
-        cc = {k: (v[alive] if isinstance(v, np.ndarray) else v) for k, v in c.items()}
+        # Same-day contracts carry no dealer sign (Chilingarian, SSRN 7131778): the signed book, the flip,
+        # the walls and net gamma use options with at least a day to expiry.
+        keep = c["T"] * 365 >= 1.0
+        ck = {k: (v[keep] if isinstance(v, np.ndarray) else v) for k, v in c.items()}
+        gex_now += dealer_gex(grid / r, ck)
+        alive = ck["T"] - dT > 1e-6
+        cc = {k: (v[alive] if isinstance(v, np.ndarray) else v) for k, v in ck.items()}
         gex_close += dealer_gex(grid / r, cc, T=cc["T"] - dT)
         g = bs_gamma(S, c["K"], c["T"], c["IV"]) * c["OI"] * 100 * S**2 * 0.01
         later = c["T"] * 365 > 1.0
         gex_ex0 += float((c["CP"] * g)[later].sum()); gross_ex0 += float(g[later].sum())
         same = c["T"] * 365 < 0.5
         gex_0 += float((c["CP"] * g)[same].sum()); gross_0 += float(g[same].sum())
-        tot["cg"] += float(g[c["CP"] > 0].sum())
-        tot["pg"] += float(g[c["CP"] < 0].sum())
-        for k, gg, cp in zip(c["K"] * r, g, c["CP"]):
+        tot["cg"] += float(g[keep & (c["CP"] > 0)].sum())
+        tot["pg"] += float(g[keep & (c["CP"] < 0)].sum())
+        for k, gg, cp in zip(c["K"][keep] * r, g[keep], c["CP"][keep]):
             b = round(k / cfg["bin"]) * cfg["bin"]
             levels.setdefault(b, [0.0, 0.0])[0 if cp > 0 else 1] += gg
         D, gross = dealer_delta(S, c)
@@ -1856,24 +1898,36 @@ def scheduled_release_ahead(events, as_of, hours=6):
 
 def dealer_signals(cfg, pos, q, events=None, as_of=None):
     S, px = [], pos["px"]
+    # Dealer gamma says how big moves will be, not which way: more net gamma goes with lower realised
+    # volatility for the rest of the session (Chilingarian, SSRN 7131778), and long gamma strengthens
+    # intraday reversals while short gamma feeds momentum (Dim, Eraker & Vilkov, SSRN 4692190). The
+    # dealer sign itself is a convention that public data can't verify (Sahu, SSRN 7398538), and measured
+    # market makers are usually net long SPX gamma (Adams et al., SSRN 5641974). So flip and tilt are a
+    # regime label, not a vote.
+    long_g = pos["net_gex"] > 0
     if pos["flip"]:
-        d, band = px - pos["flip"], px * 0.0015
-        sc = 1 if d > band else -1 if d < -band else 0
-        S.append(sig("flip", "Gamma flip", sc, 0.75,
-                     f"Price is {abs(d):,.0f} pts {'above' if d > 0 else 'below'} the gamma flip ({pos['flip']:,.0f}). " +
-                     ("Dealers are long gamma, so they buy dips and sell rips." if d > 0 else
-                      "Dealers are short gamma, so their hedging extends moves."), "Dealer positioning"))
+        d = px - pos["flip"]
+        s_ = sig("flip", "Gamma regime", 0, 0.75,
+                 f"Estimated gamma flip {pos['flip']:,.0f}, price {abs(d):,.0f} pts {'above' if d > 0 else 'below'} (options with 1+ day "
+                 f"to expiry; the dealer side is an assumption). " +
+                 ("Long gamma: expect smaller moves that tend to reverse." if long_g else
+                  "Short gamma: expect bigger moves that tend to run, in either direction."), "Dealer positioning")
+        s_["directional"] = False
+        S.append(s_)
     tilt = pos["call_gamma"] / pos["put_gamma"] if pos["put_gamma"] else 1
-    sc = 1 if tilt > 1.25 else -1 if tilt < 0.8 else 0
-    S.append(sig("tilt", "Gamma tilt", sc, 0.25, f"Call ÷ put gamma {tilt:.2f}. " +
-                 ("Call-heavy." if sc > 0 else "Put-heavy, so hedges sit below." if sc < 0 else "Balanced."),
-                 "Dealer positioning"))
+    s_ = sig("tilt", "Gamma tilt", 0, 0.25, f"Call ÷ put gamma {tilt:.2f}. " +
+             ("Call-heavy book." if tilt > 1.25 else "Put-heavy book: hedges sit below price." if tilt < 0.8 else "Balanced."),
+             "Dealer positioning")
+    s_["directional"] = False
+    S.append(s_)
     up, dn = pos["call_wall"] - px, px - pos["put_wall"]
     loc = dn / max(up + dn, 1e-9)
-    sc = 1 if loc < 0.33 else -1 if loc > 0.67 else 0
+    sc = (1 if loc < 0.33 else -1 if loc > 0.67 else 0) if long_g else 0
     S.append(sig("walls", "Wall range", sc, 0.5,
                  f"Put wall {pos['put_wall']:,.0f} / call wall {pos['call_wall']:,.0f}: {up:,.0f} pts up vs {dn:,.0f} down. " +
-                 ("Near support." if sc > 0 else "Pressed into resistance." if sc < 0 else "Mid-range."),
+                 (("Near support, and long-gamma dealers tend to defend it." if sc > 0 else
+                   "Pressed into resistance, and long-gamma dealers tend to sell into it." if sc < 0 else "Mid-range.")
+                  if long_g else "Dealers are short gamma, so walls don't hold reliably: no vote."),
                  "Dealer positioning"))
     thr = 0.0015 * pos["gross_delta"]
     ch = pos["charm_hedge_flow"]
@@ -2332,7 +2386,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                              None if view == "overnight" else fomc_drift_signal(events, as_of),
                              vrp_signal(cfg, quotes, target), fedwatch_signal(as_of), fed_leak_signal(as_of),
                              vix_roll_signal(as_of), auction_signal(as_of), funding_signal(as_of),
-                             month_end_signal(as_of), move_signal(as_of), copper_gold_signal(as_of),
+                             month_end_signal(as_of), move_signal(as_of), copper_gold_signal(as_of), vix_shock_signal(as_of),
                              fomc_cycle_signal(day), pre_holiday_signal(day), refunding_signal(day)) if x] + liquidity_signals(cfg, as_of)
         drift = next((x for x in extra if x["key"] == "fomcdrift" and x["score"]), None)
         od = fed_odds(as_of, next_fomc(as_of)) if drift else None
