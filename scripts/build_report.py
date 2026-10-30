@@ -90,7 +90,7 @@ def pct(a, b):
 
 
 # ─────────────────────────── session / cutoff ─────────────────────────────
-OPEN_MOVE_END = time(10, 0)   # pre-open call is graded on the opening move, 9:30 → 10:00 ET
+OPEN_MOVE_END = time(12, 0)   # pre-open call is graded on the New York morning, 9:30 → 12:00 ET (8:30 → 11 CT)
 
 
 # Carson's windows, in Central time (ET minus one hour; both shift for daylight saving together):
@@ -101,7 +101,7 @@ OPEN_MOVE_END = time(10, 0)   # pre-open call is graded on the opening move, 9:3
 ON_START = time(3, 0)      # 2 AM CT, London open
 ON_END = time(9, 0)        # 8 AM CT
 ON_CUT = time(2, 50)       # the overnight call locks ten minutes before London
-NY_NOW_START = time(10, 0)  # 9 AM CT, when the pre-open call's window ends
+NY_NOW_START = time(12, 0)  # 11 AM CT, when the pre-open call's window ends
 
 
 def current_session(now: datetime):
@@ -116,7 +116,7 @@ def current_session(now: datetime):
     if wd == 5 or (wd == 6 and t < time(16)) or (wd == 4 and t >= time(16)):
         return None   # Sunday from 4 PM ET: the Asia call builds ahead of the 5 PM CT reopen
     if time(9, 30) <= t < time(16):
-        return "NY", at(d, 10), at(d, 16), d
+        return "NY", at(d, 12), at(d, 16), d
     if t >= time(16):
         return "Asia", at(d, 18), at(d + timedelta(days=1), 3), next_weekday(d)
     if t < ON_START:
@@ -2349,15 +2349,13 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                   if view == "now" else [])) if pos else []
         # each window gets the evidence that fits it
         win = []
-        if view == "preopen":
-            win.append(gap_fade_signal(cfg, quotes))
-        if view in ("now", "overnight") and live:
+        fresh = live or (datetime.now(ET) - as_of) < timedelta(minutes=5)   # quotes still match the cutoff
+        if fresh:
             win.append(megacap_signal(cfg, sym, as_of))
-        if live:
-            win.append(news_signal(as_of, view))
+        if not os.environ.get("REPORT_DATE", "").strip():
+            win.append(news_signal(as_of, view))          # headlines are filtered to the cutoff
         base = base + [x for x in win if x]
-        if view in ("now", "overnight"):
-            base = apply_bond_regime(base, bond_corr)
+        base = apply_bond_regime(base, bond_corr)
         pre[sym] = (pos, apply_learning(base, mult) + dealer)
 
     if view == "overnight":
@@ -2365,7 +2363,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     elif view == "now" and sess:
         hours = (sess[2] - as_of).total_seconds() / 3600
     else:
-        hours = 0.5
+        hours = 2.5
     prior_call = previous_call(hist, view, target, as_of, sess)
     stamp_key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
     markets = {}
@@ -2472,6 +2470,32 @@ def reuse_locked(hist, day, cut, now):
     return old
 
 
+def lock_preopen(hist, day, cut, now):
+    """
+    The pre-open call locks at 9:25 ET. If the last live preview was taken within 20 minutes of the
+    cut, it becomes the locked call: its megacap quotes and headlines were point-in-time, which a
+    rebuild after the cut couldn't guarantee. A call already locked at the cut is kept as is.
+    """
+    path = hist / f"{day.isoformat()}.json"
+    if not path.exists():
+        return None
+    try:
+        old = json.loads(path.read_text())
+    except Exception:  # noqa: BLE001
+        return None
+    a = old.get("as_of", "")
+    if not (a == cut.isoformat(timespec="seconds") or (cut - timedelta(minutes=20)).isoformat() <= a < cut.isoformat()):
+        return None
+    if old.get("mode") == "live":
+        old["mode"] = "point-in-time"
+        path.write_text(json.dumps(old, indent=1, default=float))
+    grade_history(hist, "ny")
+    old = json.loads(path.read_text())
+    for sym in old.get("markets", {}):
+        old["markets"][sym]["scorecard"] = record_stats(hist, sym)
+    return old
+
+
 def finish_now(read, hist):
     """Save a compact copy of each Now call, grade the ones whose session has ended, attach the record."""
     stem = datetime.fromisoformat(read["as_of"]).strftime("%Y-%m-%dT%H%M")
@@ -2494,6 +2518,8 @@ def grade_now(hist):
     for f in sorted(hist.glob("20*.json"))[-400:]:
         rep_ = json.loads(f.read_text())
         t0, t1 = datetime.fromisoformat(rep_["as_of"]), datetime.fromisoformat(rep_["window"]["end"])
+        if rep_["window"].get("name") == "NY":   # the New York call is graded from its window start
+            t0 = max(t0, datetime.fromisoformat(rep_["window"]["start"]))
         if now < t1 + timedelta(minutes=5):
             continue
         changed = False
@@ -3167,7 +3193,9 @@ def main():
 
     # NY morning: pre-open (9:25 ET cut, or live before then) + "now"
     target, as_of, live = resolve_session(now)
-    preopen = finish(build_view(target, as_of, live, now, "preopen", hist_ny), hist_ny, "ny")
+    preopen = None if live or backfill else lock_preopen(hist_ny, target, as_of, now)
+    if preopen is None:
+        preopen = finish(build_view(target, as_of, live, now, "preopen", hist_ny), hist_ny, "ny")
     # Now: the rest of whatever session is trading (Asia, London or NY), graded at its close
     hist_now = OUT / "history" / "now"
     hist_now.mkdir(parents=True, exist_ok=True)
