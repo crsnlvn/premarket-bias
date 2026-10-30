@@ -297,6 +297,41 @@ body.compact .note{font-size:14.5px}
 :root[data-mode="calm"]{--amb:#7AA2F7}
 :root[data-mode="calm"] .tline > div{background:#262833!important;color:var(--dim)!important}
 :root[data-mode="calm"] .tline > div:nth-child(3){background:var(--accent)!important;color:#16171D!important}
+.ckp{padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.ckc{border-radius:24px;padding:16px 18px}
+.ckk{font-size:13px;color:var(--dim);font-weight:500}
+.cktime{display:flex;align-items:flex-end;gap:8px;margin-top:4px}
+.cktime b{font-size:64px;font-weight:700;letter-spacing:-.045em;line-height:.95;font-variant-numeric:tabular-nums}
+.cktime span{display:flex;flex-direction:column;padding-bottom:4px}
+.cktime em{font-style:normal;font-size:20px;font-weight:600;color:var(--dim);font-variant-numeric:tabular-nums;line-height:1}
+.cktime small{font-size:12px;font-weight:600;color:var(--dim);margin-top:3px}
+.cks{font-size:14px;color:var(--sub);margin-top:8px}
+.ckuse{font-size:38px;font-weight:700;letter-spacing:-.035em;line-height:1.1;margin-top:2px}
+.cknote{font-size:14px;line-height:1.5;color:var(--sub);margin-top:6px}
+.ckbtns{display:flex;gap:8px;margin-top:12px}
+.ckb{flex:1;padding:11px 12px;border-radius:999px;font-size:14px;font-weight:600;background:var(--sel);border:1px solid var(--edge);color:var(--text)}
+.ckb.pri{background:var(--accent);border-color:transparent;color:#0b0d12}
+.ckmap{position:relative;display:flex;gap:2px;height:30px;margin-top:12px;border-radius:10px;overflow:visible}
+.ckmap > div{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;color:var(--dim);background:var(--bar);white-space:nowrap;overflow:hidden}
+.ckmap > div:first-child{border-radius:10px 0 0 10px}.ckmap > div:last-of-type{border-radius:0 10px 10px 0}
+.ckmap > div.p{background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.ckmap > div.on{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--text)}
+.ckmap > div.p.on{background:var(--accent)}
+.ckmap i{position:absolute;top:-5px;bottom:-5px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--text);box-shadow:0 0 0 2px var(--bg)}
+.ckax{position:relative;height:16px;margin-top:6px;font-size:11.5px;color:var(--dim)}
+.ckax span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ckax span:first-child{transform:none}
+.ckrows{padding:6px 10px}
+.ckr{display:grid;grid-template-columns:122px 80px 1fr;align-items:center;gap:6px;padding:9px 8px;border-radius:12px;font-size:13.5px}
+.ckr span{color:var(--dim)}
+.ckr b{font-weight:600}
+.ckr em{font-style:normal;color:var(--sub);font-size:13px}
+.ckr.on{background:var(--sel)}
+.ckr.on span,.ckr.on em{color:var(--text)}
+.ckn{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--row);font-size:14.5px}
+.ckn:nth-child(2){border-top:0}
+.ckn b{font-weight:600;font-variant-numeric:tabular-nums}
+.ckfoot{font-size:12.5px;line-height:1.55;color:var(--faint);margin:4px 4px 0}
 /* ───────── tappable tiles + big popup ───────── */
 button.t{display:block;width:100%;font:inherit;color:inherit;cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
 button.t:active{transform:scale(.97)}
@@ -916,44 +951,46 @@ function phaseNow(){
 }
 const cd = ms => { const s=Math.max(0,Math.floor(ms/1000)); return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(x=>String(x).padStart(2,'0')).join(':'); };
 function pageClock(){
-  const now = new Date(), ph = phaseNow(), p = ph.p, t = ph.t, Q = modeNow()==='quant';
-  const T_ = (code, plain) => Q ? code : plain;
+  const now = new Date(), ph = phaseNow(), p = ph.p, t = ph.t;
   const tz = (new Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(now).find(x=>x.type==='timeZoneName')||{}).value || '';
-  let sessName = ph.k==='overnight' ? ph.leg : ph.k==='preopen' ? (t<570?'london → ny':'ny open') : ph.k==='now' ? 'new_york' : 'closed';
-  if(!Q) sessName = {asia:'Asia', london:'London', 'london → ny':'London → NY', 'ny open':'NY open', new_york:'New York', closed:'Closed'}[sessName] || sessName;
+  const h24 = +p.hour%24, h12 = h24%12 || 12, ampm = h24<12 ? 'AM' : 'PM';
+  const sess = {overnight: ph.leg==='asia'?'Asia session':'London session', preopen: t<570?'Pre-market':'NY open', now:'New York session', closed:'Market break', weekend:'Weekend'}[ph.k];
+  const leg = ph.leg==='asia' ? 'Asia' : 'London';
   const U = {
-    overnight:['OVERNIGHT','overnight', `The overnight call covers 6 PM to the 9:30 open. For the ${ph.leg} leg you're trading right now, check <b>now</b>.${t>=487&&t<565?' The pre-open call is a preview until it locks at 9:25.':''}`, [['overnight','overnight ▸'],['now','now ▸']]],
-    preopen:['PRE-OPEN','preopen', `Final open call is locked (9:25 read). It covers 9:30–10:00.${t<570?' NY opens in '+dur(etAt(now,0,9,30)-now)+'.':''} Switch to <b>now</b> at 10:00.`, [['preopen','open it ▸']]],
-    now:['NOW','now', 'Covers the rest of the NY session to 4 PM. The open call was graded at 10:00.', [['now','open it ▸']]],
-    closed:['CLOSED','', 'NY is done for the day. The next overnight call builds at 6 PM ET. Good time to check the record.', [['record','record ▸']]],
-    weekend:['CLOSED','', 'Weekend. Futures reopen Sunday at 6 PM ET, and the first overnight call builds then.', [['record','record ▸']]],
+    overnight:['Overnight', `The overnight call covers 6 PM to the 9:30 open. For the ${leg} move happening right now, check Now.${t>=487&&t<565?' Pre-open is a preview until it locks at 9:25.':''}`, [['overnight','Open Overnight',1],['now','Now',0]]],
+    preopen:['Pre-open', `The open call locked at the 9:25 read and covers 9:30 to 10:00.${t<570?' New York opens in '+dur(etAt(now,0,9,30)-now)+'.':''} Switch to Now at 10:00.`, [['preopen','Open Pre-open',1]]],
+    now:['Now', 'Covers the rest of the New York session until 4 PM. The open call was graded at 10:00.', [['now','Open Now',1]]],
+    closed:['Market break', 'New York is done for the day. The next overnight call builds at 6 PM ET.', [['record','See the record',1]]],
+    weekend:['Weekend', 'Futures reopen Sunday at 6 PM ET, and the first overnight call builds then.', [['record','See the record',1]]],
   }[ph.k];
-  const sch = [['6p – 9:25a','overnight','asia + london move','overnight'],['6p – 9:30a','now','current asia / london leg','overnight'],
-    ['8:07 – 9:25a','pre-open','preview, still updating','prev'],['9:25 – 10a','pre-open ●','final open call, locked','preopen'],
-    ['10a – 4p','now','rest of ny session','now'],['4p – 6p','—','closed · check record','closed']];
+  const rows = [['6 PM – 9:25 AM','Overnight','Asia + London','overnight'],['6 PM – 9:30 AM','Now','Live leg','overnight'],
+    ['8:07 – 9:25 AM','Pre-open','Preview','prev'],['9:25 – 10 AM','Pre-open','Locked call','preopen'],
+    ['10 AM – 4 PM','Now','Rest of NY','now'],['4 – 6 PM','—','Break','closed']];
   const onRow = r => r[3]===ph.k || (r[3]==='prev' && ph.k==='overnight' && t>=487 && t<565) || (r[3]==='closed' && ph.k==='weekend');
-  const nexts = [['final open call',nextAt(9,25,WD)],['ny open',nextAt(9,30,WD)],['switch → now',nextAt(10,0,WD)],['ny close',nextAt(16,0,WD)],['next overnight call',nextAt(18,0,SUN_THU)]];
-  const ev = upcoming(readFor(),1)[0]; if(ev) nexts.push([ev.title.toLowerCase(), new Date(ev.ts)]);
+  const nexts = [['Final open call',nextAt(9,25,WD)],['NY open',nextAt(9,30,WD)],['Switch to Now',nextAt(10,0,WD)],['NY close',nextAt(16,0,WD)],['Next overnight call',nextAt(18,0,SUN_THU)]];
+  const ev = upcoming(readFor(),1)[0]; if(ev) nexts.push([ev.title, new Date(ev.ts)]);
   nexts.sort((a,b)=>a[1]-b[1]);
-  const hr = (+p.hour%24) + (+p.minute)/60 + (+p.second)/3600;
-  const SC = {asia:['#16202B','#7FA7D6'], london:['#1B2A24','#6FCF97'], P:['var(--amb)','#0B0C0E'], new_york:['#2A1F14','#F2B266'], closed:['#16181B','#4A4F57']};
-  const ax = [['6p',18],['2a',2],['9:25',9+25/60],['4p',16],['6p',17.9999]];
-  return `<div class="qp">
-    <div class="qs"><span class="qk">${Q?`// new_york  ${p.weekday.toLowerCase()} ${+p.day} ${now.toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short'}).toLowerCase()}`:`New York · ${p.weekday} ${now.toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short'})} ${+p.day}`}</span>
-      <div class="clk"><b>${p.hour}:${p.minute}</b><em>:${p.second}</em><small>ET</small></div>
-      <span class="qk">${T_('your time','Your time')} <span style="color:var(--text)">${tLocal(now)} ${esc(tz)}</span>  ·  ${T_('session','Session')} <span style="color:var(--text)">${sessName}</span></span></div>
-    <div class="qs use"><span class="qk">${T_('use_this_view','Use this view')}</span>
-      <div class="qhd" style="margin:4px 0 6px;align-items:center"><b class="big2"${ph.k==='closed'||ph.k==='weekend'?' style="color:var(--dim)"':''}>${Q?U[0]:U[0][0]+U[0].slice(1).toLowerCase()}</b>
-        <span style="display:flex;gap:6px">${U[3].map(([v,l])=>`<button class="qbtn" data-open="${v}">${Q?l:l[0].toUpperCase()+l.slice(1)}</button>`).join('')}</span></div>
-      <div class="qnote">${U[2]}</div></div>
-    <div class="qs"><div class="qhd"><span class="qk">${T_('24h_session_map (ET)','24-hour map, New York time')}</span><span class="qk">6p → 6p</span></div>
-      <div class="tline">${SEGS.map(([n,,,w])=>`<div style="flex:${w};background:${SC[n][0]};color:${SC[n][1]};${n==='P'?'font-weight:700':''}">${Q?n:{asia:'Asia',london:'London',P:'P',new_york:'New York',closed:'Closed'}[n]}</div>`).join('')}<i class="mk" style="left:${stripPos(hr).toFixed(2)}%"></i></div>
-      <div class="tax">${ax.map(([l,h])=>`<span style="left:${stripPos(h).toFixed(2)}%;${l==='9:25'?'color:var(--amb)':''}">${l}</span>`).join('')}</div></div>
-    <div class="qs"><div class="sch qk" style="border:0;min-height:18px"><span>time ET</span><span>view</span><span>what it's for</span></div>
-      ${sch.map(r=>`<div class="sch ${onRow(r)?'on':''}"><span>${r[0]}</span><span>${r[1]}</span><span>${r[2]}</span></div>`).join('')}</div>
-    <div class="qs"><span class="qk">${T_('next','Coming up')}</span>
-      ${nexts.map(([n,d],i)=>`<div class="qev"><span>${esc(Q?n:(n[0].toUpperCase()+n.slice(1)).replace(/\bny\b/gi,'NY'))}</span><span style="color:${i?'var(--text)':'var(--amb)'}">${cd(d-now)}</span></div>`).join('')}</div>
-    <div class="qs"><div class="qk" style="line-height:1.6">Pre-open refreshes every 15 min from about 8:07 ET and locks at the 9:25 read. Now and Overnight update hourly. Times follow New York, so daylight saving is handled.</div></div>
+  const left = ms => { const s=Math.max(0,Math.floor(ms/1000)), d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60), sec=s%60;
+    return d ? `${d}d ${h}h` : h ? `${h}h ${String(m).padStart(2,'0')}m` : `${m}m ${String(sec).padStart(2,'0')}s`; };
+  const hr = h24 + (+p.minute)/60 + (+p.second)/3600;
+  const curSeg = ph.k==='overnight' ? (ph.leg==='asia'?0:1) : ph.k==='preopen' ? 2 : ph.k==='now' ? 3 : 4;
+  const names = ['Asia','London','','New York','Off'];
+  const ax = [['6 PM',18],['2 AM',2],['9:30',9.5],['4 PM',16]];
+  return `<div class="ckp">
+    <div class="card ckc"><div class="ckk">New York · ${p.weekday}, ${now.toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short'})} ${+p.day}</div>
+      <div class="cktime"><b>${h12}:${p.minute}</b><span><em>:${p.second}</em><small>${ampm} ET</small></span></div>
+      <div class="cks">Your time ${tLocal(now)} ${esc(tz)} · ${sess}</div></div>
+    <div class="card ckc"><div class="ckk">Use this view</div>
+      <div class="ckuse" style="color:${ph.k==='closed'||ph.k==='weekend'?'var(--sub)':'var(--accent)'}">${U[0]}</div>
+      <p class="cknote">${U[1]}</p>
+      <div class="ckbtns">${U[2].map(([v,l,pri])=>`<button class="ckb${pri?' pri':''}" data-open="${v}">${l}</button>`).join('')}</div></div>
+    <div class="card ckc"><div class="ckk">24 hours, New York time</div>
+      <div class="ckmap">${SEGS.map(([,,,w],i)=>`<div class="${i===curSeg?'on':''}${i===2?' p':''}" style="flex:${w}">${names[i]}</div>`).join('')}<i style="left:${stripPos(hr).toFixed(2)}%"></i></div>
+      <div class="ckax">${ax.map(([l,h])=>`<span style="left:${stripPos(h).toFixed(2)}%">${l}</span>`).join('')}</div></div>
+    <div class="card ckc ckrows">${rows.map(r=>`<div class="ckr${onRow(r)?' on':''}"><span>${r[0]}</span><b>${r[1]}</b><em>${r[2]}</em></div>`).join('')}</div>
+    <div class="card ckc"><div class="ckk" style="margin-bottom:4px">Coming up</div>
+      ${nexts.map(([n,d],i)=>`<div class="ckn"><span>${esc(n)}</span><b${i?'':' style="color:var(--accent)"'}>${left(d-now)}</b></div>`).join('')}</div>
+    <p class="ckfoot">Pre-open refreshes every 15 minutes from about 8:07 ET and locks at the 9:25 read. Now and Overnight update hourly. Times follow New York, so daylight saving is handled.</p>
   </div>`;
 }
 let CLK = null;
