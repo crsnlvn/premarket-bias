@@ -63,7 +63,7 @@ MARKETS = {
 # indices, which are only used at their prior close (known before the open).
 MACRO_TICKERS = ["NQ=F", "ES=F", "ZN=F", "ZT=F", "DX-Y.NYB", "CL=F", "HYG",
                  "BTC-USD", "VXX", "^N225", "^GDAXI", "^HSI",
-                 "^VIX", "^VIX3M", "^VXN", "^TNX"]
+                 "^VIX", "^VIX3M", "^VXN", "^TNX", "JPY=X"]
 GLOBAL = {"^N225": "Nikkei", "^GDAXI": "DAX", "^HSI": "Hang Seng"}
 PEER_WEIGHT = 0.35   # NQ and ES are ~0.9 correlated day to day
 
@@ -987,6 +987,56 @@ def funding_signal(as_of):
                                      "Funding is calm and cheap, a supportive backdrop." if sc > 0 else "Funding is normal."), "Macro")
 
 
+def month_end_signal(as_of):
+    """
+    Month-end rebalancing. Pension funds and balanced funds rebalance back to fixed stock/bond weights
+    around month-end: after a month where stocks beat bonds they sell stocks, and after one where bonds
+    won they buy. The flows are predictable from month-to-date returns and move prices in the last days
+    of the month (Harvey, Mazzoleni & Melone, "The Unintended Consequences of Rebalancing", NBER 2025).
+    Active over the last 3 business days of the month.
+    """
+    day = as_of.date()
+    nxt = date(day.year + (day.month == 12), day.month % 12 + 1, 1)
+    left = int(np.busday_count(day, nxt))
+    if left > 3:
+        return None
+    def mtd(t):
+        rows = [r for r in daily_closes(t, 45) if r[0] < day]
+        base = [r for r in rows if r[0] < date(day.year, day.month, 1)]
+        return pct(rows[-1][1], base[-1][1]) if rows and base else None
+    eq, bd = mtd("SPY"), mtd("AGG")
+    if eq is None or bd is None:
+        return None
+    gap = eq - bd
+    sc = -1 if gap > 3 else 1 if gap < -3 else 0
+    return sig("monthend", "Month-end rebalancing", sc, 0.5,
+               f"{left} business day{'s' if left != 1 else ''} left in the month. Month to date: stocks {eq:+.1f}%, bonds {bd:+.1f}% "
+               f"({gap:+.1f} pts). " + ("Stocks beat bonds by a lot, so pension funds have stocks to sell." if sc < 0 else
+                                       "Bonds beat stocks, so pension funds have stocks to buy." if sc > 0 else
+                                       "Too close for big rebalancing flows."), "Macro")
+
+
+def move_signal(as_of):
+    """
+    The MOVE index, implied volatility in Treasuries. Bond-market fear tends to spill into equity
+    volatility, and the bond variance risk premium carries information about future returns
+    (Choi, Mueller & Vedolin, "Bond Variance Risk Premiums", Review of Finance 2017).
+    The vote is MOVE's 5-session change, with its level against the past month for context.
+    """
+    rows = [r for r in daily_closes("^MOVE", 45) if r[0] < as_of.date()]
+    if len(rows) < 22:
+        return None
+    last, ago = rows[-1][1], rows[-6][1]
+    c5 = pct(last, ago)
+    avg = sum(v for _, v in rows[-21:]) / 21
+    sc = -1 if c5 > 10 else 1 if c5 < -10 else 0
+    return sig("move", "Bond volatility (MOVE)", sc, 0.5,
+               f"MOVE {last:.0f}, {c5:+.0f}% over 5 sessions ({'above' if last > avg else 'below'} its 1-month average of {avg:.0f}). " +
+               ("Bond volatility is jumping, which tends to spill into stocks." if sc < 0 else
+                "Bond volatility is draining out, a calmer backdrop for stocks." if sc > 0 else "Bond vol is steady."),
+               "Volatility")
+
+
 def market_regime(q, as_of):
     """
     Calm or stressed, from the St. Louis Fed stress index and the VIX curve. Signals don't work
@@ -1365,6 +1415,17 @@ def macro_signals(cfg, q):
                      ("Credit is bid. Equity rallies backed by credit tend to stick." if sc > 0 else
                       "Credit is leaking. Equity often follows credit lower." if sc < 0
                       else "Credit is calm."), "Macro"))
+    # Yen: a sharp yen rally means carry trades funded in yen are being unwound, forcing risk
+    # selling worldwide, hardest in Asia hours (Brunnermeier, Nagel & Pedersen, "Carry Trades and
+    # Currency Crashes", NBER Macro Annual 2008; the August 2024 unwind).
+    c = chg(q, "JPY=X")
+    if c is not None:
+        sc = -1 if c < -0.6 else 1 if c > 0.5 else 0
+        S.append(sig("yen", "Yen (USD/JPY)", sc, 0.5,
+                     f"USD/JPY {q['JPY=X']['last']:.2f} ({c:+.2f}%). " +
+                     ("The yen is ripping higher: carry trades are being unwound, which forces risk selling." if sc < 0 else
+                      "The yen is weakening: carry trades are on, a risk-on backdrop." if sc > 0 else "The yen is steady."),
+                     "Macro"))
     # volatility
     vx = chg(q, "VXX")
     if vx is not None:
@@ -1409,6 +1470,9 @@ def vol_crush_signal(events, q, as_of):
 def overnight_signals(cfg, q):
     """Evening read for the 8 PM → 8 AM CT window, built from data up to 7:50 PM CT."""
     S = [s for s in macro_signals(cfg, q) if s["key"] not in ("global", "volpre")]   # overseas closes are stale in the evening
+    for s_ in S:
+        if s_["key"] == "yen":   # carry unwinds hit hardest in Asia hours
+            s_["weight"] = 1.0
     v = q.get("^VIX")
     if v and v.get("fresh", True):
         c = pct(v["last"], v["prev"])
@@ -1935,7 +1999,8 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                              policy_gap_signal(as_of), stress_signal(as_of), macro_z_signal(as_of),
                              None if view == "overnight" else fomc_drift_signal(events, as_of),
                              vrp_signal(cfg, quotes, target), fedwatch_signal(as_of), fed_leak_signal(as_of),
-                             vix_roll_signal(as_of), auction_signal(as_of), funding_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
+                             vix_roll_signal(as_of), auction_signal(as_of), funding_signal(as_of),
+                             month_end_signal(as_of), move_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
         drift = next((x for x in extra if x["key"] == "fomcdrift" and x["score"]), None)
         od = fed_odds(as_of, next_fomc(as_of)) if drift else None
         if od and od["certainty"] >= 0.9:
