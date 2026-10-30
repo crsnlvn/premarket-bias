@@ -1421,17 +1421,24 @@ def analyse_positioning(cfg, q, target, as_of, live):
             m0 = np.abs(c["T"] - T0) < 1e-9
             S = px / c["ratio"]
             K0, CP0, OI0 = c["K"][m0], c["CP"][m0], c["OI"][m0]
-            ks = sorted({float(k) for k in K0 if abs(k / S - 1) < 0.04})
-            if ks:
-                rows = []
-                for k in ks:
-                    sel = K0 == k
-                    rows.append({"strike": k, "fut": round(k * c["ratio"], 1),
-                                 "call_oi": int(OI0[sel & (CP0 > 0)].sum()), "put_oi": int(OI0[sel & (CP0 < 0)].sum())})
+            step = cfg["bin"] * 2          # group strikes into 50-pt NQ / 10-pt ES rows
+            near0 = np.abs(K0 / S - 1) < 0.025
+            if near0.any():
+                agg = {}
+                for k, cp, o in zip(K0[near0], CP0[near0], OI0[near0]):
+                    b = round(k * c["ratio"] / step) * step
+                    a_ = agg.setdefault(b, [k, 0, 0])
+                    a_[1 if cp > 0 else 2] += int(o)
+                rows = [{"strike": float(v[0]), "fut": float(b), "call_oi": v[1], "put_oi": v[2]} for b, v in sorted(agg.items())]
                 allk = sorted(set(float(k) for k in K0))
                 pay = [sum(float(o) * max(0.0, x - float(k)) if cp > 0 else float(o) * max(0.0, float(k) - x)
                            for k, cp, o in zip(K0, CP0, OI0)) for x in allk]
                 mp = allk[int(np.argmin(pay))] if allk else None
+                if mp:   # mark the row holding max pain
+                    mb = round(mp * c["ratio"] / step) * step
+                    for r_ in rows:
+                        if r_["fut"] == mb:
+                            r_["strike"] = mp
                 strikes = {"chain": c["sym"], "days": round(T0 * 365, 2), "spot": round(S, 2), "rows": rows,
                            "max_pain": mp, "max_pain_fut": round(mp * c["ratio"], 1) if mp else None}
     big.sort(key=lambda b: -b["premium_m"])
