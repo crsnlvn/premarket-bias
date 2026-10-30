@@ -961,6 +961,32 @@ def auction_signal(as_of):
                 "Ordinary demand."), "Macro")
 
 
+def funding_signal(as_of):
+    """
+    Short-term funding stress: 3-month financial commercial paper minus the 3-month T-bill (FRED DCPF3M,
+    DTB3), its level and how jumpy it has been. Funding-spread factors and their volatility predicted the
+    VIX, the variance risk premium and next month's S&P 500 excess returns beyond the VIX itself
+    (Andreou & Ghysels, SSRN 2510196). Rising funding stress is a headwind. Slow, so a background vote.
+    """
+    cp, tb = _upto(fred("DCPF3M"), as_of, 1), _upto(fred("DTB3"), as_of, 1)
+    if len(cp) < 120 or not tb:
+        return None
+    sp = [(d, v - _at(tb, d)) for d, v in cp if _at(tb, d) is not None]
+    if len(sp) < 120:
+        return None
+    x = np.array([v for _, v in sp[-260:]])
+    lvl_z = (x[-1] - x.mean()) / (x.std() or 1)
+    dx = np.diff(x)
+    vols = np.array([dx[i - 21:i].std() for i in range(21, len(dx) + 1)])
+    vol_z = (vols[-1] - vols.mean()) / (vols.std() or 1)
+    z = (lvl_z + vol_z) / 2
+    sc = -1 if z > 1.0 else 1 if z < -0.5 else 0
+    return sig("funding", "Funding stress", sc, 0.3,
+               f"Commercial paper minus T-bills {x[-1]*100:+.0f} bp ({lvl_z:+.1f}σ vs the past year), its day-to-day swings "
+               f"{vol_z:+.1f}σ. " + ("Funding markets are getting tight and jumpy, which has led higher vol and weaker stocks." if sc < 0 else
+                                     "Funding is calm and cheap, a supportive backdrop." if sc > 0 else "Funding is normal."), "Macro")
+
+
 def market_regime(q, as_of):
     """
     Calm or stressed, from the St. Louis Fed stress index and the VIX curve. Signals don't work
@@ -1909,7 +1935,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                              policy_gap_signal(as_of), stress_signal(as_of), macro_z_signal(as_of),
                              None if view == "overnight" else fomc_drift_signal(events, as_of),
                              vrp_signal(cfg, quotes, target), fedwatch_signal(as_of), fed_leak_signal(as_of),
-                             vix_roll_signal(as_of), auction_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
+                             vix_roll_signal(as_of), auction_signal(as_of), funding_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
         drift = next((x for x in extra if x["key"] == "fomcdrift" and x["score"]), None)
         od = fed_odds(as_of, next_fomc(as_of)) if drift else None
         if od and od["certainty"] >= 0.9:
