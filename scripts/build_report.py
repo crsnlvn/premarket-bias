@@ -743,22 +743,32 @@ def zq_implied(y, m, before):
 def fed_odds(as_of, meet):
     """Market-implied change at `meet`, in bp, from the fed funds futures (the CME FedWatch method)."""
     import calendar
-    effr = _upto(fred("EFFR"), as_of, 1)
-    if not effr or not meet:
+    if not meet:
         return None
+    # The rate going into the meeting: CME's method reads it off the previous month's contract when that
+    # month has no meeting; otherwise fall back to the latest effective Fed funds rate.
+    py, pm = (meet.year - 1, 12) if meet.month == 1 else (meet.year, meet.month - 1)
+    pre = zq_implied(py, pm, as_of.date()) if not any(d.year == py and d.month == pm for d in FOMC_DATES) else []
+    if pre:
+        r0 = pre[-1][1]
+    else:
+        effr = _upto(fred("EFFR"), as_of, 1)
+        if not effr:
+            return None
+        r0 = effr[-1][1]
     n = calendar.monthrange(meet.year, meet.month)[1]
     after = n - meet.day
     if after >= 10:   # enough of the month left after the decision: read the meeting month itself
         rows = zq_implied(meet.year, meet.month, as_of.date())
         if not rows:
             return None
-        delta = (rows[-1][1] - effr[-1][1]) * n / after
+        delta = (rows[-1][1] * n - r0 * meet.day) / after - r0   # month average = r0 before, r0 + delta after
     else:             # late-month meeting: the next month's contract is all post-decision
         y, m = (meet.year + 1, 1) if meet.month == 12 else (meet.year, meet.month + 1)
         rows = zq_implied(y, m, as_of.date())
         if not rows:
             return None
-        delta = rows[-1][1] - effr[-1][1]
+        delta = rows[-1][1] - r0
     steps = delta / 0.25
     frac = abs(steps) - math.floor(abs(steps))
     return {"bp": delta * 100, "certainty": max(frac, 1 - frac), "rows": rows}
@@ -1995,6 +2005,33 @@ def finish(read, hist, kind):
     return read
 
 
+def reuse_locked(hist, day, cut, now):
+    """
+    Keep a locked overnight call as it was. Once the clock passes midnight the option snapshot is
+    from the next day and can't be used point-in-time, so rebuilding would drop the dealer votes.
+    Reused when it was built at the cut, or (if the first locked run was late) from the last preview.
+    """
+    path = hist / f"{day.isoformat()}.json"
+    if not path.exists():
+        return None
+    try:
+        old = json.loads(path.read_text())
+    except Exception:  # noqa: BLE001
+        return None
+    at_cut = old.get("as_of") == cut.isoformat(timespec="seconds")
+    late = now.date() > day and old.get("as_of", "") < cut.isoformat()
+    if not (at_cut or late):
+        return None
+    if old.get("mode") == "live":
+        old["mode"] = "point-in-time"
+        path.write_text(json.dumps(old, indent=1, default=float))
+    grade_history(hist, "overnight")
+    old = json.loads(path.read_text())
+    for sym in old.get("markets", {}):
+        old["markets"][sym]["scorecard"] = record_stats(hist, sym)
+    return old
+
+
 def finish_now(read, hist):
     """Save a compact copy of each Now call, grade the ones whose session has ended, attach the record."""
     stem = datetime.fromisoformat(read["as_of"]).strftime("%Y-%m-%dT%H%M")
@@ -2227,7 +2264,9 @@ def main():
 
     # Overnight: 8 PM → 8 AM CT. A live preview from 4 PM ET, locked at 7:50 PM CT
     on_day, on_cut, on_live = resolve_overnight(now)
-    overnight = finish(build_view(on_day, on_cut, on_live, now, "overnight", hist_on), hist_on, "overnight")
+    overnight = None if on_live or backfill else reuse_locked(hist_on, on_day, on_cut, now)
+    if overnight is None:
+        overnight = finish(build_view(on_day, on_cut, on_live, now, "overnight", hist_on), hist_on, "overnight")
 
     report = {"generated": now.isoformat(timespec="seconds"), "red": red_folder(now),
               "ny": {"preopen": preopen, "now": current}, "overnight": overnight,
