@@ -1623,6 +1623,24 @@ def analyse_positioning(cfg, q, target, as_of, live):
     big.sort(key=lambda b: -b["premium_m"])
 
     flip = find_flip(grid, gex_now, px)
+    # diagnostics: where the flip sits for each chain alone and for each expiry bucket
+    diag = {}
+    try:
+        for c in chains:
+            r = c["ratio"]
+            for name, sel in (("all", np.ones_like(c["T"], bool)), ("0dte", c["T"] * 365 < 1), ("1-7d", (c["T"] * 365 >= 1) & (c["T"] * 365 <= 7)),
+                              ("8-30d", (c["T"] * 365 > 7) & (c["T"] * 365 <= 30)), ("31-60d", c["T"] * 365 > 30)):
+                cc = {k: (v[sel] if isinstance(v, np.ndarray) else v) for k, v in c.items()}
+                if not len(cc["K"]):
+                    continue
+                g = dealer_gex(grid / r, cc)
+                gg = bs_gamma(px / r, cc["K"], cc["T"], cc["IV"]) * cc["OI"] * 100 * (px / r) ** 2 * 0.01
+                diag[f"{c['sym']} {name}"] = {"flip": find_flip(grid, g, px), "net_bn": round(float(np.interp(px, grid, g)) / 1e9, 2),
+                                              "call_bn": round(float(gg[cc["CP"] > 0].sum()) / 1e9, 2),
+                                              "put_bn": round(float(gg[cc["CP"] < 0].sum()) / 1e9, 2),
+                                              "call_oi": int(cc["OI"][cc["CP"] > 0].sum()), "put_oi": int(cc["OI"][cc["CP"] < 0].sum())}
+    except Exception:  # noqa: BLE001
+        traceback.print_exc()
     near = {k: v for k, v in levels.items() if abs(k / px - 1) < 0.06}
     above = {k: v for k, v in near.items() if k >= px} or near
     below = {k: v for k, v in near.items() if k <= px} or near
@@ -1639,7 +1657,7 @@ def analyse_positioning(cfg, q, target, as_of, live):
         majors=[{"level": k, "net_gex": near[k][0] - near[k][1]} for k in sorted(majors)],
         dealer_delta=tot["D"], gross_delta=tot["gross"],
         charm_hedge_flow=-(tot["Dc"] - tot["D"]), vanna_per_volpt=tot["vanna"],
-        flow=flow if live else None, big_trades=big[:20], strikes=strikes,
+        flow=flow if live else None, big_trades=big[:20], strikes=strikes, gamma_diag=diag,
         top_flow=[{"level": k[0], "side": k[1], "premium": v}
                   for k, v in sorted(sflow.items(), key=lambda kv: kv[1], reverse=True)[:5]],
         profile=[{"px": round(float(x), 2), "gex": float(y)} for x, y in zip(grid[::6], gex_now[::6])],
@@ -2387,6 +2405,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                 "top": pos["top_flow"]},
             "profile": pos["profile"] if pos else [],
             "big_trades": pos.get("big_trades") if pos else None, "strikes": pos.get("strikes") if pos else None,
+            "gamma_diag": pos.get("gamma_diag") if pos else None,
             "earnings": [e for e in earnings if e["symbol"] in cfg["megacaps"]],
             "scorecard": None, "outcome": None,
         }
