@@ -728,6 +728,24 @@ def bs_delta(S, K, T, iv, cp):
     return np.where(cp > 0, nd, nd - 1)
 
 
+# Hull & White (2017), "Optimal delta hedging for options" (SSRN 2658343): index implied vol falls
+# when the index rises, so the hedge that actually minimises variance is
+#   delta_MV = delta_BS + vega/(S*sqrt(T)) * (a + b*delta_BS + c*delta_BS^2)
+# and vega/(S*sqrt(T)) is just the normal density at d1. Parameters read off their Figure 1
+# (S&P 500, 2013-2015 estimates). Calls get under-hedged, puts over-hedged, vs Black-Scholes.
+MV_CALL = (-0.21, 0.33, -0.31)
+MV_PUT = (-0.21, -0.43, -0.48)
+
+
+def mv_delta(S, K, T, iv, cp):
+    T = np.maximum(T, 1e-6)
+    d1 = bs_d1(S, K, T, iv)
+    d = np.where(cp > 0, norm.cdf(d1), norm.cdf(d1) - 1)
+    a = np.where(cp > 0, MV_CALL[0], MV_PUT[0]); b = np.where(cp > 0, MV_CALL[1], MV_PUT[1])
+    c = np.where(cp > 0, MV_CALL[2], MV_PUT[2])
+    return d + norm.pdf(d1) * (a + b * d + c * d * d)
+
+
 def dealer_gex(S, c, T=None):
     T = c["T"] if T is None else T
     S = np.asarray(S, dtype=float)[..., None]
@@ -737,7 +755,7 @@ def dealer_gex(S, c, T=None):
 def dealer_delta(S, c, T=None, IV=None):
     T = c["T"] if T is None else T
     IV = c["IV"] if IV is None else IV
-    d = bs_delta(S, c["K"], T, IV, c["CP"])
+    d = mv_delta(S, c["K"], T, IV, c["CP"])   # minimum-variance delta, not plain Black-Scholes
     pos = np.where(c["CP"] > 0, 1.0, -1.0)
     return float((pos * d * c["OI"] * 100 * S).sum()), float((np.abs(d) * c["OI"] * 100 * S).sum())
 
@@ -927,6 +945,27 @@ def macro_signals(cfg, q):
     return S
 
 
+def vol_crush_signal(events, q, as_of):
+    """
+    After a scheduled high-impact release, implied vol tends to drop as the uncertainty resolves,
+    and more so the bigger the uncertainty was (Beber & Brandt, SSRN 906748). Falling vol makes
+    dealers buy back hedges (vanna), a tailwind. If vol instead rises after the print, the
+    uncertainty didn't resolve. Only on days with a release that is already out.
+    """
+    done = [e for e in (events or []) if e.get("impact") == "High" and e["ts"] <= as_of.isoformat()
+            and (as_of - datetime.fromisoformat(e["ts"])).total_seconds() <= 5 * 3600]
+    vx = chg(q, "VXX")
+    if not done or vx is None:
+        return None
+    e = done[-1]
+    sc = 1 if vx < -1.5 else -1 if vx > 2.5 else 0
+    return sig("crush", "Post-release vol", sc, 0.5,
+               f"{e['title']} is out ({e['time']}). VXX {vx:+.1f}% on the day. " +
+               ("Vol is being sold after the print: dealers buy back hedges." if sc > 0 else
+                "Vol is rising after the print: the uncertainty didn't resolve." if sc < 0 else
+                "Vol is little changed after the print."), "Volatility")
+
+
 def overnight_signals(cfg, q):
     """Evening read for the 6 PM–8:30 AM Globex session, built from data up to 6 PM ET."""
     S = [s for s in macro_signals(cfg, q) if s["key"] not in ("global", "volpre")]   # overseas closes are stale at 6 PM
@@ -961,7 +1000,18 @@ def fetch_bars(ticker, start: datetime, end: datetime):
         return None
 
 
-def dealer_signals(cfg, pos, q):
+def scheduled_release_ahead(events, as_of, hours=6):
+    """A high-impact US release later in this session (CPI, NFP, FOMC...)."""
+    if not events or not as_of:
+        return None
+    end = (as_of + timedelta(hours=hours)).isoformat()
+    for e in events:
+        if e.get("impact") == "High" and as_of.isoformat() < e["ts"] <= end:
+            return e
+    return None
+
+
+def dealer_signals(cfg, pos, q, events=None, as_of=None):
     S, px = [], pos["px"]
     if pos["flip"]:
         d, band = px - pos["flip"], px * 0.0015
@@ -998,12 +1048,48 @@ def dealer_signals(cfg, pos, q):
                      f"{'buying' if fv > 0 else 'selling'}.", "Dealer positioning"))
     f = pos["flow"]
     if f and f["call"] + f["put"] > 0:
+        # Index option flow carries no informed signal and leans contrarian (Pan & Poteshman 2006,
+        # SSRN 622869); our own graded history agreed (as-is 8/27 right, flipped 19/27). Option buying
+        # also says little ahead of scheduled releases (SSRN 2544344), so it sits those out.
         pc = f["put"] / f["call"] if f["call"] else 9.9
-        sc = 1 if pc < 0.8 else -1 if pc > 1.25 else 0
-        S.append(sig("flow", "Options flow (prior session)", sc, 0.25,
-                     f"Short-dated premium put/call {pc:.2f}.", "Dealer positioning"))
+        sc = 1 if pc > 1.25 else -1 if pc < 0.8 else 0
+        ahead = scheduled_release_ahead(events, as_of)
+        txt = f"Short-dated premium put/call {pc:.2f}. " + (
+            "Heavy put buying: crowded hedging tends to unwind, a contrarian lean up." if sc > 0 else
+            "Heavy call buying: crowded upside chasing tends to fade, a contrarian lean down." if sc < 0 else
+            "Balanced.")
+        if ahead and sc:
+            sc = 0
+            txt += f" Muted until {ahead['title']} at {ahead['time']}: flow before scheduled news isn't informative."
+        S.append(sig("flow", "Options flow (contrarian)", sc, 0.25, txt, "Dealer positioning"))
+    # Expiration day: gamma near the money peaks and hedging gets heavier (SSRN 7222220), so the
+    # positioning votes count for more. Kept modest: the paper is a framework, not a tested result.
+    if as_of and opex_kind(as_of.date()):
+        for s_ in S:
+            if s_["key"] in ("flip", "walls", "charm"):
+                s_["weight"] = round(s_["weight"] * OPEX_BOOST, 3)
+                s_["text"] += f" Weighted up for {opex_kind(as_of.date())}."
     # Dealer positioning votes at its own weights; the Record retunes it like every other signal.
     return S
+
+
+OPEX_BOOST = 1.4
+
+
+def opex_kind(d):
+    """Third Friday = monthly expiration (quarterly in Mar/Jun/Sep/Dec)."""
+    if d.weekday() != 4 or not 15 <= d.day <= 21:
+        return None
+    return "quarterly expiration" if d.month in (3, 6, 9, 12) else "monthly expiration"
+
+
+def pin_risk(pos, as_of):
+    """Long-gamma dealers near a heavy strike on expiration day tend to pin price to it."""
+    if not pos or not as_of or not opex_kind(as_of.date()) or pos["net_gex"] <= 0:
+        return None
+    px = pos["px"]
+    cands = [m for m in pos.get("majors", []) if m["net_gex"] > 0 and abs(m["level"] / px - 1) < 0.004]
+    return min(cands, key=lambda m: abs(m["level"] - px))["level"] if cands else None
 
 
 NEUTRAL_BAND = 0.08   # every call picks a side; under this the evidence is close to balanced,
@@ -1348,12 +1434,13 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
             base = macro_signals(cfg, quotes)
         else:
             base = macro_signals(cfg, quotes)
-        extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of)) if x] + liquidity_signals(cfg, as_of)
+        extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of),
+                             None if view == "overnight" else vol_crush_signal(events, quotes, as_of)) if x] + liquidity_signals(cfg, as_of)
         base = base + extra
         # learn only from sessions graded before this one, so every read stays point-in-time
         key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
         mult = learned_multipliers(hist, sym, key, 1000 if view == "now" else 120)
-        pre[sym] = (pos, apply_learning(base, mult) + (dealer_signals(cfg, pos, quotes) if pos else []))
+        pre[sym] = (pos, apply_learning(base, mult) + (dealer_signals(cfg, pos, quotes, events, as_of) if pos else []))
 
     if view == "overnight":
         hours = 6.5          # ~15h of Globex carries roughly one cash session of variance
@@ -1371,6 +1458,10 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
         cuts, n_hist = conviction_cuts(sym, stamp_key)
         bias = narrate(cfg, sym, pos, sigs, events, earnings, as_of, live, peer, view, sess, prior_call.get(sym), cuts)
         bias["conv_cuts"] = [round(c, 3) for c in cuts]; bias["conv_basis"] = n_hist
+        pin = pin_risk(pos, as_of)
+        if pin:
+            bias["pin"] = pin
+            bias["overall"] = (bias.get("overall") or "") + f" {opex_kind(as_of.date()).capitalize()}: dealers are long gamma near {pin:,.0f}, so price may pin there."
         px = pos["px"] if pos else (quotes.get(cfg["future"]) or {}).get("last")
         changed = None
         if view != "now" and prior and sym in prior.get("markets", {}):
