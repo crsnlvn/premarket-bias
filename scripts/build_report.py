@@ -93,12 +93,22 @@ def pct(a, b):
 OPEN_MOVE_END = time(10, 0)   # pre-open call is graded on the opening move, 9:30 → 10:00 ET
 
 
+# Carson's windows, in Central time (ET minus one hour; both shift for daylight saving together):
+#   Now (evening)  5 PM → 8 PM CT  = Globex reopen to the Asia open
+#   Overnight      8 PM → 8 AM CT  = Asia open to the US pre-market
+#   Pre-open       8:30 → 9 AM CT  = the first half hour of New York
+EVE_START = time(18, 0)    # 5 PM CT
+ON_START = time(21, 0)     # 8 PM CT
+ON_END = time(9, 0)        # 8 AM CT
+ON_CUT = time(20, 50)      # the overnight call locks ten minutes before the Asia open
+
+
 def current_session(now: datetime):
     """
-    Which futures session is trading right now, as (name, start, end, ny_date).
-    Asia 6 PM → 2 AM, London 2 AM → 9:30 AM, NY 9:30 AM → 4 PM (ET). Between 4 and
-    6 PM it calls the coming Asia session. ny_date is the NY day the session feeds
-    into, which sets the "yesterday's 4 PM" baseline. None when futures are shut.
+    Which futures session is trading right now, as (name, start, end, ny_date), in ET.
+    Evening 6 → 9 PM (5 → 8 PM CT), Asia 9 PM → 2 AM, London 2 AM → 9:30 AM, NY 9:30 AM → 4 PM.
+    Between 4 and 6 PM it calls the coming evening session. ny_date is the NY day the session
+    feeds into. None when futures are shut.
     """
     wd, t, d = now.weekday(), now.time(), now.date()
     at = lambda day, hh, mm=0: datetime.combine(day, time(hh, mm), ET)  # noqa: E731
@@ -106,10 +116,12 @@ def current_session(now: datetime):
         return None
     if time(9, 30) <= t < time(16):
         return "NY", at(d, 9, 30), at(d, 16), d
-    if t >= time(16):
-        return "Asia", at(d, 18), at(d + timedelta(days=1), 2), next_weekday(d)
+    if time(16) <= t < ON_START:
+        return "Evening", at(d, 18), at(d, 21), next_weekday(d)
+    if t >= ON_START:
+        return "Asia", at(d, 21), at(d + timedelta(days=1), 2), next_weekday(d)
     if t < time(2):
-        return "Asia", at(d - timedelta(days=1), 18), at(d, 2), d
+        return "Asia", at(d - timedelta(days=1), 21), at(d, 2), d
     return "London", at(d, 2), at(d, 9, 30), d
 
 def resolve_session(now: datetime):
@@ -705,6 +717,238 @@ def vrp_signal(cfg, q, target):
                 "Realized vol is running above implied: genuine stress." if sc < 0 else "A normal premium."), "Volatility")
 
 
+# ─────────────── Fed funds futures, pre-Fed positioning, VIX futures roll, Treasury auctions ───────────────
+FOMC_DATES = [date(2026, 1, 28), date(2026, 3, 18), date(2026, 4, 29), date(2026, 6, 17), date(2026, 7, 29),
+              date(2026, 9, 16), date(2026, 10, 28), date(2026, 12, 9)]   # decision days; the calendar adds later ones
+ZQ_CODES = "FGHJKMNQUVXZ"
+
+
+def next_fomc(as_of):
+    """The next Fed decision day on or after as_of's date (before 2 PM on the day itself)."""
+    days = set(FOMC_DATES)
+    for e in WEEK_EVENTS:
+        if e.get("impact") == "High" and any(w in e.get("title", "") for w in ("FOMC", "Federal Funds Rate")):
+            days.add(date.fromisoformat(e["ts"][:10]))
+    cut = as_of.date() if as_of.time() < time(14) else as_of.date() + timedelta(days=1)
+    later = sorted(d for d in days if d >= cut)
+    return later[0] if later else None
+
+
+def zq_implied(y, m, before):
+    """[(date, implied average Fed funds rate %)] for the fed funds futures contract of month m, closes before `before`."""
+    sym = f"ZQ{ZQ_CODES[m - 1]}{y % 100:02d}.CBT"
+    return [(d, 100 - v) for d, v in daily_closes(sym, 20) if d < before and 80 < v <= 100]
+
+
+def fed_odds(as_of, meet):
+    """Market-implied change at `meet`, in bp, from the fed funds futures (the CME FedWatch method)."""
+    import calendar
+    effr = _upto(fred("EFFR"), as_of, 1)
+    if not effr or not meet:
+        return None
+    n = calendar.monthrange(meet.year, meet.month)[1]
+    after = n - meet.day
+    if after >= 10:   # enough of the month left after the decision: read the meeting month itself
+        rows = zq_implied(meet.year, meet.month, as_of.date())
+        if not rows:
+            return None
+        delta = (rows[-1][1] - effr[-1][1]) * n / after
+    else:             # late-month meeting: the next month's contract is all post-decision
+        y, m = (meet.year + 1, 1) if meet.month == 12 else (meet.year, meet.month + 1)
+        rows = zq_implied(y, m, as_of.date())
+        if not rows:
+            return None
+        delta = rows[-1][1] - effr[-1][1]
+    steps = delta / 0.25
+    frac = abs(steps) - math.floor(abs(steps))
+    return {"bp": delta * 100, "certainty": max(frac, 1 - frac), "rows": rows}
+
+
+def fedwatch_signal(as_of):
+    """
+    The CME FedWatch read, rebuilt from free fed funds futures prices. FedWatch called FOMC decisions
+    right 88% of the time 30 days out and its signal carried economic value (Bonini, Huang & Simaan,
+    SSRN 5093703). The vote is the 5-session shift in the priced outcome of the next meeting:
+    more easing priced is a tailwind, more tightening a headwind.
+    """
+    meet = next_fomc(as_of)
+    od = fed_odds(as_of, meet) if meet else None
+    if not od or len(od["rows"]) < 6:
+        return None
+    rows = od["rows"]
+    d5 = (rows[-1][1] - rows[-6][1]) * 100
+    sc = 1 if d5 <= -3 else -1 if d5 >= 3 else 0
+    steps, word = od["bp"] / 25, "cut" if od["bp"] < 0 else "hike"
+    a = abs(steps)
+    odds = (f"{a*100:.0f}% odds of a 25 bp {word}" if a < 1 else
+            f"a 25 bp {word} fully priced, {(a - 1)*100:.0f}% odds of 50 bp" if a < 2 else f"about {a*25:.0f} bp of {word}s priced")
+    return sig("fedwatch", "FedWatch (fed funds futures)", sc, 0.4,
+               f"{meet:%b %-d} Fed meeting: {odds}. "
+               f"The priced rate moved {d5:+.0f} bp over 5 sessions: " +
+               ("more easing is being priced." if sc > 0 else "less easing is being priced." if sc < 0 else "steady."), "Macro")
+
+
+def fed_leak_signal(as_of):
+    """
+    Before scheduled FOMC announcements, institutions trade rate-sensitive stocks in the direction of the
+    coming policy surprise, most strongly before easing surprises (Mano, SSRN 3830271). Proxy with public
+    prices: small caps (IWM) and homebuilders (XHB) against the S&P 500 (SPY) over the 3 sessions
+    before the meeting.
+    """
+    meet = next_fomc(as_of)
+    if not meet or np.busday_count(as_of.date(), meet) > 3:
+        return None
+    def r3(t):
+        rows = [r for r in daily_closes(t, 15) if r[0] < as_of.date()]
+        return pct(rows[-1][1], rows[-4][1]) if len(rows) >= 4 else None
+    spy = r3("SPY")
+    if spy is None:
+        return None
+    rel = {k: x - spy for k, x in (("Small caps", r3("IWM")), ("Homebuilders", r3("XHB"))) if x is not None}
+    if not rel:
+        return None
+    avg = sum(rel.values()) / len(rel)
+    sc = 1 if avg > 1.0 else -1 if avg < -1.0 else 0
+    return sig("fedleak", "Pre-Fed positioning", sc, 0.4,
+               f"Fed decision {meet:%a %b %-d}. Over the last 3 sessions, " +
+               ", ".join(f"{k} {v:+.1f}%" for k, v in rel.items()) + " against the S&P 500. " +
+               ("Rate-sensitive stocks are being bought ahead of the Fed, which has preceded dovish surprises." if sc > 0 else
+                "Rate-sensitive stocks are being sold ahead of the Fed, which has preceded hawkish surprises." if sc < 0 else
+                "No clear positioning ahead of the Fed."), "Macro")
+
+
+def vx_expiry(y, m):
+    """VIX futures for month m settle on the Wednesday 30 days before the third Friday of the next month."""
+    ny, nm = (y + 1, 1) if m == 12 else (y, m + 1)
+    d = date(ny, nm, 15)
+    while d.weekday() != 4:
+        d += timedelta(days=1)
+    return d - timedelta(days=30)
+
+
+VX_CACHE = {}
+
+
+def vix_roll_signal(as_of):
+    """
+    The VIX futures roll: (front VIX future − spot VIX) ÷ business days to settlement. In contango
+    VIX futures tend to roll down to a lower VIX, and in backwardation the VIX doesn't fall
+    (Simon, SSRN 2624713; Simon & Campasano 2014, threshold ±0.10 a day). Contango is the calm
+    backdrop vol sellers lean on; backwardation marks stress. Settlements from CBOE, yesterday's close.
+    """
+    if FIXTURES:
+        return None
+    day = as_of.date()
+    y, m = day.year, day.month
+    exp = None
+    for _ in range(3):
+        e = vx_expiry(y, m)
+        if e > day and np.busday_count(day, e) >= 5:
+            exp = e
+            break
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    if not exp:
+        return None
+    try:
+        if exp not in VX_CACHE:
+            r = requests.get(f"https://cdn.cboe.com/data/us/futures/market_statistics/historical_data/VX/VX_{exp.isoformat()}.csv",
+                             headers=UA, timeout=30)
+            r.raise_for_status()
+            VX_CACHE[exp] = r.text
+        lines = [l.split(",") for l in VX_CACHE[exp].strip().splitlines()]
+        hdr = [h.strip().lower() for h in lines[0]]
+        ti, si = hdr.index("trade date"), hdr.index("settle")
+        rows = [(date.fromisoformat(l[ti].strip()), float(l[si])) for l in lines[1:] if l[si].strip() not in ("", "0")]
+        rows = [r for r in rows if r[0] < day]
+        vix = dict(daily_closes("^VIX", 15))
+        both = [(d, f) for d, f in rows if d in vix]
+        if not both:
+            raise ValueError("no matching VIX close")
+        d0, fut = both[-1]
+    except Exception as e:  # noqa: BLE001
+        note(f"VIX futures roll skipped ({type(e).__name__})")
+        return None
+    bd = max(int(np.busday_count(d0, exp)), 1)
+    roll = (fut - vix[d0]) / bd
+    sc = 1 if roll > 0.10 else -1 if roll < -0.10 else 0
+    return sig("vxroll", "VIX futures roll", sc, 0.3,
+               f"Front VIX future {fut:.2f} vs VIX {vix[d0]:.2f}, {bd} sessions to settlement: roll {roll:+.2f} a day. " +
+               ("Steep contango: vol is priced to drift lower, the calm backdrop." if sc > 0 else
+                "Backwardation: near-term fear is priced above spot, a stress backdrop." if sc < 0 else
+                "A mild roll, no signal."), "Volatility")
+
+
+AUCTIONS = None
+
+
+def fetch_auctions():
+    """Treasury note and bond auctions (announced and completed) from the Treasury's fiscal data API."""
+    global AUCTIONS
+    if AUCTIONS is not None:
+        return AUCTIONS
+    AUCTIONS = []
+    if FIXTURES:
+        return AUCTIONS
+    start = (datetime.now(ET).date() - timedelta(days=400)).isoformat()
+    try:
+        r = requests.get("https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query",
+                         params={"filter": f"auction_date:gte:{start}", "sort": "-auction_date", "page[size]": "1000"},
+                         headers=UA, timeout=45)
+        r.raise_for_status()
+        for a in r.json().get("data", []):
+            if a.get("security_type") not in ("Note", "Bond"):
+                continue
+            yrs = int(str(a.get("security_term", "0")).split("-")[0] or 0)
+            if yrs < 9:
+                continue
+            tenor = 10 if yrs < 15 else 20 if yrs < 25 else 30
+            btc = a.get("bid_to_cover_ratio")
+            AUCTIONS.append({"date": date.fromisoformat(a["auction_date"][:10]), "tenor": tenor,
+                             "btc": float(btc) if btc not in (None, "", "null") else None})
+        stamp("Treasury auctions", True, None, f"{len(AUCTIONS)} long-end auctions")
+    except Exception as e:  # noqa: BLE001
+        stamp("Treasury auctions", False)
+        note(f"Treasury auctions unavailable ({type(e).__name__})")
+    return AUCTIONS
+
+
+def auction_signal(as_of):
+    """
+    Long-end Treasury auctions (10, 20, 30-year). Auctions clear below secondary-market prices because
+    dealers want paying for the price risk they take on (Goldreich, SSRN 449181; Herb, SSRN 4247371), so
+    yields tend to back up into the 1 PM auction: a headwind that morning. Afterwards, demand matters:
+    bid-to-cover above its recent average means the supply went down easily (rates relief); below it means
+    the market struggled to absorb it (Garbade & Ingber, SSRN 678301 on the process).
+    """
+    rows = fetch_auctions()
+    if not rows:
+        return None
+    day, t = as_of.date(), as_of.time()
+    today = [a for a in rows if a["date"] == day]
+    if today and t < time(13, 5):
+        a = today[0]
+        return sig("auction", "Treasury auction", -1, 0.3,
+                   f"{a['tenor']}-year auction at 1 PM ET today. Yields tend to rise into long-end supply as dealers "
+                   "demand a concession, a mild headwind until it clears.", "Macro")
+    done = [a for a in rows if a["btc"] and (a["date"] < day or (a["date"] == day and t >= time(13, 5)))
+            and a["date"] >= prev_weekday(day)]
+    if not done:
+        return None
+    a = max(done, key=lambda x: x["date"])
+    past = [x["btc"] for x in rows if x["tenor"] == a["tenor"] and x["btc"] and x["date"] < a["date"]][:6]
+    if len(past) < 3:
+        return None
+    avg = sum(past) / len(past)
+    diff = a["btc"] - avg
+    sc = 1 if diff > 0.08 else -1 if diff < -0.08 else 0
+    return sig("auction", "Treasury auction", sc, 0.3,
+               f"{a['tenor']}-year auction {'today' if a['date'] == day else a['date'].strftime('%a')}: bid-to-cover "
+               f"{a['btc']:.2f} vs {avg:.2f} average. " +
+               ("Strong demand: the supply went down easily, relief for rates." if sc > 0 else
+                "Weak demand: the market struggled to absorb the supply, pressure on rates." if sc < 0 else
+                "Ordinary demand."), "Macro")
+
+
 def market_regime(q, as_of):
     """
     Calm or stressed, from the St. Louis Fed stress index and the VIX curve. Signals don't work
@@ -944,6 +1188,8 @@ def analyse_positioning(cfg, q, target, as_of, live):
     grid = np.linspace(px * 0.94, px * 1.06, 361)
     gex_now, gex_close = np.zeros_like(grid), np.zeros_like(grid)
     gex_ex0, gross_ex0 = 0.0, 0.0      # net / gross gamma without same-day expiries
+    gex_0, gross_0 = 0.0, 0.0          # the same-day part on its own
+    zdte = dict(call=0.0, put=0.0)     # gamma-weighted same-day volume, live only
     tot = dict(cg=0.0, pg=0.0, D=0.0, gross=0.0, Dc=0.0, vanna=0.0)
     levels, flow, sflow = {}, dict(call=0.0, put=0.0), {}
 
@@ -957,6 +1203,8 @@ def analyse_positioning(cfg, q, target, as_of, live):
         g = bs_gamma(S, c["K"], c["T"], c["IV"]) * c["OI"] * 100 * S**2 * 0.01
         later = c["T"] * 365 > 1.0
         gex_ex0 += float((c["CP"] * g)[later].sum()); gross_ex0 += float(g[later].sum())
+        same = c["T"] * 365 < 0.5
+        gex_0 += float((c["CP"] * g)[same].sum()); gross_0 += float(g[same].sum())
         tot["cg"] += float(g[c["CP"] > 0].sum())
         tot["pg"] += float(g[c["CP"] < 0].sum())
         for k, gg, cp in zip(c["K"] * r, g, c["CP"]):
@@ -972,6 +1220,9 @@ def analyse_positioning(cfg, q, target, as_of, live):
             prem = c["VOL"] * c["MID"] * 100
             flow["call"] += float(prem[short & (c["CP"] > 0)].sum())
             flow["put"] += float(prem[short & (c["CP"] < 0)].sum())
+            gv = bs_gamma(S, c["K"], c["T"], c["IV"]) * c["VOL"] * 100 * S**2 * 0.01
+            zdte["call"] += float(gv[same & (c["CP"] > 0)].sum())
+            zdte["put"] += float(gv[same & (c["CP"] < 0)].sum())
             for k, p, cp, s in zip(c["K"] * r, prem, c["CP"], short):
                 if s and p > 0:
                     key = (round(k / cfg["bin"]) * cfg["bin"], "call" if cp > 0 else "put")
@@ -986,6 +1237,8 @@ def analyse_positioning(cfg, q, target, as_of, live):
         px=px, chains=[c["sym"] for c in chains],
         net_gex=float(np.interp(px, grid, gex_now)), flip=flip,
         gamma_ratio_ex0=(gex_ex0 / gross_ex0) if gross_ex0 else None,
+        gamma_ratio_0=(gex_0 / gross_0) if gross_0 else None,
+        zdte=zdte if live and zdte["call"] + zdte["put"] > 0 else None,
         flip_close=find_flip(grid, gex_close, px) if hrs > 0.5 else None,
         call_gamma=tot["cg"], put_gamma=tot["pg"],
         call_wall=max(above, key=lambda k: near[k][0]), put_wall=max(below, key=lambda k: near[k][1]),
@@ -1116,8 +1369,8 @@ def vol_crush_signal(events, q, as_of):
 
 
 def overnight_signals(cfg, q):
-    """Evening read for the 6 PM–8:30 AM Globex session, built from data up to 6 PM ET."""
-    S = [s for s in macro_signals(cfg, q) if s["key"] not in ("global", "volpre")]   # overseas closes are stale at 6 PM
+    """Evening read for the 8 PM → 8 AM CT window, built from data up to 7:50 PM CT."""
+    S = [s for s in macro_signals(cfg, q) if s["key"] not in ("global", "volpre")]   # overseas closes are stale in the evening
     v = q.get("^VIX")
     if v and v.get("fresh", True):
         c = pct(v["last"], v["prev"])
@@ -1219,6 +1472,39 @@ def dealer_signals(cfg, pos, q, events=None, as_of=None):
                 s_["weight"] = round(s_["weight"] * OPEX_BOOST, 3)
                 s_["text"] += f" Weighted up for {opex_kind(as_of.date())}."
     # Dealer positioning votes at its own weights; the Record retunes it like every other signal.
+    return S
+
+
+def intraday_dealer_signals(cfg, pos, as_of, sess):
+    """New York session only."""
+    S = []
+    if not pos or not sess or sess[0] != "NY":
+        return S
+    z = pos.get("zdte")
+    if z and time(9, 40) <= as_of.time() < time(11, 0):
+        # Gamma-weighted put/call of same-day options after the open: put-heavy opening flow is followed
+        # by a weaker next hour and a higher chance of a fall in it (Maurer & Müller, SSRN 7339718).
+        # Their out-of-sample rule made no money, so it's a risk tilt at low weight.
+        r = z["put"] / z["call"] if z["call"] else 9.9
+        sc = -1 if r > 1.2 else 1 if r < 0.83 else 0
+        S.append(sig("zdte", "0DTE opening flow", sc, 0.3,
+                     f"Same-day option volume since the open, weighted by gamma: put/call {r:.2f}. " +
+                     ("Put-heavy: a weaker next hour and a higher chance of a dip." if sc < 0 else
+                      "Call-heavy: a firmer next hour." if sc > 0 else "Balanced."), "Dealer positioning"))
+    if as_of.time() >= time(15, 0):
+        # End-of-day hedging: when dealers are short gamma, their rebalancing pushes the day's move further
+        # into the close; when long gamma, it leans against it (Barbon, Beckmeyer, Buraschi & Moerke, SSRN 3925725).
+        # The one vote that uses today's own price move.
+        h = fetch_bars(cfg["future"], datetime.combine(as_of.date(), time(9, 30), ET), as_of)
+        if h is not None:
+            r = pct(float(h["Close"].iloc[-1]), float(h["Open"].iloc[0]))
+            short = pos["net_gex"] < 0
+            sc = 0 if abs(r) < 0.3 else int(np.sign(r)) * (1 if short else -1)
+            S.append(sig("eodgamma", "End-of-day gamma hedging", sc, 0.5,
+                         f"Futures {r:+.2f}% since the open, dealers {'short' if short else 'long'} gamma. " +
+                         ("Too small a move to force much hedging." if sc == 0 else
+                          "Short-gamma hedging tends to push the day's move further into the close." if short else
+                          "Long-gamma hedging tends to lean against the day's move into the close."), "Dealer positioning"))
     return S
 
 
@@ -1337,7 +1623,7 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
     # now / overnight: only releases that land before the session being called ends
     end = sess[2].isoformat() if sess else None
     if view == "overnight":
-        end = datetime.combine(next_weekday(as_of.date()), time(9, 30), ET).isoformat()
+        end = datetime.combine(next_weekday(as_of.date()), ON_END, ET).isoformat()
     upcoming = [e for e in events if e["impact"] == "High" and e["ts"] > as_of.isoformat()
                 and (end is None or e["ts"] <= end)]
     mega = [e for e in earnings if e["symbol"] in cfg["megacaps"]]
@@ -1392,7 +1678,7 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
             "Neutral": f"A break of {pos['put_wall']:,.0f} or {pos['call_wall']:,.0f}",
         }[bias]
     elif view == "overnight":
-        invalid = "Futures reversing through today's 4 PM close in Asia"
+        invalid = "Futures reversing through the 8 PM CT price once Asia opens"
     elif view == "now" and sess:
         invalid = f"Price reversing through the {sess[0]} session open"
     elif cfg["future"] in ("NQ=F", "ES=F"):
@@ -1406,7 +1692,7 @@ def narrate(cfg, sym, pos, signals, events, earnings, as_of, live, peer, view="p
                 macro_share=round(100 * macro_w / (sum(s["weight"] for s in signals) or 1)))
 
 
-def expected_range(cfg, pos, q, px, hours=6.5):
+def expected_range(cfg, pos, q, px, hours=6.5, intraday=False):
     v = q.get(cfg["vol_index"])
     if not (v and px):
         return None
@@ -1419,6 +1705,11 @@ def expected_range(cfg, pos, q, px, hours=6.5):
         gm = 1.0 if not pos else (0.85 if pos["net_gex"] > 0 else 1.15)
     else:
         gm = 1.0 - 0.2 * max(-1.0, min(1.0, ratio / 0.5))
+    r0 = pos.get("gamma_ratio_0") if pos else None
+    if intraday and r0 is not None:
+        # During New York, the same-day gamma state adds a little: more of it has gone with calmer next
+        # minutes, but the effect flipped sign between 2024 and 2025 (Singh, SSRN 7350465), so it's capped at ±5%.
+        gm *= 1.0 - 0.05 * max(-1.0, min(1.0, r0 / 0.5))
     move = px * v["prev"] / 100 / math.sqrt(252) * scale * gm
     return {"move": round(move, 2), "low": round(px - move, 2), "high": round(px + move, 2)}
 
@@ -1444,8 +1735,8 @@ def next_weekday(d):
 
 def grade_window(kind, d):
     """(start, end) of the move each session's call is graded on, in ET."""
-    if kind == "overnight":   # all of Asia + London, into the NY open
-        return datetime.combine(d, time(18, 0), ET), datetime.combine(next_weekday(d), time(9, 30), ET)
+    if kind == "overnight":   # Asia open to the US pre-market: 8 PM → 8 AM CT
+        return datetime.combine(d, ON_START, ET), datetime.combine(next_weekday(d), ON_END, ET)
     return datetime.combine(d, time(9, 30), ET), datetime.combine(d, OPEN_MOVE_END, ET)
 
 
@@ -1473,7 +1764,7 @@ def grade_history(hist_dir, kind):
                 h = yf.Ticker(MARKETS[sym]["future"]).history(start=d, end=t1.date() + timedelta(days=1),
                                                                interval=iv, prepost=True)
                 h.index = h.index.tz_convert(ET)
-                if kind == "overnight":   # Globex reopens at 6 PM: start from the last print at or before it
+                if kind == "overnight":   # start from the last print at or before 8 PM CT
                     o = float(h[h.index <= t0]["Close"].iloc[-1])
                 else:
                     o = float(h[h.index >= t0]["Open"].iloc[0])
@@ -1565,7 +1856,7 @@ def previous_call(hist, view, target, as_of, sess):
 
 
 def build_view(target, as_of, live, now, view, hist, sess=None):
-    """One complete read: view = 'preopen' (9:25 ET cut), 'now' (latest) or 'overnight' (6 PM cut)."""
+    """One complete read: view = 'preopen' (9:25 ET cut), 'now' (latest) or 'overnight' (7:50 PM CT cut)."""
     NOTES.clear(); SOURCES.clear()
     print(f"[{view}] session {target} · evidence cut at {as_of:%Y-%m-%d %H:%M} ET", file=sys.stderr)
     marks = None
@@ -1588,7 +1879,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     for sym, cfg in MARKETS.items():
         pos, why = None, None
         try:
-            pos, why = analyse_positioning(cfg, quotes, target, as_of, live)
+            pos, why = analyse_positioning(cfg, quotes, target, as_of, live and view != "overnight")
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()
             why = f"positioning failed ({type(e).__name__})"
@@ -1605,15 +1896,25 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                              None if view == "overnight" else vol_crush_signal(events, quotes, as_of),
                              policy_gap_signal(as_of), stress_signal(as_of), macro_z_signal(as_of),
                              None if view == "overnight" else fomc_drift_signal(events, as_of),
-                             vrp_signal(cfg, quotes, target)) if x] + liquidity_signals(cfg, as_of)
+                             vrp_signal(cfg, quotes, target), fedwatch_signal(as_of), fed_leak_signal(as_of),
+                             vix_roll_signal(as_of), auction_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
+        drift = next((x for x in extra if x["key"] == "fomcdrift" and x["score"]), None)
+        od = fed_odds(as_of, next_fomc(as_of)) if drift else None
+        if od and od["certainty"] >= 0.9:
+            # A near-certain FedWatch read lowers pre-meeting uncertainty, which mutes the pre-FOMC drift
+            # (Bonini, Huang & Simaan, SSRN 5093703).
+            drift["weight"] = round(drift["weight"] * 0.6, 3)
+            drift["text"] += f" Futures price the outcome about {od['certainty']*100:.0f}% one-sided, which has muted the drift, so it counts less."
         base = base + extra
         # learn only from sessions graded before this one, so every read stays point-in-time
         key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
         mult = learned_multipliers(hist, sym, key, 1000 if view == "now" else 120, regime)
-        pre[sym] = (pos, apply_learning(base, mult) + (dealer_signals(cfg, pos, quotes, events, as_of) if pos else []))
+        dealer = (dealer_signals(cfg, pos, quotes, events, as_of) + (intraday_dealer_signals(cfg, pos, as_of, sess)
+                  if view == "now" else [])) if pos else []
+        pre[sym] = (pos, apply_learning(base, mult) + dealer)
 
     if view == "overnight":
-        hours = 6.5          # ~15h of Globex carries roughly one cash session of variance
+        hours = 6.5          # ~12h of Globex carries roughly one cash session of variance
     elif view == "now" and sess:
         hours = (sess[2] - as_of).total_seconds() / 3600
     else:
@@ -1641,7 +1942,7 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
                        "delta": round(bias["score"] - pb["score"], 3)}
         markets[sym] = {
             "name": cfg["name"], "bias": bias, "signals": sigs, "changed": changed,
-            "expected_range": expected_range(cfg, pos, quotes, px, hours),
+            "expected_range": expected_range(cfg, pos, quotes, px, hours, view == "now" and bool(sess) and sess[0] == "NY"),
             "levels": {"price": px and round(px, 2), **({} if not pos else {
                 "flip": pos["flip"] and round(pos["flip"], 2),
                 "flip_close": pos["flip_close"] and round(pos["flip_close"], 2),
@@ -1662,8 +1963,8 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     return {
         "view": view, "session": "overnight" if view == "overnight" else "ny", "date": target.isoformat(),
         "window": {"name": sess[0], "start": sess[1].isoformat(), "end": sess[2].isoformat()} if sess else
-                  {"name": "Asia + London", "start": datetime.combine(target, time(18), ET).isoformat(),
-                   "end": datetime.combine(next_weekday(target), time(9, 30), ET).isoformat()} if view == "overnight" else
+                  {"name": "Asia to pre-market", "start": datetime.combine(target, ON_START, ET).isoformat(),
+                   "end": datetime.combine(next_weekday(target), ON_END, ET).isoformat()} if view == "overnight" else
                   {"name": "NY open", "start": datetime.combine(target, time(9, 30), ET).isoformat(),
                    "end": datetime.combine(target, OPEN_MOVE_END, ET).isoformat()},
         "mode": "live" if live else "point-in-time",
@@ -1739,10 +2040,20 @@ def grade_now(hist):
 
 
 # ───────────────────────── red folder: CPI and FOMC previews ─────────────────────────
+DAILY_CACHE = {}
+
+
 def daily_closes(ticker, days=70):
-    """[(date, close)] daily, oldest → newest, from Yahoo."""
+    """[(date, close)] daily, oldest → newest, from Yahoo. Cached per run (callers filter by date)."""
     if FIXTURES:
         return []
+    if (ticker, days) in DAILY_CACHE:
+        return DAILY_CACHE[(ticker, days)]
+    DAILY_CACHE[(ticker, days)] = _daily_closes(ticker, days)
+    return DAILY_CACHE[(ticker, days)]
+
+
+def _daily_closes(ticker, days):
     try:
         import yfinance as yf
         h = yf.Ticker(ticker).history(period=f"{days}d", interval="1d", auto_adjust=False)
@@ -1875,13 +2186,18 @@ def red_folder(now):
 
 
 def resolve_overnight(now):
+    """The evening whose overnight call is showing, its evidence cut, and whether it's still live.
+    From 4 PM ET the coming night's call is a live preview; it locks at 7:50 PM CT. Sunday evening
+    gets its own call (Globex reopens at 5 PM CT); Friday has none, since futures shut for the weekend."""
     forced = os.environ.get("REPORT_DATE", "").strip()
     if forced:
-        return date.fromisoformat(forced)
+        d = date.fromisoformat(forced)
+        return d, datetime.combine(d, ON_CUT, ET), False
     d = now.date()
-    while d.weekday() >= 5 or now < datetime.combine(d, time(18, 0), ET):
+    while d.weekday() in (4, 5) or now < datetime.combine(d, time(16, 0), ET):
         d -= timedelta(days=1)
-    return d
+    cut = datetime.combine(d, ON_CUT, ET)
+    return (d, now, True) if now < cut else (d, cut, False)
 
 
 def main():
@@ -1909,10 +2225,9 @@ def main():
     else:
         current = finish_now(build_view(sess[3], now, True, now, "now", hist_now, sess), hist_now)
 
-    # Overnight: the most recent weekday evening whose 6 PM cutoff has passed
-    on_day = resolve_overnight(now)
-    on_cut = datetime.combine(on_day, time(18, 0), ET)
-    overnight = finish(build_view(on_day, on_cut, False, now, "overnight", hist_on), hist_on, "overnight")
+    # Overnight: 8 PM → 8 AM CT. A live preview from 4 PM ET, locked at 7:50 PM CT
+    on_day, on_cut, on_live = resolve_overnight(now)
+    overnight = finish(build_view(on_day, on_cut, on_live, now, "overnight", hist_on), hist_on, "overnight")
 
     report = {"generated": now.isoformat(timespec="seconds"), "red": red_folder(now),
               "ny": {"preopen": preopen, "now": current}, "overnight": overnight,
