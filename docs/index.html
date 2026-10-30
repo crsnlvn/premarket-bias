@@ -228,6 +228,15 @@ details.rs[open] summary em{transform:rotate(90deg)}
 .gsearch svg{width:17px;height:17px;color:var(--dim);flex:none}
 .gsearch input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:16px}
 .gnone{padding:16px 0;color:var(--dim);font-size:14px}
+.fstrip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px 0 0;padding:0 20px 4px 0;scrollbar-width:none}
+.fstrip::-webkit-scrollbar{display:none}
+.fcard{flex:none;width:150px;scroll-snap-align:start;padding:14px 14px 12px;border-radius:16px;background:var(--glass);border:1px solid var(--edge);display:flex;flex-direction:column}
+.fcard b{font-size:15.5px;font-weight:600}
+.fcard .fc{font-size:13px;color:var(--dim);margin-top:2px}
+.fcard i{display:block;border-top:1px dashed var(--line2);margin:10px 0 12px;opacity:.7}
+.fcard svg{margin-bottom:8px}
+.fcard .fp{font-size:17px;font-weight:600}
+.fcard .fx{font-size:14px;margin-top:2px}
 .hp{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:12px 16px;border-top:1px solid var(--row);color:var(--text)}
 .hp:first-child{border-top:0}
 .hpi{width:20px;height:20px;color:var(--dim);flex:none;margin-top:2px}.hpi svg{width:20px;height:20px}
@@ -1551,11 +1560,22 @@ const colr = v => v>0?'var(--up)':v<0?'var(--down)':'var(--sub)';
 const toolFoot = T => `<section class="foot"><p>Updated ${T.generated?nAgo(T.generated):'—'}. Refreshes with each hourly read.</p></section>`;
 const empty = (h,msg) => h + `<section><div class="card pad" style="color:var(--sub)">${msg}</div></section>`;
 
+function spark(pts, col){
+  if(!pts || pts.length<2) return '';
+  const lo=Math.min(...pts), hi=Math.max(...pts), W=64, H=26, x=i=>i*(W-6)/(pts.length-1)+1, y=v=>H-3-(hi===lo?.5:(v-lo)/(hi-lo))*(H-6);
+  const d=pts.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><path d="${d}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(pts.length-1)}" cy="${y(pts[pts.length-1])}" r="2.6" fill="${col}"/></svg>`;
+}
+function futStrip(T){
+  const F=T.futures||[]; if(!F.length) return '';
+  return `<section><h2>Futures markets</h2><div class="fstrip">${F.map(f=>{ const c=colr(f.chg);
+    return `<div class="fcard"><b>${esc(f.name)}</b><span class="fc">${esc(f.code)}</span><i></i>${spark(f.spark,c)}<div class="fp num">${fmt(f.last, f.last<200?2:f.last<10000?2:2)}</div><div class="fx" style="color:${c}">${f.chg>0?'▲':f.chg<0?'▼':''} ${fmt(Math.abs(f.chg),2)}%</div></div>`; }).join('')}</div></section>`;
+}
 function pageMega(){
   const [h, T] = toolsOr('Megacap watch', `The biggest stocks in ${esc(SYM==='NQ'?'the Nasdaq-100':'the S&P 500')}: today's move, including pre-market and after-hours, and what it's worth in ${esc(SYM)} points.`);
   if(!T) return h; const M = (T.megacaps||{})[SYM]; if(!M || !M.rows.length) return empty(h,'No quotes yet.');
   const rows = M.rows.slice().sort((a,b)=>Math.abs(b.pts||0)-Math.abs(a.pts||0));
-  return h + `<section><div class="card pad"><div class="lbl" style="color:var(--dim);font-size:13px">Combined</div><div class="num" style="font-size:34px;font-weight:700;color:${colr(M.total_pts)}">${sgT(M.total_pts,0)} pts</div><div style="color:var(--sub);font-size:13.5px">What these ${rows.length} stocks alone are worth to ${esc(SYM)} right now.</div></div></section>
+  return h + futStrip(T) + `<section><div class="card pad"><div class="lbl" style="color:var(--dim);font-size:13px">Combined</div><div class="num" style="font-size:34px;font-weight:700;color:${colr(M.total_pts)}">${sgT(M.total_pts,0)} pts</div><div style="color:var(--sub);font-size:13.5px">What these ${rows.length} stocks alone are worth to ${esc(SYM)} right now.</div></div></section>
     <section><div class="card rows">${rows.map(r=>`<div class="r"><span><b style="font-weight:600">${esc(r.ticker)}</b> <small style="color:var(--dim)">${fmt(r.weight,1)}%</small></span><span class="num"><span style="color:${colr(r.chg)}">${sgT(r.chg,2)}%</span> · <b style="color:${colr(r.pts)}">${r.pts==null?'—':sgT(r.pts,0)+' pts'}</b></span></div>`).join('')}</div></section>
     <section class="foot"><p>Index weights are approximate and drift over time. Points = futures price × weight × the stock's move.</p></section>` + toolFoot(T);
 }

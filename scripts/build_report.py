@@ -2820,6 +2820,8 @@ WORLD = [("^N225", "Nikkei 225", "Tokyo"), ("^HSI", "Hang Seng", "Hong Kong"), (
          ("^FCHI", "CAC 40", "Paris"), ("^STOXX50E", "Euro Stoxx 50", "Frankfurt"), ("^GSPC", "S&P 500", "New York"),
          ("^NDX", "Nasdaq 100", "New York"), ("^DJI", "Dow", "New York"), ("^RUT", "Russell 2000", "New York"),
          ("^GSPTSE", "TSX", "Toronto"), ("^BVSP", "Bovespa", "Sao Paulo")]
+FUTS = [("ES=F", "S&P 500", "/MES"), ("NQ=F", "Nasdaq 100", "/MNQ"), ("BTC=F", "Bitcoin", "/MBT"), ("YM=F", "Dow", "/MYM"),
+        ("RTY=F", "Russell 2000", "/M2K"), ("CL=F", "Crude oil", "/MCL"), ("GC=F", "Gold", "/MGC"), ("ZN=F", "10-year note", "/ZN")]
 VOLS = [("^VIX9D", "9 days"), ("^VIX", "30 days"), ("^VIX3M", "3 months"), ("^VIX6M", "6 months")]
 
 
@@ -2853,6 +2855,14 @@ def _batch_quotes(tickers, now):
             prev = float(ref[-1])
             out[t] = {"last": round(last, 4), "prev": round(prev, 4), "chg": round(pct(last, prev), 2),
                       "ts": ts.isoformat(timespec="minutes")}
+            if t.endswith("=F"):   # sparkline: this futures session, from the last 5 PM CT reopen
+                start = datetime.combine(ts.date() - timedelta(days=0 if ts.time() >= time(18) else 1), time(18), ET)
+                while start.weekday() == 5 or (start.weekday() == 4 and ts.weekday() != 4):
+                    start -= timedelta(days=1)
+                seg = h[h.index >= start]["Close"]
+                if len(seg) > 60:
+                    seg = seg.iloc[np.linspace(0, len(seg) - 1, 60).astype(int)]
+                out[t]["spark"] = [round(float(v), 2) for v in seg]
         except Exception:  # noqa: BLE001
             continue
     return out
@@ -2878,7 +2888,7 @@ def drivers():
 
 
 def market_tools(now, reads):
-    tickers = sorted(set(NDX_W) | set(SPX_W) | {t for t, _, _ in WORLD} | {t for t, _ in VOLS} | {"^SKEW"})
+    tickers = sorted(set(NDX_W) | set(SPX_W) | {t for t, _, _ in WORLD} | {t for t, _ in VOLS} | {t for t, _, _ in FUTS} | {"^SKEW"})
     q = _batch_quotes(tickers, now)
     fut = {}
     for r in reads:
@@ -2915,7 +2925,9 @@ def market_tools(now, reads):
     except Exception:  # noqa: BLE001
         traceback.print_exc(); drv = []
     stamp("Market tools", bool(q), now.isoformat(), f"{len(q)} of {len(tickers)} tickers")
-    return {"generated": now.isoformat(timespec="seconds"), "megacaps": mega, "heatmap": heat, "world": world,
+    futs = [{"ticker": t, "name": n, "code": c, "last": q[t]["last"], "chg": q[t]["chg"], "spark": q[t].get("spark", [])}
+            for t, n, c in FUTS if t in q]
+    return {"generated": now.isoformat(timespec="seconds"), "futures": futs, "megacaps": mega, "heatmap": heat, "world": world,
             "vol_curve": curve, "skew": skew and {"now": skew["last"], "prev": skew["prev"]},
             "big_trades": trades, "strikes": strikes, "drivers": drv}
 
