@@ -3,13 +3,13 @@
  "session": "overnight",
  "date": "2026-10-29",
  "window": {
-  "name": "Asia + London",
-  "start": "2026-10-29T18:00:00-04:00",
-  "end": "2026-10-30T09:30:00-04:00"
+  "name": "Asia to pre-market",
+  "start": "2026-10-29T21:00:00-04:00",
+  "end": "2026-10-30T09:00:00-04:00"
  },
  "mode": "point-in-time",
- "as_of": "2026-10-29T18:00:00-04:00",
- "generated": "2026-10-30T02:17:01-04:00",
+ "as_of": "2026-10-29T20:50:00-04:00",
+ "generated": "2026-10-30T03:04:42-04:00",
  "events": [
   {
    "time": "8:30 AM",
@@ -22,49 +22,49 @@
  ],
  "macro": {
   "NQ=F": {
-   "last": 29130.0,
-   "chg_pct": -3.15,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 28980.25,
+   "chg_pct": -3.65,
+   "ts": "2026-10-29T20:50:00-04:00"
   },
   "ES=F": {
-   "last": 7706.5,
-   "chg_pct": -1.21,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 7693.25,
+   "chg_pct": -1.38,
+   "ts": "2026-10-29T20:50:00-04:00"
   },
   "ZN=F": {
-   "last": 106.5469,
-   "chg_pct": 0.62,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 106.7656,
+   "chg_pct": 0.83,
+   "ts": "2026-10-29T20:50:00-04:00"
   },
   "ZT=F": {
-   "last": 102.2422,
-   "chg_pct": 0.2,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 102.3008,
+   "chg_pct": 0.26,
+   "ts": "2026-10-29T20:50:00-04:00"
   },
   "DX-Y.NYB": {
-   "last": 101.887,
-   "chg_pct": -0.19,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 101.79,
+   "chg_pct": -0.29,
+   "ts": "2026-10-29T20:50:00-04:00"
   },
   "CL=F": {
-   "last": 102.79,
-   "chg_pct": 1.23,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 102.68,
+   "chg_pct": 1.12,
+   "ts": "2026-10-29T20:50:00-04:00"
   },
   "HYG": {
-   "last": 77.6003,
-   "chg_pct": 0.01,
-   "ts": "2026-10-29T16:07:00-04:00"
+   "last": 77.5,
+   "chg_pct": -0.12,
+   "ts": "2026-10-29T19:19:59-04:00"
   },
   "BTC-USD": {
-   "last": 78832.2109,
-   "chg_pct": -3.41,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 77792.4297,
+   "chg_pct": -4.69,
+   "ts": "2026-10-29T19:59:00-04:00"
   },
   "VXX": {
-   "last": 17.9,
-   "chg_pct": 1.07,
-   "ts": "2026-10-29T18:00:00-04:00"
+   "last": 17.9301,
+   "chg_pct": 1.24,
+   "ts": "2026-10-29T19:59:00-04:00"
   },
   "^N225": {
    "last": 64580.6406,
@@ -107,24 +107,25 @@
    "name": "Nasdaq-100 futures",
    "bias": {
     "bias": "Bullish",
-    "score": 0.191,
-    "raw_score": 0.191,
+    "score": 0.375,
+    "raw_score": 0.375,
     "dampened": [],
     "held": false,
-    "own_score": 0.225,
-    "conviction": "Medium",
-    "ups": 3,
+    "own_score": 0.377,
+    "conviction": "High",
+    "ups": 8,
     "downs": 1,
-    "total": 12,
+    "total": 18,
     "overall": "For: 10-year yield, VIX term structure, 2-year / Fed path. Against: Fed pressure (official data). ES agrees.",
-    "invalidation": "Futures reversing through today's 4 PM close in Asia",
+    "invalidation": "Futures reversing through the 8 PM CT price once Asia opens",
     "macro_share": 100,
     "conv_cuts": [
      0.06,
      0.15,
      0.22
     ],
-    "conv_basis": 11
+    "conv_basis": 11,
+    "regime": "calm"
    },
    "signals": [
     {
@@ -133,7 +134,7 @@
      "score": 1,
      "raw": 1,
      "weight": 1.25,
-     "text": "10Y futures +0.62% \u2248 -9.5 bp in yield (from 5.05%). Falling yields lift equity valuations.",
+     "text": "10Y futures +0.83% \u2248 -12.7 bp in yield (from 5.05%). Falling yields lift equity valuations.",
      "group": "Macro"
     },
     {
@@ -142,16 +143,16 @@
      "score": 1,
      "raw": 1,
      "weight": 0.75,
-     "text": "2Y futures +0.203% \u2248 -10.6 bp. The market is pricing in easier policy.",
+     "text": "2Y futures +0.260% \u2248 -13.5 bp. The market is pricing in easier policy.",
      "group": "Macro"
     },
     {
      "key": "dollar",
      "label": "US dollar",
-     "score": 0,
-     "raw": 0,
+     "score": 1,
+     "raw": 1,
      "weight": 0.75,
-     "text": "DXY 101.89 (-0.19%). Flat.",
+     "text": "DXY 101.79 (-0.29%). A softer dollar eases financial conditions.",
      "group": "Macro"
     },
     {
@@ -160,7 +161,7 @@
      "score": 0,
      "raw": 0,
      "weight": 0.5,
-     "text": "WTI 102.79 (+1.2%). No energy shock.",
+     "text": "WTI 102.68 (+1.1%). No energy shock.",
      "group": "Macro"
     },
     {
@@ -169,7 +170,7 @@
      "score": 0,
      "raw": 0,
      "weight": 0.75,
-     "text": "High-yield bonds +0.01%. Credit is calm.",
+     "text": "High-yield bonds -0.12%. Credit is calm.",
      "group": "Macro"
     },
     {
@@ -198,6 +199,60 @@
      "weight": 0.75,
      "text": "Unemployment rate 4.2% (in range); Initial jobless claims 194.0K (hot); Payrolls (3-mo avg change) 50.7K (cool); CPI y/y 4.0% (hot); Core CPI y/y 2.8% (hot); PPI m/m 1.3% (hot); Chicago PMI 58.8 (hot); Consumer confidence 81.9 (cool). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
      "group": "Macro"
+    },
+    {
+     "key": "policygap",
+     "label": "Policy gap (2Y \u2212 Fed funds)",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "2-year yield minus Fed funds +79 bp, -14 bp over 5 sessions. The market is pricing in more cuts. The 10Y minus 3M curve is +0.87%.",
+     "group": "Macro"
+    },
+    {
+     "key": "stress",
+     "label": "Financial stress",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "St. Louis Fed stress index -0.58 (below normal), +0.22 over 4 weeks. Stress is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "macroz",
+     "label": "Macro z-score (hawk + dove)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "Hawkish lens +0.5\u03c3 (neutral), dovish lens +0.2\u03c3 (neutral), together +0.3\u03c3. Biggest mover: Priced Fed path (-1.6\u03c3 over 5 sessions).",
+     "group": "Macro"
+    },
+    {
+     "key": "vrp",
+     "label": "Volatility risk premium",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Implied vol 23.7 vs realized 19.2 over the past month: premium +4.6 pts. Protection is expensive relative to actual moves, a backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "fedwatch",
+     "label": "FedWatch (fed funds futures)",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Dec 9 Fed meeting: 87% odds of a 25 bp hike. The priced rate moved -4 bp over 5 sessions: more easing is being priced.",
+     "group": "Macro"
+    },
+    {
+     "key": "vxroll",
+     "label": "VIX futures roll",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.3,
+     "text": "Front VIX future 18.60 vs VIX 16.91, 15 sessions to settlement: roll +0.11 a day. Steep contango: vol is priced to drift lower, the calm backdrop.",
+     "group": "Volatility"
     },
     {
      "key": "realyield",
@@ -240,15 +295,15 @@
     "prev_date": "2026-10-28",
     "prev_bias": "Bullish",
     "prev_score": 0.09,
-    "delta": 0.101
+    "delta": 0.285
    },
    "expected_range": {
-    "move": 435.27,
-    "low": 28694.73,
-    "high": 29565.27
+    "move": 433.03,
+    "low": 28547.22,
+    "high": 29413.28
    },
    "levels": {
-    "price": 29130.0
+    "price": 28980.25
    },
    "dealer": null,
    "flow": null,
@@ -270,24 +325,25 @@
    "name": "S&P 500 futures",
    "bias": {
     "bias": "Bullish",
-    "score": 0.161,
-    "raw_score": 0.161,
+    "score": 0.372,
+    "raw_score": 0.372,
     "dampened": [],
     "held": false,
-    "own_score": 0.127,
-    "conviction": "Medium",
-    "ups": 4,
-    "downs": 3,
-    "total": 16,
-    "overall": "For: VIX term structure, 10-year yield, 2-year / Fed path. Against: Fed pressure (official data), Gamma flip. Dealers short gamma: moves can run. NQ agrees.",
-    "invalidation": "A failure to reclaim 7,808, or a break of the put wall at 7,680",
-    "macro_share": 83,
+    "own_score": 0.369,
+    "conviction": "High",
+    "ups": 8,
+    "downs": 1,
+    "total": 18,
+    "overall": "For: VIX term structure, 10-year yield, 2-year / Fed path. Against: Fed pressure (official data). NQ agrees.",
+    "invalidation": "Futures reversing through the 8 PM CT price once Asia opens",
+    "macro_share": 100,
     "conv_cuts": [
      0.06,
      0.15,
      0.22
     ],
-    "conv_basis": 11
+    "conv_basis": 11,
+    "regime": "calm"
    },
    "signals": [
     {
@@ -296,7 +352,7 @@
      "score": 1,
      "raw": 1,
      "weight": 0.9375,
-     "text": "10Y futures +0.62% \u2248 -9.5 bp in yield (from 5.05%). Falling yields lift equity valuations.",
+     "text": "10Y futures +0.83% \u2248 -12.7 bp in yield (from 5.05%). Falling yields lift equity valuations.",
      "group": "Macro"
     },
     {
@@ -305,16 +361,16 @@
      "score": 1,
      "raw": 1,
      "weight": 0.75,
-     "text": "2Y futures +0.203% \u2248 -10.6 bp. The market is pricing in easier policy.",
+     "text": "2Y futures +0.260% \u2248 -13.5 bp. The market is pricing in easier policy.",
      "group": "Macro"
     },
     {
      "key": "dollar",
      "label": "US dollar",
-     "score": 0,
-     "raw": 0,
+     "score": 1,
+     "raw": 1,
      "weight": 0.75,
-     "text": "DXY 101.89 (-0.19%). Flat.",
+     "text": "DXY 101.79 (-0.29%). A softer dollar eases financial conditions.",
      "group": "Macro"
     },
     {
@@ -323,7 +379,7 @@
      "score": 0,
      "raw": 0,
      "weight": 0.5,
-     "text": "WTI 102.79 (+1.2%). No energy shock.",
+     "text": "WTI 102.68 (+1.1%). No energy shock.",
      "group": "Macro"
     },
     {
@@ -332,7 +388,7 @@
      "score": 0,
      "raw": 0,
      "weight": 0.75,
-     "text": "High-yield bonds +0.01%. Credit is calm.",
+     "text": "High-yield bonds -0.12%. Credit is calm.",
      "group": "Macro"
     },
     {
@@ -361,6 +417,60 @@
      "weight": 0.75,
      "text": "Unemployment rate 4.2% (in range); Initial jobless claims 194.0K (hot); Payrolls (3-mo avg change) 50.7K (cool); CPI y/y 4.0% (hot); Core CPI y/y 2.8% (hot); PPI m/m 1.3% (hot); Chicago PMI 58.8 (hot); Consumer confidence 81.9 (cool). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
      "group": "Macro"
+    },
+    {
+     "key": "policygap",
+     "label": "Policy gap (2Y \u2212 Fed funds)",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "2-year yield minus Fed funds +79 bp, -14 bp over 5 sessions. The market is pricing in more cuts. The 10Y minus 3M curve is +0.87%.",
+     "group": "Macro"
+    },
+    {
+     "key": "stress",
+     "label": "Financial stress",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "St. Louis Fed stress index -0.58 (below normal), +0.22 over 4 weeks. Stress is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "macroz",
+     "label": "Macro z-score (hawk + dove)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "Hawkish lens +0.5\u03c3 (neutral), dovish lens +0.2\u03c3 (neutral), together +0.3\u03c3. Biggest mover: Priced Fed path (-1.6\u03c3 over 5 sessions).",
+     "group": "Macro"
+    },
+    {
+     "key": "vrp",
+     "label": "Volatility risk premium",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Implied vol 16.6 vs realized 9.9 over the past month: premium +6.7 pts. Protection is expensive relative to actual moves, a backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "fedwatch",
+     "label": "FedWatch (fed funds futures)",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Dec 9 Fed meeting: 87% odds of a 25 bp hike. The priced rate moved -4 bp over 5 sessions: more easing is being priced.",
+     "group": "Macro"
+    },
+    {
+     "key": "vxroll",
+     "label": "VIX futures roll",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.3,
+     "text": "Front VIX future 18.60 vs VIX 16.91, 15 sessions to settlement: roll +0.11 a day. Steep contango: vol is priced to drift lower, the calm backdrop.",
+     "group": "Volatility"
     },
     {
      "key": "realyield",
@@ -397,342 +507,25 @@
      "weight": 0.75,
      "text": "Fed balance sheet minus the Treasury account and reverse repo: $5.80T, +31B over 4 weeks. Liquidity is roughly flat.",
      "group": "Macro"
-    },
-    {
-     "key": "flip",
-     "label": "Gamma flip",
-     "score": -1,
-     "raw": -1,
-     "weight": 0.75,
-     "text": "Price is 102 pts below the gamma flip (7,808). Dealers are short gamma, so their hedging extends moves.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "tilt",
-     "label": "Gamma tilt",
-     "score": -1,
-     "raw": -1,
-     "weight": 0.25,
-     "text": "Call \u00f7 put gamma 0.63. Put-heavy, so hedges sit below.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "walls",
-     "label": "Wall range",
-     "score": 1,
-     "raw": 1,
-     "weight": 0.5,
-     "text": "Put wall 7,680 / call wall 8,085: 378 pts up vs 26 down. Near support.",
-     "group": "Dealer positioning"
-    },
-    {
-     "key": "vanna",
-     "label": "Vanna",
-     "score": 0,
-     "raw": 0,
-     "weight": 0.4,
-     "text": "Implied vol \u2248 +0.09 pts pre-market, worth about $2.34B of dealer selling.",
-     "group": "Dealer positioning"
     }
    ],
    "changed": {
     "prev_date": "2026-10-28",
     "prev_bias": "Bullish",
     "prev_score": 0.092,
-    "delta": 0.069
+    "delta": 0.28
    },
    "expected_range": {
-    "move": 92.62,
-    "low": 7613.88,
-    "high": 7799.12
+    "move": 80.4,
+    "low": 7612.85,
+    "high": 7773.65
    },
    "levels": {
-    "price": 7706.5,
-    "flip": 7808.19,
-    "flip_close": null,
-    "call_wall": 8085,
-    "put_wall": 7680,
-    "majors": [
-     {
-      "level": 7475,
-      "net_gex": -3889738902.899452
-     },
-     {
-      "level": 7580,
-      "net_gex": -6919907475.505946
-     },
-     {
-      "level": 7630,
-      "net_gex": -3370103981.024469
-     },
-     {
-      "level": 7680,
-      "net_gex": -8215029911.479298
-     },
-     {
-      "level": 7730,
-      "net_gex": -6489279105.3699875
-     }
-    ]
+    "price": 7693.25
    },
-   "dealer": {
-    "net_gex_bn": -84.811,
-    "call_put_gamma": 0.63,
-    "dealer_delta_bn": 2600.86,
-    "charm_bn": -0.0,
-    "vanna_bn_per_pt": 26.296,
-    "chains": [
-     "SPX",
-     "SPY"
-    ]
-   },
+   "dealer": null,
    "flow": null,
-   "profile": [
-    {
-     "px": 7244.11,
-     "gex": -106466866745.09549
-    },
-    {
-     "px": 7259.52,
-     "gex": -107406977735.90053
-    },
-    {
-     "px": 7274.94,
-     "gex": -108373390773.2241
-    },
-    {
-     "px": 7290.35,
-     "gex": -109371079294.93848
-    },
-    {
-     "px": 7305.76,
-     "gex": -110403978822.33694
-    },
-    {
-     "px": 7321.17,
-     "gex": -111474754972.51553
-    },
-    {
-     "px": 7336.59,
-     "gex": -112584305841.77081
-    },
-    {
-     "px": 7352.0,
-     "gex": -113731004974.31892
-    },
-    {
-     "px": 7367.41,
-     "gex": -114909778276.41403
-    },
-    {
-     "px": 7382.83,
-     "gex": -116111142536.02698
-    },
-    {
-     "px": 7398.24,
-     "gex": -117320324991.60965
-    },
-    {
-     "px": 7413.65,
-     "gex": -118516561230.48088
-    },
-    {
-     "px": 7429.07,
-     "gex": -119672661385.68286
-    },
-    {
-     "px": 7444.48,
-     "gex": -120754951746.94301
-    },
-    {
-     "px": 7459.89,
-     "gex": -121723721852.81847
-    },
-    {
-     "px": 7475.31,
-     "gex": -122534297506.76215
-    },
-    {
-     "px": 7490.72,
-     "gex": -123138782960.95348
-    },
-    {
-     "px": 7506.13,
-     "gex": -123488364173.02502
-    },
-    {
-     "px": 7521.54,
-     "gex": -123535872592.03905
-    },
-    {
-     "px": 7536.96,
-     "gex": -123238135065.06903
-    },
-    {
-     "px": 7552.37,
-     "gex": -122557533158.5021
-    },
-    {
-     "px": 7567.78,
-     "gex": -121462178421.55313
-    },
-    {
-     "px": 7583.2,
-     "gex": -119924155008.6651
-    },
-    {
-     "px": 7598.61,
-     "gex": -117915379550.63425
-    },
-    {
-     "px": 7614.02,
-     "gex": -115400865302.33234
-    },
-    {
-     "px": 7629.43,
-     "gex": -112329746170.4112
-    },
-    {
-     "px": 7644.85,
-     "gex": -108625479999.2467
-    },
-    {
-     "px": 7660.26,
-     "gex": -104178078154.70114
-    },
-    {
-     "px": 7675.67,
-     "gex": -98842376346.19656
-    },
-    {
-     "px": 7691.09,
-     "gex": -92446294581.35095
-    },
-    {
-     "px": 7706.5,
-     "gex": -84810972199.85768
-    },
-    {
-     "px": 7721.91,
-     "gex": -75780792435.4496
-    },
-    {
-     "px": 7737.33,
-     "gex": -65257145167.82422
-    },
-    {
-     "px": 7752.74,
-     "gex": -53227702431.53045
-    },
-    {
-     "px": 7768.15,
-     "gex": -39784726667.48222
-    },
-    {
-     "px": 7783.57,
-     "gex": -25130582586.98914
-    },
-    {
-     "px": 7798.98,
-     "gex": -9572285991.482685
-    },
-    {
-     "px": 7814.39,
-     "gex": 6493881106.890503
-    },
-    {
-     "px": 7829.8,
-     "gex": 22610123049.82759
-    },
-    {
-     "px": 7845.22,
-     "gex": 38299325030.02342
-    },
-    {
-     "px": 7860.63,
-     "gex": 53116531745.76904
-    },
-    {
-     "px": 7876.04,
-     "gex": 66696469014.566734
-    },
-    {
-     "px": 7891.46,
-     "gex": 78783701454.83849
-    },
-    {
-     "px": 7906.87,
-     "gex": 89240472309.28348
-    },
-    {
-     "px": 7922.28,
-     "gex": 98036568647.74033
-    },
-    {
-     "px": 7937.69,
-     "gex": 105229090542.32225
-    },
-    {
-     "px": 7953.11,
-     "gex": 110938325202.25824
-    },
-    {
-     "px": 7968.52,
-     "gex": 115323294765.85246
-    },
-    {
-     "px": 7983.93,
-     "gex": 118559341912.86076
-    },
-    {
-     "px": 7999.35,
-     "gex": 120819826063.54971
-    },
-    {
-     "px": 8014.76,
-     "gex": 122263440390.41057
-    },
-    {
-     "px": 8030.17,
-     "gex": 123027540246.69357
-    },
-    {
-     "px": 8045.59,
-     "gex": 123226666278.3518
-    },
-    {
-     "px": 8061.0,
-     "gex": 122954660753.93526
-    },
-    {
-     "px": 8076.41,
-     "gex": 122288593479.19247
-    },
-    {
-     "px": 8091.83,
-     "gex": 121293014017.17715
-    },
-    {
-     "px": 8107.24,
-     "gex": 120023582934.61932
-    },
-    {
-     "px": 8122.65,
-     "gex": 118529676500.50673
-    },
-    {
-     "px": 8138.06,
-     "gex": 116855964023.4718
-    },
-    {
-     "px": 8153.48,
-     "gex": 115043179203.78561
-    },
-    {
-     "px": 8168.89,
-     "gex": 113128371947.73901
-    }
-   ],
+   "profile": [],
    "earnings": [
     {
      "symbol": "AMZN",
@@ -757,50 +550,45 @@
  },
  "divergence": null,
  "notes": [
-  "NQ: dealer positioning skipped, option snapshot is from Oct 30, after this session. The read is macro only."
+  "NQ: dealer positioning skipped, option snapshot is from Oct 30, after this session. The read is macro only.",
+  "ES: dealer positioning skipped, option snapshot is from Oct 30, after this session. The read is macro only."
  ],
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-30T02:17:31-04:00",
-   "data_time": "2026-10-29T18:00:00-04:00",
-   "detail": "16 of 16 tickers \u00b7 1m bars, cut at 6:00 PM ET"
+   "fetched": "2026-10-30T03:05:16-04:00",
+   "data_time": "2026-10-29T20:50:00-04:00",
+   "detail": "16 of 16 tickers \u00b7 1m bars, cut at 8:50 PM ET"
   },
   "Economic calendar": {
    "ok": true,
-   "fetched": "2026-10-30T02:17:31-04:00",
+   "fetched": "2026-10-30T03:05:16-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 29": {
    "ok": true,
-   "fetched": "2026-10-30T02:17:33-04:00",
+   "fetched": "2026-10-30T03:05:17-04:00",
    "data_time": null,
    "detail": "303 companies"
   },
   "Earnings Oct 30": {
    "ok": true,
-   "fetched": "2026-10-30T02:17:34-04:00",
+   "fetched": "2026-10-30T03:05:18-04:00",
    "data_time": null,
    "detail": "63 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-30T02:17:35-04:00",
-   "data_time": "2026-10-30T02:17:04-04:00",
+   "fetched": "2026-10-30T03:05:19-04:00",
+   "data_time": "2026-10-30T02:52:45-04:00",
    "detail": "16,512 contracts"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-30T02:17:36-04:00",
-   "data_time": "2026-10-29T23:35:16-04:00",
-   "detail": "28,872 contracts"
-  },
-  "CBOE SPY options": {
-   "ok": true,
-   "fetched": "2026-10-30T02:17:37-04:00",
-   "data_time": "2026-10-29T20:13:44-04:00",
-   "detail": "12,170 contracts"
+   "fetched": "2026-10-30T03:05:20-04:00",
+   "data_time": "2026-10-30T03:05:04-04:00",
+   "detail": "29,232 contracts"
   }
  }
 }
