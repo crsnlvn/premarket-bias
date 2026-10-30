@@ -1,0 +1,623 @@
+{
+ "view": "overnight",
+ "session": "overnight",
+ "date": "2026-09-17",
+ "window": {
+  "name": "Asia to pre-market",
+  "start": "2026-09-17T21:00:00-04:00",
+  "end": "2026-09-18T09:00:00-04:00"
+ },
+ "mode": "point-in-time",
+ "as_of": "2026-09-17T20:50:00-04:00",
+ "generated": "2026-10-30T04:05:37-04:00",
+ "events": [],
+ "macro": {
+  "NQ=F": {
+   "last": 29668.25,
+   "chg_pct": 1.36,
+   "ts": "2026-09-17T20:50:00-04:00"
+  },
+  "ES=F": {
+   "last": 7699.5,
+   "chg_pct": 0.99,
+   "ts": "2026-09-17T20:50:00-04:00"
+  },
+  "ZN=F": {
+   "last": 106.2344,
+   "chg_pct": 0.49,
+   "ts": "2026-09-17T20:50:00-04:00"
+  },
+  "ZT=F": {
+   "last": 102.0117,
+   "chg_pct": 0.12,
+   "ts": "2026-09-17T20:50:00-04:00"
+  },
+  "DX-Y.NYB": {
+   "last": 100.229,
+   "chg_pct": -0.03,
+   "ts": "2026-09-17T20:50:00-04:00"
+  },
+  "CL=F": {
+   "last": 101.03,
+   "chg_pct": -1.16,
+   "ts": "2026-09-17T20:50:00-04:00"
+  },
+  "HYG": {
+   "last": 78.72,
+   "chg_pct": 0.3,
+   "ts": "2026-09-17T19:50:00-04:00"
+  },
+  "BTC-USD": {
+   "last": 76348.7422,
+   "chg_pct": 0.19,
+   "ts": "2026-09-17T19:55:00-04:00"
+  },
+  "VXX": {
+   "last": 17.78,
+   "chg_pct": -3.58,
+   "ts": "2026-09-17T19:55:00-04:00"
+  },
+  "^N225": {
+   "last": 64098.3086,
+   "chg_pct": 0.38,
+   "ts": "2026-09-17T02:25:00-04:00"
+  },
+  "^GDAXI": {
+   "last": 25731.8008,
+   "chg_pct": 0.68,
+   "ts": "2026-09-17T11:25:00-04:00"
+  },
+  "^HSI": {
+   "last": 24604.2891,
+   "chg_pct": -0.44,
+   "ts": "2026-09-17T04:05:00-04:00"
+  },
+  "^VIX": {
+   "last": 15.44,
+   "chg_pct": -12.22,
+   "ts": "2026-09-17T16:10:00-04:00"
+  },
+  "^VIX3M": {
+   "last": 18.52,
+   "chg_pct": -5.8,
+   "ts": "2026-09-17T15:55:00-04:00"
+  },
+  "^VXN": {
+   "last": 20.08,
+   "chg_pct": -10.68,
+   "ts": "2026-09-17T15:55:00-04:00"
+  },
+  "^TNX": {
+   "last": 4.947,
+   "chg_pct": -1.18,
+   "ts": "2026-09-17T14:55:00-04:00"
+  },
+  "JPY=X": {
+   "last": 155.942,
+   "chg_pct": -0.13,
+   "ts": "2026-09-17T18:55:00-04:00"
+  },
+  "CNH=X": {
+   "last": 6.7032,
+   "chg_pct": -0.12,
+   "ts": "2026-09-17T18:55:00-04:00"
+  }
+ },
+ "markets": {
+  "NQ": {
+   "name": "Nasdaq-100 futures",
+   "bias": {
+    "bias": "Bullish",
+    "score": 0.236,
+    "raw_score": 0.236,
+    "dampened": [],
+    "held": false,
+    "own_score": 0.234,
+    "conviction": "High",
+    "ups": 8,
+    "downs": 4,
+    "total": 20,
+    "overall": "For: 10-year yield, VIX term structure, VIX today. Against: Real 10-year yield, Fed pressure (official data). ES agrees.",
+    "invalidation": "Futures reversing through the 8 PM CT price once Asia opens",
+    "macro_share": 100,
+    "conv_cuts": [
+     0.06,
+     0.15,
+     0.22
+    ],
+    "conv_basis": 15,
+    "regime": "calm"
+   },
+   "signals": [
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.25,
+     "text": "10Y futures +0.49% \u2248 -7.5 bp in yield (from 5.01%). Falling yields lift equity valuations.",
+     "group": "Macro"
+    },
+    {
+     "key": "fed",
+     "label": "2-year / Fed path",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "2Y futures +0.119% \u2248 -6.2 bp. The market is pricing in easier policy.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "DXY 100.23 (-0.03%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 101.03 (-1.2%). No energy shock.",
+     "group": "Macro"
+    },
+    {
+     "key": "credit",
+     "label": "Credit (HYG)",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "High-yield bonds +0.30%. Credit is bid. Equity rallies backed by credit tend to stick.",
+     "group": "Macro"
+    },
+    {
+     "key": "yen",
+     "label": "Yen (USD/JPY)",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.0,
+     "text": "USD/JPY 155.94 (-0.13%). The yen is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "yuan",
+     "label": "Chinese yuan (USD/CNH)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "USD/CNH 6.7032 (-0.12%). The yuan is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "term",
+     "label": "VIX term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX \u00f7 VIX3M at yesterday's close = 0.89. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "vixday",
+     "label": "VIX today",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX 15.44 (-12.2% on the day). Fear came out of the market today.",
+     "group": "Volatility"
+    },
+    {
+     "key": "fedpressure",
+     "label": "Fed pressure (official data)",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Unemployment rate 4.1% (in range); Initial jobless claims 196.0K (hot); Payrolls (3-mo avg change) 71.3K (cool); CPI y/y 3.7% (hot); Core CPI y/y 2.8% (hot); PPI m/m 0.4% (hot). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
+     "group": "Macro"
+    },
+    {
+     "key": "policygap",
+     "label": "Policy gap (2Y \u2212 Fed funds)",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "2-year yield minus Fed funds +111 bp, +31 bp over 5 sessions. The market is pricing a tighter Fed path. The 10Y minus 3M curve is +0.87%.",
+     "group": "Macro"
+    },
+    {
+     "key": "stress",
+     "label": "Financial stress",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "St. Louis Fed stress index -0.85 (below normal), -0.02 over 4 weeks. Stress is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "macroz",
+     "label": "Macro z-score (hawk + dove)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "Hawkish lens -1.0\u03c3 (bearish), dovish lens +0.0\u03c3 (neutral), together -0.5\u03c3. Biggest mover: Real 10Y yield (+3.0\u03c3 over 5 sessions).",
+     "group": "Macro"
+    },
+    {
+     "key": "auction",
+     "label": "Treasury auction",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.3,
+     "text": "10-year auction today: bid-to-cover 2.24 vs 2.54 average. Weak demand: the market struggled to absorb the supply, pressure on rates.",
+     "group": "Macro"
+    },
+    {
+     "key": "funding",
+     "label": "Funding stress",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.3,
+     "text": "Commercial paper minus T-bills -2 bp (-2.0\u03c3 vs the past year), its day-to-day swings +0.2\u03c3. Funding is calm and cheap, a supportive backdrop.",
+     "group": "Macro"
+    },
+    {
+     "key": "fomccycle",
+     "label": "FOMC cycle week",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Week 0 of the cycle from the Sep 16 Fed meeting. Even weeks are when stocks have earned their returns since 1994.",
+     "group": "Macro"
+    },
+    {
+     "key": "realyield",
+     "label": "Real 10-year yield",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.0,
+     "text": "10-year TIPS yield 2.68%, +22 bp over the last 5 sessions. Rising real rates compress long-duration valuations, tech hardest.",
+     "group": "Macro"
+    },
+    {
+     "key": "hyoas",
+     "label": "High-yield spreads",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "High-yield spread 2.70%, -1 bp over 5 sessions. Credit spreads are steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "nfci",
+     "label": "Financial conditions",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "Chicago Fed NFCI -0.56 (looser than average), -0.01 over 4 weeks. Conditions are steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "liquidity",
+     "label": "Fed net liquidity",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "Fed balance sheet minus the Treasury account and reverse repo: $5.86T, +62B over 4 weeks. More dollars in the system tends to lift risk assets.",
+     "group": "Macro"
+    }
+   ],
+   "changed": {
+    "prev_date": "2026-09-16",
+    "prev_bias": "Bearish",
+    "prev_score": -0.088,
+    "delta": 0.324
+   },
+   "expected_range": {
+    "move": 420.13,
+    "low": 29248.12,
+    "high": 30088.38
+   },
+   "levels": {
+    "price": 29668.25
+   },
+   "dealer": null,
+   "flow": null,
+   "profile": [],
+   "earnings": [],
+   "scorecard": null,
+   "outcome": {
+    "open": 29659.5,
+    "noon": 29772.25,
+    "close": 29772.25,
+    "move": 112.75,
+    "start": "2026-09-17T21:00:00-04:00",
+    "end": "2026-09-18T09:00:00-04:00",
+    "result": "hit"
+   }
+  },
+  "ES": {
+   "name": "S&P 500 futures",
+   "bias": {
+    "bias": "Bullish",
+    "score": 0.238,
+    "raw_score": 0.238,
+    "dampened": [],
+    "held": false,
+    "own_score": 0.239,
+    "conviction": "High",
+    "ups": 8,
+    "downs": 4,
+    "total": 20,
+    "overall": "For: VIX term structure, VIX today, 10-year yield. Against: Fed pressure (official data), Policy gap (2Y \u2212 Fed funds). NQ agrees.",
+    "invalidation": "Futures reversing through the 8 PM CT price once Asia opens",
+    "macro_share": 100,
+    "conv_cuts": [
+     0.06,
+     0.15,
+     0.22
+    ],
+    "conv_basis": 15,
+    "regime": "calm"
+   },
+   "signals": [
+    {
+     "key": "rates",
+     "label": "10-year yield",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.9375,
+     "text": "10Y futures +0.49% \u2248 -7.5 bp in yield (from 5.01%). Falling yields lift equity valuations.",
+     "group": "Macro"
+    },
+    {
+     "key": "fed",
+     "label": "2-year / Fed path",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "2Y futures +0.119% \u2248 -6.2 bp. The market is pricing in easier policy.",
+     "group": "Macro"
+    },
+    {
+     "key": "dollar",
+     "label": "US dollar",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "DXY 100.23 (-0.03%). Flat.",
+     "group": "Macro"
+    },
+    {
+     "key": "oil",
+     "label": "Crude oil",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "WTI 101.03 (-1.2%). No energy shock.",
+     "group": "Macro"
+    },
+    {
+     "key": "credit",
+     "label": "Credit (HYG)",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "High-yield bonds +0.30%. Credit is bid. Equity rallies backed by credit tend to stick.",
+     "group": "Macro"
+    },
+    {
+     "key": "yen",
+     "label": "Yen (USD/JPY)",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.0,
+     "text": "USD/JPY 155.94 (-0.13%). The yen is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "yuan",
+     "label": "Chinese yuan (USD/CNH)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "USD/CNH 6.7032 (-0.12%). The yuan is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "term",
+     "label": "VIX term structure",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX \u00f7 VIX3M at yesterday's close = 0.89. Healthy contango, the backdrop where dips get bought.",
+     "group": "Volatility"
+    },
+    {
+     "key": "vixday",
+     "label": "VIX today",
+     "score": 1,
+     "raw": 1,
+     "weight": 1.0,
+     "text": "VIX 15.44 (-12.2% on the day). Fear came out of the market today.",
+     "group": "Volatility"
+    },
+    {
+     "key": "fedpressure",
+     "label": "Fed pressure (official data)",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "Unemployment rate 4.1% (in range); Initial jobless claims 196.0K (hot); Payrolls (3-mo avg change) 71.3K (cool); CPI y/y 3.7% (hot); Core CPI y/y 2.8% (hot); PPI m/m 0.4% (hot). Most of the data runs hot, which keeps the Fed leaning tight: a headwind.",
+     "group": "Macro"
+    },
+    {
+     "key": "policygap",
+     "label": "Policy gap (2Y \u2212 Fed funds)",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "2-year yield minus Fed funds +111 bp, +31 bp over 5 sessions. The market is pricing a tighter Fed path. The 10Y minus 3M curve is +0.87%.",
+     "group": "Macro"
+    },
+    {
+     "key": "stress",
+     "label": "Financial stress",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "St. Louis Fed stress index -0.85 (below normal), -0.02 over 4 weeks. Stress is steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "macroz",
+     "label": "Macro z-score (hawk + dove)",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.5,
+     "text": "Hawkish lens -1.0\u03c3 (bearish), dovish lens +0.0\u03c3 (neutral), together -0.5\u03c3. Biggest mover: Real 10Y yield (+3.0\u03c3 over 5 sessions).",
+     "group": "Macro"
+    },
+    {
+     "key": "auction",
+     "label": "Treasury auction",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.3,
+     "text": "10-year auction today: bid-to-cover 2.24 vs 2.54 average. Weak demand: the market struggled to absorb the supply, pressure on rates.",
+     "group": "Macro"
+    },
+    {
+     "key": "funding",
+     "label": "Funding stress",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.3,
+     "text": "Commercial paper minus T-bills -2 bp (-2.0\u03c3 vs the past year), its day-to-day swings +0.2\u03c3. Funding is calm and cheap, a supportive backdrop.",
+     "group": "Macro"
+    },
+    {
+     "key": "fomccycle",
+     "label": "FOMC cycle week",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.4,
+     "text": "Week 0 of the cycle from the Sep 16 Fed meeting. Even weeks are when stocks have earned their returns since 1994.",
+     "group": "Macro"
+    },
+    {
+     "key": "realyield",
+     "label": "Real 10-year yield",
+     "score": -1,
+     "raw": -1,
+     "weight": 0.75,
+     "text": "10-year TIPS yield 2.68%, +22 bp over the last 5 sessions. Rising real rates compress long-duration valuations, tech hardest.",
+     "group": "Macro"
+    },
+    {
+     "key": "hyoas",
+     "label": "High-yield spreads",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "High-yield spread 2.70%, -1 bp over 5 sessions. Credit spreads are steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "nfci",
+     "label": "Financial conditions",
+     "score": 0,
+     "raw": 0,
+     "weight": 0.75,
+     "text": "Chicago Fed NFCI -0.56 (looser than average), -0.01 over 4 weeks. Conditions are steady.",
+     "group": "Macro"
+    },
+    {
+     "key": "liquidity",
+     "label": "Fed net liquidity",
+     "score": 1,
+     "raw": 1,
+     "weight": 0.75,
+     "text": "Fed balance sheet minus the Treasury account and reverse repo: $5.86T, +62B over 4 weeks. More dollars in the system tends to lift risk assets.",
+     "group": "Macro"
+    }
+   ],
+   "changed": {
+    "prev_date": "2026-09-16",
+    "prev_bias": "Bearish",
+    "prev_score": -0.084,
+    "delta": 0.322
+   },
+   "expected_range": {
+    "move": 85.32,
+    "low": 7614.18,
+    "high": 7784.82
+   },
+   "levels": {
+    "price": 7699.5
+   },
+   "dealer": null,
+   "flow": null,
+   "profile": [],
+   "earnings": [],
+   "scorecard": null,
+   "outcome": {
+    "open": 7698.5,
+    "noon": 7700.25,
+    "close": 7700.25,
+    "move": 1.75,
+    "start": "2026-09-17T21:00:00-04:00",
+    "end": "2026-09-18T09:00:00-04:00",
+    "result": "hit"
+   }
+  }
+ },
+ "divergence": null,
+ "notes": [
+  "NQ: dealer positioning skipped, option snapshot is from Oct 30, after this session. The read is macro only.",
+  "VIX futures roll skipped (ValueError)",
+  "ES: dealer positioning skipped, option snapshot is from Oct 30, after this session. The read is macro only.",
+  "VIX futures roll skipped (ValueError)"
+ ],
+ "sources": {
+  "Yahoo prices": {
+   "ok": true,
+   "fetched": "2026-10-30T04:05:51-04:00",
+   "data_time": "2026-09-17T20:50:00-04:00",
+   "detail": "18 of 18 tickers \u00b7 5m bars, cut at 8:50 PM ET"
+  },
+  "Economic calendar": {
+   "ok": true,
+   "fetched": "2026-10-30T04:05:51-04:00",
+   "data_time": null,
+   "detail": ""
+  },
+  "Earnings Sep 17": {
+   "ok": true,
+   "fetched": "2026-10-30T04:05:53-04:00",
+   "data_time": null,
+   "detail": "6 companies"
+  },
+  "Earnings Sep 18": {
+   "ok": true,
+   "fetched": "2026-10-30T04:05:56-04:00",
+   "data_time": null,
+   "detail": "2 companies"
+  },
+  "CBOE NDX options": {
+   "ok": true,
+   "fetched": "2026-10-30T04:05:56-04:00",
+   "data_time": "2026-10-30T04:01:54-04:00",
+   "detail": "16,512 contracts"
+  },
+  "CBOE SPX options": {
+   "ok": true,
+   "fetched": "2026-10-30T04:05:58-04:00",
+   "data_time": "2026-10-30T04:05:06-04:00",
+   "detail": "29,232 contracts"
+  }
+ }
+}

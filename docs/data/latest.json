@@ -893,58 +893,58 @@
       }
      ],
      "scorecard": {
-      "hits": 0,
-      "misses": 2,
-      "pct": 0,
+      "hits": 19,
+      "misses": 19,
+      "pct": 50,
       "by_bias": {
        "Bullish": {
-        "hits": 0,
-        "misses": 2,
-        "pct": 0
+        "hits": 10,
+        "misses": 11,
+        "pct": 48
        },
        "Bearish": {
-        "hits": 0,
-        "misses": 0,
-        "pct": null
+        "hits": 9,
+        "misses": 8,
+        "pct": 53
        }
       },
       "by_conviction": {
        "Very low": {
-        "hits": 0,
-        "misses": 1,
-        "pct": 0
+        "hits": 8,
+        "misses": 9,
+        "pct": 47
        },
        "Low": {
-        "hits": 0,
-        "misses": 1,
-        "pct": 0
+        "hits": 4,
+        "misses": 8,
+        "pct": 33
        },
        "Medium": {
-        "hits": 0,
+        "hits": 3,
         "misses": 0,
-        "pct": null
+        "pct": 100
        },
        "High": {
-        "hits": 0,
-        "misses": 0,
-        "pct": null
+        "hits": 4,
+        "misses": 2,
+        "pct": 67
        }
       },
       "streak": {
-       "n": 2,
+       "n": 3,
        "kind": "miss"
       },
       "signals": [
        {
-        "key": "walls",
-        "label": "Wall range",
-        "n": 1,
-        "right": 1,
+        "key": "fedwatch",
+        "label": "FedWatch (fed funds futures)",
+        "n": 2,
+        "right": 2,
         "pct": 100
        },
        {
-        "key": "fedpressure",
-        "label": "Fed pressure (official data)",
+        "key": "walls",
+        "label": "Wall range",
         "n": 1,
         "right": 1,
         "pct": 100
@@ -957,6 +957,132 @@
         "pct": 100
        },
        {
+        "key": "fed",
+        "label": "2-year / Fed path",
+        "n": 15,
+        "right": 12,
+        "pct": 80
+       },
+       {
+        "key": "rates",
+        "label": "10-year yield",
+        "n": 10,
+        "right": 8,
+        "pct": 80
+       },
+       {
+        "key": "nfci",
+        "label": "Financial conditions",
+        "n": 5,
+        "right": 4,
+        "pct": 80
+       },
+       {
+        "key": "vrp",
+        "label": "Volatility risk premium",
+        "n": 4,
+        "right": 3,
+        "pct": 75
+       },
+       {
+        "key": "stress",
+        "label": "Financial stress",
+        "n": 7,
+        "right": 5,
+        "pct": 71
+       },
+       {
+        "key": "fedleak",
+        "label": "Pre-Fed positioning",
+        "n": 3,
+        "right": 2,
+        "pct": 67
+       },
+       {
+        "key": "realyield",
+        "label": "Real 10-year yield",
+        "n": 15,
+        "right": 9,
+        "pct": 60
+       },
+       {
+        "key": "copgold",
+        "label": "Copper vs gold",
+        "n": 5,
+        "right": 3,
+        "pct": 60
+       },
+       {
+        "key": "policygap",
+        "label": "Policy gap (2Y \u2212 Fed funds)",
+        "n": 19,
+        "right": 11,
+        "pct": 58
+       },
+       {
+        "key": "dollar",
+        "label": "US dollar",
+        "n": 12,
+        "right": 7,
+        "pct": 58
+       },
+       {
+        "key": "credit",
+        "label": "Credit (HYG)",
+        "n": 14,
+        "right": 8,
+        "pct": 57
+       },
+       {
+        "key": "fedpressure",
+        "label": "Fed pressure (official data)",
+        "n": 32,
+        "right": 17,
+        "pct": 53
+       },
+       {
+        "key": "funding",
+        "label": "Funding stress",
+        "n": 29,
+        "right": 15,
+        "pct": 52
+       },
+       {
+        "key": "global",
+        "label": "Global equities",
+        "n": 26,
+        "right": 13,
+        "pct": 50
+       },
+       {
+        "key": "macroz",
+        "label": "Macro z-score (hawk + dove)",
+        "n": 12,
+        "right": 6,
+        "pct": 50
+       },
+       {
+        "key": "auction",
+        "label": "Treasury auction",
+        "n": 10,
+        "right": 5,
+        "pct": 50
+       },
+       {
+        "key": "yen",
+        "label": "Yen (USD/JPY)",
+        "n": 4,
+        "right": 2,
+        "pct": 50
+       },
+       {
+        "key": "vxroll",
+        "label": "VIX futures roll",
+        "n": 2,
+        "right": 1,
+        "pct": 50
+       },
+       {
         "key": "flip",
         "label": "Gamma flip",
         "n": 2,
@@ -964,9 +1090,51 @@
         "pct": 50
        },
        {
-        "key": "global",
-        "label": "Global equities",
-        "n": 2,
+        "key": "term",
+        "label": "VIX term structure",
+        "n": 29,
+        "right": 14,
+        "pct": 48
+       },
+       {
+        "key": "fomccycle",
+        "label": "FOMC cycle week",
+        "n": 21,
+        "right": 10,
+        "pct": 48
+       },
+       {
+        "key": "liquidity",
+        "label": "Fed net liquidity",
+        "n": 13,
+        "right": 6,
+        "pct": 46
+       },
+       {
+        "key": "hyoas",
+        "label": "High-yield spreads",
+        "n": 11,
+        "right": 4,
+        "pct": 36
+       },
+       {
+        "key": "move",
+        "label": "Bond volatility (MOVE)",
+        "n": 6,
+        "right": 2,
+        "pct": 33
+       },
+       {
+        "key": "oil",
+        "label": "Crude oil",
+        "n": 4,
+        "right": 1,
+        "pct": 25
+       },
+       {
+        "key": "volpre",
+        "label": "Pre-market volatility",
+        "n": 5,
         "right": 0,
         "pct": 0
        },
@@ -983,16 +1151,297 @@
         "n": 1,
         "right": 0,
         "pct": 0
-       },
-       {
-        "key": "term",
-        "label": "VIX term structure",
-        "n": 1,
-        "right": 0,
-        "pct": 0
        }
       ],
       "recent": [
+       {
+        "date": "2026-09-08",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.063,
+        "move": -161.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-09",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.01,
+        "move": 123.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-10",
+        "bias": "Bearish",
+        "conviction": "High",
+        "score": -0.288,
+        "move": 60.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-11",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.082,
+        "move": -25.75,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-14",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.119,
+        "move": 118.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-15",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.052,
+        "move": -23.5,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-16",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.001,
+        "move": 48.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-17",
+        "bias": "Bullish",
+        "conviction": "High",
+        "score": 0.247,
+        "move": -42.75,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-18",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.052,
+        "move": -86.25,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-21",
+        "bias": "Bullish",
+        "conviction": "High",
+        "score": 0.371,
+        "move": 194.5,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-22",
+        "bias": "Bullish",
+        "conviction": "Medium",
+        "score": 0.212,
+        "move": 163.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-23",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.021,
+        "move": -175.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-24",
+        "bias": "Bullish",
+        "conviction": "Medium",
+        "score": 0.194,
+        "move": 87.25,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-25",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.042,
+        "move": -16.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-28",
+        "bias": "Bearish",
+        "conviction": "High",
+        "score": -0.285,
+        "move": -122.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-29",
+        "bias": "Bearish",
+        "conviction": "High",
+        "score": -0.225,
+        "move": -79.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-30",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.079,
+        "move": 164.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-01",
+        "bias": "Bearish",
+        "conviction": "Medium",
+        "score": -0.184,
+        "move": -175.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-02",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.02,
+        "move": 101.5,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-05",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.029,
+        "move": 93.25,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-06",
+        "bias": "Bullish",
+        "conviction": "High",
+        "score": 0.242,
+        "move": 36.5,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-07",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.217,
+        "move": -29.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-08",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.134,
+        "move": -4.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-09",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.028,
+        "move": -142.5,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-12",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.017,
+        "move": -98.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-13",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.024,
+        "move": 184.75,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-14",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.179,
+        "move": -44.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-15",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.118,
+        "move": 44.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-16",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.111,
+        "move": -159.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-19",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.006,
+        "move": -97.75,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-20",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.098,
+        "move": 55.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-21",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.047,
+        "move": 10.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-22",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.051,
+        "move": 43.25,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-23",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.023,
+        "move": 139.75,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-26",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.019,
+        "move": 8.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-27",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.125,
+        "move": -16.5,
+        "result": "miss"
+       },
        {
         "date": "2026-10-28",
         "bias": "Bullish",
@@ -1674,53 +2123,53 @@
       }
      ],
      "scorecard": {
-      "hits": 0,
-      "misses": 2,
-      "pct": 0,
+      "hits": 19,
+      "misses": 19,
+      "pct": 50,
       "by_bias": {
        "Bullish": {
-        "hits": 0,
-        "misses": 2,
-        "pct": 0
+        "hits": 10,
+        "misses": 12,
+        "pct": 45
        },
        "Bearish": {
-        "hits": 0,
-        "misses": 0,
-        "pct": null
+        "hits": 9,
+        "misses": 7,
+        "pct": 56
        }
       },
       "by_conviction": {
        "Very low": {
-        "hits": 0,
-        "misses": 0,
-        "pct": null
+        "hits": 7,
+        "misses": 9,
+        "pct": 44
        },
        "Low": {
-        "hits": 0,
-        "misses": 2,
-        "pct": 0
+        "hits": 4,
+        "misses": 9,
+        "pct": 31
        },
        "Medium": {
-        "hits": 0,
+        "hits": 3,
         "misses": 0,
-        "pct": null
+        "pct": 100
        },
        "High": {
-        "hits": 0,
-        "misses": 0,
-        "pct": null
+        "hits": 5,
+        "misses": 1,
+        "pct": 83
        }
       },
       "streak": {
-       "n": 2,
+       "n": 3,
        "kind": "miss"
       },
       "signals": [
        {
-        "key": "fedpressure",
-        "label": "Fed pressure (official data)",
-        "n": 1,
-        "right": 1,
+        "key": "fedwatch",
+        "label": "FedWatch (fed funds futures)",
+        "n": 2,
+        "right": 2,
         "pct": 100
        },
        {
@@ -1729,6 +2178,118 @@
         "n": 1,
         "right": 1,
         "pct": 100
+       },
+       {
+        "key": "rates",
+        "label": "10-year yield",
+        "n": 10,
+        "right": 9,
+        "pct": 90
+       },
+       {
+        "key": "fed",
+        "label": "2-year / Fed path",
+        "n": 15,
+        "right": 13,
+        "pct": 87
+       },
+       {
+        "key": "auction",
+        "label": "Treasury auction",
+        "n": 10,
+        "right": 8,
+        "pct": 80
+       },
+       {
+        "key": "copgold",
+        "label": "Copper vs gold",
+        "n": 5,
+        "right": 4,
+        "pct": 80
+       },
+       {
+        "key": "liquidity",
+        "label": "Fed net liquidity",
+        "n": 13,
+        "right": 9,
+        "pct": 69
+       },
+       {
+        "key": "dollar",
+        "label": "US dollar",
+        "n": 12,
+        "right": 8,
+        "pct": 67
+       },
+       {
+        "key": "fedleak",
+        "label": "Pre-Fed positioning",
+        "n": 3,
+        "right": 2,
+        "pct": 67
+       },
+       {
+        "key": "nfci",
+        "label": "Financial conditions",
+        "n": 5,
+        "right": 3,
+        "pct": 60
+       },
+       {
+        "key": "policygap",
+        "label": "Policy gap (2Y \u2212 Fed funds)",
+        "n": 19,
+        "right": 11,
+        "pct": 58
+       },
+       {
+        "key": "credit",
+        "label": "Credit (HYG)",
+        "n": 14,
+        "right": 8,
+        "pct": 57
+       },
+       {
+        "key": "fedpressure",
+        "label": "Fed pressure (official data)",
+        "n": 32,
+        "right": 17,
+        "pct": 53
+       },
+       {
+        "key": "realyield",
+        "label": "Real 10-year yield",
+        "n": 15,
+        "right": 8,
+        "pct": 53
+       },
+       {
+        "key": "macroz",
+        "label": "Macro z-score (hawk + dove)",
+        "n": 12,
+        "right": 6,
+        "pct": 50
+       },
+       {
+        "key": "vrp",
+        "label": "Volatility risk premium",
+        "n": 10,
+        "right": 5,
+        "pct": 50
+       },
+       {
+        "key": "yen",
+        "label": "Yen (USD/JPY)",
+        "n": 4,
+        "right": 2,
+        "pct": 50
+       },
+       {
+        "key": "vxroll",
+        "label": "VIX futures roll",
+        "n": 2,
+        "right": 1,
+        "pct": 50
        },
        {
         "key": "flip",
@@ -1740,9 +2301,65 @@
        {
         "key": "global",
         "label": "Global equities",
-        "n": 2,
-        "right": 0,
-        "pct": 0
+        "n": 26,
+        "right": 12,
+        "pct": 46
+       },
+       {
+        "key": "term",
+        "label": "VIX term structure",
+        "n": 29,
+        "right": 13,
+        "pct": 45
+       },
+       {
+        "key": "funding",
+        "label": "Funding stress",
+        "n": 29,
+        "right": 13,
+        "pct": 45
+       },
+       {
+        "key": "hyoas",
+        "label": "High-yield spreads",
+        "n": 11,
+        "right": 5,
+        "pct": 45
+       },
+       {
+        "key": "fomccycle",
+        "label": "FOMC cycle week",
+        "n": 21,
+        "right": 9,
+        "pct": 43
+       },
+       {
+        "key": "stress",
+        "label": "Financial stress",
+        "n": 7,
+        "right": 3,
+        "pct": 43
+       },
+       {
+        "key": "move",
+        "label": "Bond volatility (MOVE)",
+        "n": 6,
+        "right": 2,
+        "pct": 33
+       },
+       {
+        "key": "oil",
+        "label": "Crude oil",
+        "n": 4,
+        "right": 1,
+        "pct": 25
+       },
+       {
+        "key": "volpre",
+        "label": "Pre-market volatility",
+        "n": 5,
+        "right": 1,
+        "pct": 20
        },
        {
         "key": "walls",
@@ -1757,16 +2374,297 @@
         "n": 2,
         "right": 0,
         "pct": 0
-       },
-       {
-        "key": "term",
-        "label": "VIX term structure",
-        "n": 1,
-        "right": 0,
-        "pct": 0
        }
       ],
       "recent": [
+       {
+        "date": "2026-09-08",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.063,
+        "move": -21.25,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-09",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.01,
+        "move": -2.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-10",
+        "bias": "Bearish",
+        "conviction": "High",
+        "score": -0.285,
+        "move": -7.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-11",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.083,
+        "move": 7.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-14",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.115,
+        "move": 14.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-15",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.047,
+        "move": -13.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-16",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.004,
+        "move": 2.25,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-17",
+        "bias": "Bullish",
+        "conviction": "High",
+        "score": 0.248,
+        "move": -26.75,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-18",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.059,
+        "move": -23.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-21",
+        "bias": "Bullish",
+        "conviction": "High",
+        "score": 0.369,
+        "move": 11.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-22",
+        "bias": "Bullish",
+        "conviction": "Medium",
+        "score": 0.214,
+        "move": 0.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-23",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.021,
+        "move": -24.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-09-24",
+        "bias": "Bullish",
+        "conviction": "Medium",
+        "score": 0.197,
+        "move": 19.5,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-25",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.038,
+        "move": -11.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-28",
+        "bias": "Bearish",
+        "conviction": "High",
+        "score": -0.277,
+        "move": -6.5,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-29",
+        "bias": "Bearish",
+        "conviction": "High",
+        "score": -0.222,
+        "move": -19.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-09-30",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.075,
+        "move": 22.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-01",
+        "bias": "Bearish",
+        "conviction": "Medium",
+        "score": -0.181,
+        "move": -44.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-02",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.02,
+        "move": 10.0,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-05",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.03,
+        "move": 12.25,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-06",
+        "bias": "Bullish",
+        "conviction": "High",
+        "score": 0.245,
+        "move": 18.25,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-07",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.214,
+        "move": -12.25,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-08",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.137,
+        "move": 6.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-09",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.029,
+        "move": -6.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-12",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.016,
+        "move": -3.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-13",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.024,
+        "move": 2.25,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-14",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.167,
+        "move": -15.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-15",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.12,
+        "move": 6.75,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-16",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.12,
+        "move": -17.75,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-19",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.009,
+        "move": -9.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-20",
+        "bias": "Bearish",
+        "conviction": "Low",
+        "score": -0.095,
+        "move": 20.5,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-21",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.05,
+        "move": -13.0,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-22",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.045,
+        "move": 10.25,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-23",
+        "bias": "Bearish",
+        "conviction": "Very low",
+        "score": -0.028,
+        "move": 7.25,
+        "result": "miss"
+       },
+       {
+        "date": "2026-10-26",
+        "bias": "Bullish",
+        "conviction": "Very low",
+        "score": 0.019,
+        "move": 14.25,
+        "result": "hit"
+       },
+       {
+        "date": "2026-10-27",
+        "bias": "Bullish",
+        "conviction": "Low",
+        "score": 0.122,
+        "move": -15.75,
+        "result": "miss"
+       },
        {
         "date": "2026-10-28",
         "bias": "Bullish",
@@ -4616,41 +5514,41 @@
      }
     ],
     "scorecard": {
-     "hits": 0,
-     "misses": 1,
-     "pct": 0,
+     "hits": 10,
+     "misses": 20,
+     "pct": 33,
      "by_bias": {
       "Bullish": {
-       "hits": 0,
-       "misses": 1,
-       "pct": 0
+       "hits": 5,
+       "misses": 12,
+       "pct": 29
       },
       "Bearish": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 5,
+       "misses": 8,
+       "pct": 38
       }
      },
      "by_conviction": {
       "Very low": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 2,
+       "misses": 5,
+       "pct": 29
       },
       "Low": {
-       "hits": 0,
-       "misses": 1,
-       "pct": 0
+       "hits": 5,
+       "misses": 7,
+       "pct": 42
       },
       "Medium": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 2,
+       "misses": 4,
+       "pct": 33
       },
       "High": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 1,
+       "misses": 4,
+       "pct": 20
       }
      },
      "streak": {
@@ -4659,28 +5557,414 @@
      },
      "signals": [
       {
-       "key": "fedpressure",
-       "label": "Fed pressure (official data)",
-       "n": 1,
-       "right": 1,
+       "key": "fedleak",
+       "label": "Pre-Fed positioning",
+       "n": 2,
+       "right": 2,
        "pct": 100
       },
       {
-       "key": "fed",
-       "label": "2-year / Fed path",
-       "n": 1,
-       "right": 0,
-       "pct": 0
+       "key": "copgold",
+       "label": "Copper vs gold",
+       "n": 4,
+       "right": 3,
+       "pct": 75
+      },
+      {
+       "key": "nfci",
+       "label": "Financial conditions",
+       "n": 4,
+       "right": 3,
+       "pct": 75
+      },
+      {
+       "key": "yen",
+       "label": "Yen (USD/JPY)",
+       "n": 3,
+       "right": 2,
+       "pct": 67
+      },
+      {
+       "key": "vrp",
+       "label": "Volatility risk premium",
+       "n": 3,
+       "right": 2,
+       "pct": 67
+      },
+      {
+       "key": "fomccycle",
+       "label": "FOMC cycle week",
+       "n": 17,
+       "right": 10,
+       "pct": 59
+      },
+      {
+       "key": "liquidity",
+       "label": "Fed net liquidity",
+       "n": 11,
+       "right": 6,
+       "pct": 55
+      },
+      {
+       "key": "fedpressure",
+       "label": "Fed pressure (official data)",
+       "n": 26,
+       "right": 14,
+       "pct": 54
       },
       {
        "key": "vixday",
        "label": "VIX today",
+       "n": 15,
+       "right": 8,
+       "pct": 53
+      },
+      {
+       "key": "stress",
+       "label": "Financial stress",
+       "n": 6,
+       "right": 3,
+       "pct": 50
+      },
+      {
+       "key": "funding",
+       "label": "Funding stress",
+       "n": 24,
+       "right": 11,
+       "pct": 46
+      },
+      {
+       "key": "hyoas",
+       "label": "High-yield spreads",
+       "n": 9,
+       "right": 4,
+       "pct": 44
+      },
+      {
+       "key": "term",
+       "label": "VIX term structure",
+       "n": 23,
+       "right": 10,
+       "pct": 43
+      },
+      {
+       "key": "rates",
+       "label": "10-year yield",
+       "n": 14,
+       "right": 6,
+       "pct": 43
+      },
+      {
+       "key": "oil",
+       "label": "Crude oil",
+       "n": 5,
+       "right": 2,
+       "pct": 40
+      },
+      {
+       "key": "credit",
+       "label": "Credit (HYG)",
+       "n": 18,
+       "right": 7,
+       "pct": 39
+      },
+      {
+       "key": "fed",
+       "label": "2-year / Fed path",
+       "n": 13,
+       "right": 5,
+       "pct": 38
+      },
+      {
+       "key": "dollar",
+       "label": "US dollar",
+       "n": 11,
+       "right": 4,
+       "pct": 36
+      },
+      {
+       "key": "policygap",
+       "label": "Policy gap (2Y \u2212 Fed funds)",
+       "n": 14,
+       "right": 4,
+       "pct": 29
+      },
+      {
+       "key": "macroz",
+       "label": "Macro z-score (hawk + dove)",
+       "n": 9,
+       "right": 2,
+       "pct": 22
+      },
+      {
+       "key": "realyield",
+       "label": "Real 10-year yield",
+       "n": 12,
+       "right": 2,
+       "pct": 17
+      },
+      {
+       "key": "auction",
+       "label": "Treasury auction",
+       "n": 6,
+       "right": 1,
+       "pct": 17
+      },
+      {
+       "key": "move",
+       "label": "Bond volatility (MOVE)",
+       "n": 6,
+       "right": 1,
+       "pct": 17
+      },
+      {
+       "key": "vxroll",
+       "label": "VIX futures roll",
+       "n": 2,
+       "right": 0,
+       "pct": 0
+      },
+      {
+       "key": "fedwatch",
+       "label": "FedWatch (fed funds futures)",
        "n": 1,
        "right": 0,
        "pct": 0
       }
      ],
      "recent": [
+      {
+       "date": "2026-09-08",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.046,
+       "move": -160.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-09",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.167,
+       "move": -322.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-10",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.254,
+       "move": 304.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-14",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.104,
+       "move": -40.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-15",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.141,
+       "move": 106.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-16",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.088,
+       "move": 278.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-17",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.236,
+       "move": 112.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-21",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.281,
+       "move": -117.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-22",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.218,
+       "move": -70.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-23",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.096,
+       "move": -244.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-24",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.012,
+       "move": 170.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-28",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.334,
+       "move": 125.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-29",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.164,
+       "move": 87.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-30",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.29,
+       "move": 29.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-01",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.163,
+       "move": 380.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-05",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.074,
+       "move": 120.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-06",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.131,
+       "move": -233.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-07",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.056,
+       "move": -183.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-08",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.104,
+       "move": 201.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-12",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.069,
+       "move": -77.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-13",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.0,
+       "move": -233.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-14",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.101,
+       "move": -163.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-15",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.243,
+       "move": -2.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-19",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.085,
+       "move": -4.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-20",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.037,
+       "move": -2.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-21",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.072,
+       "move": -288.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-22",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.123,
+       "move": -90.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-26",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.105,
+       "move": 62.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-27",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.19,
+       "move": 64.5,
+       "result": "hit"
+      },
       {
        "date": "2026-10-28",
        "bias": "Bullish",
@@ -4917,71 +6201,457 @@
      }
     ],
     "scorecard": {
-     "hits": 1,
-     "misses": 0,
-     "pct": 100,
+     "hits": 14,
+     "misses": 16,
+     "pct": 47,
      "by_bias": {
       "Bullish": {
-       "hits": 1,
-       "misses": 0,
-       "pct": 100
+       "hits": 9,
+       "misses": 8,
+       "pct": 53
       },
       "Bearish": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 5,
+       "misses": 8,
+       "pct": 38
       }
      },
      "by_conviction": {
       "Very low": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 2,
+       "misses": 4,
+       "pct": 33
       },
       "Low": {
-       "hits": 1,
-       "misses": 0,
-       "pct": 100
+       "hits": 6,
+       "misses": 7,
+       "pct": 46
       },
       "Medium": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 3,
+       "misses": 2,
+       "pct": 60
       },
       "High": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 3,
+       "misses": 3,
+       "pct": 50
       }
      },
      "streak": {
-      "n": 1,
+      "n": 3,
       "kind": "hit"
      },
      "signals": [
       {
-       "key": "fed",
-       "label": "2-year / Fed path",
-       "n": 1,
-       "right": 1,
+       "key": "fedleak",
+       "label": "Pre-Fed positioning",
+       "n": 2,
+       "right": 2,
        "pct": 100
+      },
+      {
+       "key": "copgold",
+       "label": "Copper vs gold",
+       "n": 4,
+       "right": 3,
+       "pct": 75
       },
       {
        "key": "vixday",
        "label": "VIX today",
-       "n": 1,
-       "right": 1,
-       "pct": 100
+       "n": 15,
+       "right": 10,
+       "pct": 67
+      },
+      {
+       "key": "yen",
+       "label": "Yen (USD/JPY)",
+       "n": 3,
+       "right": 2,
+       "pct": 67
+      },
+      {
+       "key": "fomccycle",
+       "label": "FOMC cycle week",
+       "n": 17,
+       "right": 11,
+       "pct": 65
+      },
+      {
+       "key": "rates",
+       "label": "10-year yield",
+       "n": 14,
+       "right": 9,
+       "pct": 64
+      },
+      {
+       "key": "liquidity",
+       "label": "Fed net liquidity",
+       "n": 11,
+       "right": 7,
+       "pct": 64
+      },
+      {
+       "key": "credit",
+       "label": "Credit (HYG)",
+       "n": 18,
+       "right": 10,
+       "pct": 56
+      },
+      {
+       "key": "funding",
+       "label": "Funding stress",
+       "n": 24,
+       "right": 13,
+       "pct": 54
+      },
+      {
+       "key": "fed",
+       "label": "2-year / Fed path",
+       "n": 13,
+       "right": 7,
+       "pct": 54
+      },
+      {
+       "key": "term",
+       "label": "VIX term structure",
+       "n": 23,
+       "right": 12,
+       "pct": 52
+      },
+      {
+       "key": "vrp",
+       "label": "Volatility risk premium",
+       "n": 8,
+       "right": 4,
+       "pct": 50
+      },
+      {
+       "key": "nfci",
+       "label": "Financial conditions",
+       "n": 4,
+       "right": 2,
+       "pct": 50
+      },
+      {
+       "key": "policygap",
+       "label": "Policy gap (2Y \u2212 Fed funds)",
+       "n": 14,
+       "right": 6,
+       "pct": 43
+      },
+      {
+       "key": "oil",
+       "label": "Crude oil",
+       "n": 5,
+       "right": 2,
+       "pct": 40
       },
       {
        "key": "fedpressure",
        "label": "Fed pressure (official data)",
+       "n": 26,
+       "right": 10,
+       "pct": 38
+      },
+      {
+       "key": "dollar",
+       "label": "US dollar",
+       "n": 11,
+       "right": 4,
+       "pct": 36
+      },
+      {
+       "key": "realyield",
+       "label": "Real 10-year yield",
+       "n": 12,
+       "right": 4,
+       "pct": 33
+      },
+      {
+       "key": "macroz",
+       "label": "Macro z-score (hawk + dove)",
+       "n": 9,
+       "right": 3,
+       "pct": 33
+      },
+      {
+       "key": "hyoas",
+       "label": "High-yield spreads",
+       "n": 9,
+       "right": 3,
+       "pct": 33
+      },
+      {
+       "key": "stress",
+       "label": "Financial stress",
+       "n": 6,
+       "right": 2,
+       "pct": 33
+      },
+      {
+       "key": "move",
+       "label": "Bond volatility (MOVE)",
+       "n": 6,
+       "right": 2,
+       "pct": 33
+      },
+      {
+       "key": "auction",
+       "label": "Treasury auction",
+       "n": 6,
+       "right": 1,
+       "pct": 17
+      },
+      {
+       "key": "vxroll",
+       "label": "VIX futures roll",
+       "n": 2,
+       "right": 0,
+       "pct": 0
+      },
+      {
+       "key": "fedwatch",
+       "label": "FedWatch (fed funds futures)",
        "n": 1,
        "right": 0,
        "pct": 0
       }
      ],
      "recent": [
+      {
+       "date": "2026-09-08",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.047,
+       "move": -24.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-09",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.162,
+       "move": -40.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-10",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.251,
+       "move": 62.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-14",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.1,
+       "move": -7.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-15",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.137,
+       "move": 10.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-16",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.084,
+       "move": 54.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-17",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.238,
+       "move": 1.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-21",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.278,
+       "move": 5.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-22",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.221,
+       "move": -6.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-23",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.09,
+       "move": -28.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-24",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.019,
+       "move": 32.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-28",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.327,
+       "move": 15.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-29",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.161,
+       "move": 16.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-30",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.282,
+       "move": -5.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-01",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.166,
+       "move": 71.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-05",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.075,
+       "move": 24.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-06",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.132,
+       "move": -41.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-07",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.057,
+       "move": -25.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-08",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.099,
+       "move": 13.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-12",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.069,
+       "move": 4.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-13",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.0,
+       "move": -32.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-14",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.104,
+       "move": -2.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-15",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.246,
+       "move": 14.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-19",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.076,
+       "move": -3.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-20",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.041,
+       "move": 9.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-21",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.077,
+       "move": -39.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-22",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.123,
+       "move": -33.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-26",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.109,
+       "move": 14.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-27",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.189,
+       "move": 13.75,
+       "result": "hit"
+      },
       {
        "date": "2026-10-28",
        "bias": "Bullish",
@@ -5880,58 +7550,58 @@
      }
     ],
     "scorecard": {
-     "hits": 0,
-     "misses": 2,
-     "pct": 0,
+     "hits": 19,
+     "misses": 19,
+     "pct": 50,
      "by_bias": {
       "Bullish": {
-       "hits": 0,
-       "misses": 2,
-       "pct": 0
+       "hits": 10,
+       "misses": 11,
+       "pct": 48
       },
       "Bearish": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 9,
+       "misses": 8,
+       "pct": 53
       }
      },
      "by_conviction": {
       "Very low": {
-       "hits": 0,
-       "misses": 1,
-       "pct": 0
+       "hits": 8,
+       "misses": 9,
+       "pct": 47
       },
       "Low": {
-       "hits": 0,
-       "misses": 1,
-       "pct": 0
+       "hits": 4,
+       "misses": 8,
+       "pct": 33
       },
       "Medium": {
-       "hits": 0,
+       "hits": 3,
        "misses": 0,
-       "pct": null
+       "pct": 100
       },
       "High": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 4,
+       "misses": 2,
+       "pct": 67
       }
      },
      "streak": {
-      "n": 2,
+      "n": 3,
       "kind": "miss"
      },
      "signals": [
       {
-       "key": "walls",
-       "label": "Wall range",
-       "n": 1,
-       "right": 1,
+       "key": "fedwatch",
+       "label": "FedWatch (fed funds futures)",
+       "n": 2,
+       "right": 2,
        "pct": 100
       },
       {
-       "key": "fedpressure",
-       "label": "Fed pressure (official data)",
+       "key": "walls",
+       "label": "Wall range",
        "n": 1,
        "right": 1,
        "pct": 100
@@ -5944,6 +7614,132 @@
        "pct": 100
       },
       {
+       "key": "fed",
+       "label": "2-year / Fed path",
+       "n": 15,
+       "right": 12,
+       "pct": 80
+      },
+      {
+       "key": "rates",
+       "label": "10-year yield",
+       "n": 10,
+       "right": 8,
+       "pct": 80
+      },
+      {
+       "key": "nfci",
+       "label": "Financial conditions",
+       "n": 5,
+       "right": 4,
+       "pct": 80
+      },
+      {
+       "key": "vrp",
+       "label": "Volatility risk premium",
+       "n": 4,
+       "right": 3,
+       "pct": 75
+      },
+      {
+       "key": "stress",
+       "label": "Financial stress",
+       "n": 7,
+       "right": 5,
+       "pct": 71
+      },
+      {
+       "key": "fedleak",
+       "label": "Pre-Fed positioning",
+       "n": 3,
+       "right": 2,
+       "pct": 67
+      },
+      {
+       "key": "realyield",
+       "label": "Real 10-year yield",
+       "n": 15,
+       "right": 9,
+       "pct": 60
+      },
+      {
+       "key": "copgold",
+       "label": "Copper vs gold",
+       "n": 5,
+       "right": 3,
+       "pct": 60
+      },
+      {
+       "key": "policygap",
+       "label": "Policy gap (2Y \u2212 Fed funds)",
+       "n": 19,
+       "right": 11,
+       "pct": 58
+      },
+      {
+       "key": "dollar",
+       "label": "US dollar",
+       "n": 12,
+       "right": 7,
+       "pct": 58
+      },
+      {
+       "key": "credit",
+       "label": "Credit (HYG)",
+       "n": 14,
+       "right": 8,
+       "pct": 57
+      },
+      {
+       "key": "fedpressure",
+       "label": "Fed pressure (official data)",
+       "n": 32,
+       "right": 17,
+       "pct": 53
+      },
+      {
+       "key": "funding",
+       "label": "Funding stress",
+       "n": 29,
+       "right": 15,
+       "pct": 52
+      },
+      {
+       "key": "global",
+       "label": "Global equities",
+       "n": 26,
+       "right": 13,
+       "pct": 50
+      },
+      {
+       "key": "macroz",
+       "label": "Macro z-score (hawk + dove)",
+       "n": 12,
+       "right": 6,
+       "pct": 50
+      },
+      {
+       "key": "auction",
+       "label": "Treasury auction",
+       "n": 10,
+       "right": 5,
+       "pct": 50
+      },
+      {
+       "key": "yen",
+       "label": "Yen (USD/JPY)",
+       "n": 4,
+       "right": 2,
+       "pct": 50
+      },
+      {
+       "key": "vxroll",
+       "label": "VIX futures roll",
+       "n": 2,
+       "right": 1,
+       "pct": 50
+      },
+      {
        "key": "flip",
        "label": "Gamma flip",
        "n": 2,
@@ -5951,9 +7747,51 @@
        "pct": 50
       },
       {
-       "key": "global",
-       "label": "Global equities",
-       "n": 2,
+       "key": "term",
+       "label": "VIX term structure",
+       "n": 29,
+       "right": 14,
+       "pct": 48
+      },
+      {
+       "key": "fomccycle",
+       "label": "FOMC cycle week",
+       "n": 21,
+       "right": 10,
+       "pct": 48
+      },
+      {
+       "key": "liquidity",
+       "label": "Fed net liquidity",
+       "n": 13,
+       "right": 6,
+       "pct": 46
+      },
+      {
+       "key": "hyoas",
+       "label": "High-yield spreads",
+       "n": 11,
+       "right": 4,
+       "pct": 36
+      },
+      {
+       "key": "move",
+       "label": "Bond volatility (MOVE)",
+       "n": 6,
+       "right": 2,
+       "pct": 33
+      },
+      {
+       "key": "oil",
+       "label": "Crude oil",
+       "n": 4,
+       "right": 1,
+       "pct": 25
+      },
+      {
+       "key": "volpre",
+       "label": "Pre-market volatility",
+       "n": 5,
        "right": 0,
        "pct": 0
       },
@@ -5970,16 +7808,297 @@
        "n": 1,
        "right": 0,
        "pct": 0
-      },
-      {
-       "key": "term",
-       "label": "VIX term structure",
-       "n": 1,
-       "right": 0,
-       "pct": 0
       }
      ],
      "recent": [
+      {
+       "date": "2026-09-08",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.063,
+       "move": -161.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-09",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.01,
+       "move": 123.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-10",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.288,
+       "move": 60.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-11",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.082,
+       "move": -25.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-14",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.119,
+       "move": 118.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-15",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.052,
+       "move": -23.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-16",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.001,
+       "move": 48.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-17",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.247,
+       "move": -42.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-18",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.052,
+       "move": -86.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-21",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.371,
+       "move": 194.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-22",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.212,
+       "move": 163.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-23",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.021,
+       "move": -175.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-24",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.194,
+       "move": 87.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-25",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.042,
+       "move": -16.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-28",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.285,
+       "move": -122.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-29",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.225,
+       "move": -79.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-30",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.079,
+       "move": 164.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-01",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.184,
+       "move": -175.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-02",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.02,
+       "move": 101.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-05",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.029,
+       "move": 93.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-06",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.242,
+       "move": 36.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-07",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.217,
+       "move": -29.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-08",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.134,
+       "move": -4.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-09",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.028,
+       "move": -142.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-12",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.017,
+       "move": -98.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-13",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.024,
+       "move": 184.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-14",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.179,
+       "move": -44.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-15",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.118,
+       "move": 44.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-16",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.111,
+       "move": -159.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-19",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.006,
+       "move": -97.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-20",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.098,
+       "move": 55.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-21",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.047,
+       "move": 10.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-22",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.051,
+       "move": 43.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-23",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.023,
+       "move": 139.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-26",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.019,
+       "move": 8.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-27",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.125,
+       "move": -16.5,
+       "result": "miss"
+      },
       {
        "date": "2026-10-28",
        "bias": "Bullish",
@@ -6661,53 +8780,53 @@
      }
     ],
     "scorecard": {
-     "hits": 0,
-     "misses": 2,
-     "pct": 0,
+     "hits": 19,
+     "misses": 19,
+     "pct": 50,
      "by_bias": {
       "Bullish": {
-       "hits": 0,
-       "misses": 2,
-       "pct": 0
+       "hits": 10,
+       "misses": 12,
+       "pct": 45
       },
       "Bearish": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 9,
+       "misses": 7,
+       "pct": 56
       }
      },
      "by_conviction": {
       "Very low": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 7,
+       "misses": 9,
+       "pct": 44
       },
       "Low": {
-       "hits": 0,
-       "misses": 2,
-       "pct": 0
+       "hits": 4,
+       "misses": 9,
+       "pct": 31
       },
       "Medium": {
-       "hits": 0,
+       "hits": 3,
        "misses": 0,
-       "pct": null
+       "pct": 100
       },
       "High": {
-       "hits": 0,
-       "misses": 0,
-       "pct": null
+       "hits": 5,
+       "misses": 1,
+       "pct": 83
       }
      },
      "streak": {
-      "n": 2,
+      "n": 3,
       "kind": "miss"
      },
      "signals": [
       {
-       "key": "fedpressure",
-       "label": "Fed pressure (official data)",
-       "n": 1,
-       "right": 1,
+       "key": "fedwatch",
+       "label": "FedWatch (fed funds futures)",
+       "n": 2,
+       "right": 2,
        "pct": 100
       },
       {
@@ -6716,6 +8835,118 @@
        "n": 1,
        "right": 1,
        "pct": 100
+      },
+      {
+       "key": "rates",
+       "label": "10-year yield",
+       "n": 10,
+       "right": 9,
+       "pct": 90
+      },
+      {
+       "key": "fed",
+       "label": "2-year / Fed path",
+       "n": 15,
+       "right": 13,
+       "pct": 87
+      },
+      {
+       "key": "auction",
+       "label": "Treasury auction",
+       "n": 10,
+       "right": 8,
+       "pct": 80
+      },
+      {
+       "key": "copgold",
+       "label": "Copper vs gold",
+       "n": 5,
+       "right": 4,
+       "pct": 80
+      },
+      {
+       "key": "liquidity",
+       "label": "Fed net liquidity",
+       "n": 13,
+       "right": 9,
+       "pct": 69
+      },
+      {
+       "key": "dollar",
+       "label": "US dollar",
+       "n": 12,
+       "right": 8,
+       "pct": 67
+      },
+      {
+       "key": "fedleak",
+       "label": "Pre-Fed positioning",
+       "n": 3,
+       "right": 2,
+       "pct": 67
+      },
+      {
+       "key": "nfci",
+       "label": "Financial conditions",
+       "n": 5,
+       "right": 3,
+       "pct": 60
+      },
+      {
+       "key": "policygap",
+       "label": "Policy gap (2Y \u2212 Fed funds)",
+       "n": 19,
+       "right": 11,
+       "pct": 58
+      },
+      {
+       "key": "credit",
+       "label": "Credit (HYG)",
+       "n": 14,
+       "right": 8,
+       "pct": 57
+      },
+      {
+       "key": "fedpressure",
+       "label": "Fed pressure (official data)",
+       "n": 32,
+       "right": 17,
+       "pct": 53
+      },
+      {
+       "key": "realyield",
+       "label": "Real 10-year yield",
+       "n": 15,
+       "right": 8,
+       "pct": 53
+      },
+      {
+       "key": "macroz",
+       "label": "Macro z-score (hawk + dove)",
+       "n": 12,
+       "right": 6,
+       "pct": 50
+      },
+      {
+       "key": "vrp",
+       "label": "Volatility risk premium",
+       "n": 10,
+       "right": 5,
+       "pct": 50
+      },
+      {
+       "key": "yen",
+       "label": "Yen (USD/JPY)",
+       "n": 4,
+       "right": 2,
+       "pct": 50
+      },
+      {
+       "key": "vxroll",
+       "label": "VIX futures roll",
+       "n": 2,
+       "right": 1,
+       "pct": 50
       },
       {
        "key": "flip",
@@ -6727,9 +8958,65 @@
       {
        "key": "global",
        "label": "Global equities",
-       "n": 2,
-       "right": 0,
-       "pct": 0
+       "n": 26,
+       "right": 12,
+       "pct": 46
+      },
+      {
+       "key": "term",
+       "label": "VIX term structure",
+       "n": 29,
+       "right": 13,
+       "pct": 45
+      },
+      {
+       "key": "funding",
+       "label": "Funding stress",
+       "n": 29,
+       "right": 13,
+       "pct": 45
+      },
+      {
+       "key": "hyoas",
+       "label": "High-yield spreads",
+       "n": 11,
+       "right": 5,
+       "pct": 45
+      },
+      {
+       "key": "fomccycle",
+       "label": "FOMC cycle week",
+       "n": 21,
+       "right": 9,
+       "pct": 43
+      },
+      {
+       "key": "stress",
+       "label": "Financial stress",
+       "n": 7,
+       "right": 3,
+       "pct": 43
+      },
+      {
+       "key": "move",
+       "label": "Bond volatility (MOVE)",
+       "n": 6,
+       "right": 2,
+       "pct": 33
+      },
+      {
+       "key": "oil",
+       "label": "Crude oil",
+       "n": 4,
+       "right": 1,
+       "pct": 25
+      },
+      {
+       "key": "volpre",
+       "label": "Pre-market volatility",
+       "n": 5,
+       "right": 1,
+       "pct": 20
       },
       {
        "key": "walls",
@@ -6744,16 +9031,297 @@
        "n": 2,
        "right": 0,
        "pct": 0
-      },
-      {
-       "key": "term",
-       "label": "VIX term structure",
-       "n": 1,
-       "right": 0,
-       "pct": 0
       }
      ],
      "recent": [
+      {
+       "date": "2026-09-08",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.063,
+       "move": -21.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-09",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.01,
+       "move": -2.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-10",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.285,
+       "move": -7.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-11",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.083,
+       "move": 7.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-14",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.115,
+       "move": 14.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-15",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.047,
+       "move": -13.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-16",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.004,
+       "move": 2.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-17",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.248,
+       "move": -26.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-18",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.059,
+       "move": -23.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-21",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.369,
+       "move": 11.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-22",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.214,
+       "move": 0.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-23",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.021,
+       "move": -24.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-09-24",
+       "bias": "Bullish",
+       "conviction": "Medium",
+       "score": 0.197,
+       "move": 19.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-25",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.038,
+       "move": -11.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-28",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.277,
+       "move": -6.5,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-29",
+       "bias": "Bearish",
+       "conviction": "High",
+       "score": -0.222,
+       "move": -19.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-09-30",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.075,
+       "move": 22.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-01",
+       "bias": "Bearish",
+       "conviction": "Medium",
+       "score": -0.181,
+       "move": -44.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-02",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.02,
+       "move": 10.0,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-05",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.03,
+       "move": 12.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-06",
+       "bias": "Bullish",
+       "conviction": "High",
+       "score": 0.245,
+       "move": 18.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-07",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.214,
+       "move": -12.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-08",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.137,
+       "move": 6.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-09",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.029,
+       "move": -6.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-12",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.016,
+       "move": -3.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-13",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.024,
+       "move": 2.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-14",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.167,
+       "move": -15.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-15",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.12,
+       "move": 6.75,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-16",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.12,
+       "move": -17.75,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-19",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.009,
+       "move": -9.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-20",
+       "bias": "Bearish",
+       "conviction": "Low",
+       "score": -0.095,
+       "move": 20.5,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-21",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.05,
+       "move": -13.0,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-22",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.045,
+       "move": 10.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-23",
+       "bias": "Bearish",
+       "conviction": "Very low",
+       "score": -0.028,
+       "move": 7.25,
+       "result": "miss"
+      },
+      {
+       "date": "2026-10-26",
+       "bias": "Bullish",
+       "conviction": "Very low",
+       "score": 0.019,
+       "move": 14.25,
+       "result": "hit"
+      },
+      {
+       "date": "2026-10-27",
+       "bias": "Bullish",
+       "conviction": "Low",
+       "score": 0.122,
+       "move": -15.75,
+       "result": "miss"
+      },
       {
        "date": "2026-10-28",
        "bias": "Bullish",
