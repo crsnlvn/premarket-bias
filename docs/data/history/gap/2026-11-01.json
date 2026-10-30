@@ -1,0 +1,78 @@
+{
+ "sunday": "2026-11-01",
+ "friday": "2026-10-30",
+ "as_of": "2026-10-30T16:14:59-04:00",
+ "locked": false,
+ "btc_pct": 0.0,
+ "tasi_pct": null,
+ "markets": {
+  "NQ": {
+   "name": "Nasdaq-100 futures",
+   "bias": "Bearish",
+   "conviction": "Medium",
+   "friday_close": 28380.5,
+   "pred_pts": -42.2,
+   "pred_pct": -0.149,
+   "typical_pts": 65.5,
+   "typical_pct": 0.231,
+   "beta_btc": 0.231,
+   "weekends": 57,
+   "score": -0.5,
+   "signals": [
+    {
+     "key": "btc",
+     "label": "Bitcoin over the weekend",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.0,
+     "text": "Bitcoin +0.0% since Friday's futures close. It trades all weekend, so it is the live read on risk appetite.",
+     "group": "Weekend"
+    },
+    {
+     "key": "friday",
+     "label": "Friday macro read",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.0,
+     "text": "The model's last Friday read scored -0.22 on macro and options, before the weekend.",
+     "group": "Weekend"
+    }
+   ],
+   "outcome": null
+  },
+  "ES": {
+   "name": "S&P 500 futures",
+   "bias": "Bearish",
+   "conviction": "High",
+   "friday_close": 7613.5,
+   "pred_pts": -11.2,
+   "pred_pct": -0.147,
+   "typical_pts": 11.4,
+   "typical_pct": 0.15,
+   "beta_btc": 0.186,
+   "weekends": 57,
+   "score": -0.5,
+   "signals": [
+    {
+     "key": "btc",
+     "label": "Bitcoin over the weekend",
+     "score": 0,
+     "raw": 0,
+     "weight": 1.0,
+     "text": "Bitcoin +0.0% since Friday's futures close. It trades all weekend, so it is the live read on risk appetite.",
+     "group": "Weekend"
+    },
+    {
+     "key": "friday",
+     "label": "Friday macro read",
+     "score": -1,
+     "raw": -1,
+     "weight": 1.0,
+     "text": "The model's last Friday read scored -0.24 on macro and options, before the weekend.",
+     "group": "Weekend"
+    }
+   ],
+   "outcome": null
+  }
+ }
+}
