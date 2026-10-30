@@ -1127,6 +1127,116 @@ def copper_gold_signal(as_of):
                "Macro")
 
 
+# ─────────────────────── window-specific votes (Oct 30 fix) ───────────────────────
+MEGA_Q = {}
+
+
+def megacap_signal(cfg, sym, as_of):
+    """
+    The biggest index members' moves since yesterday's close (earnings after the bell, pre-market),
+    weighted by index weight and turned into an index move. Big-firm earnings news is market news:
+    it carries information about the whole market (Savor & Wilson, "Earnings Announcements and
+    Systematic Risk", JF 2016; Patton & Verardo, RFS 2012). Live reads only.
+    """
+    if FIXTURES:
+        return None
+    if not MEGA_Q:
+        MEGA_Q.update(_batch_quotes(sorted(set(MEGA) & (set(NDX_W) | set(SPX_W))), as_of) or {"_": {}})
+    W = NDX_W if sym == "NQ" else SPX_W
+    parts = [(t, W[t], MEGA_Q[t]["chg"]) for t in MEGA if t in W and t in MEGA_Q]
+    if not parts:
+        return None
+    idx = sum(w * c for _, w, c in parts) / 100          # % move these names alone put on the index
+    sc = -1 if idx < -0.35 else 1 if idx > 0.35 else 0
+    top = sorted(parts, key=lambda p_: -abs(p_[1] * p_[2]))[:3]
+    return sig("megacap", "Megacaps (earnings & pre-market)", sc, 1.25,
+               f"The biggest {sym} stocks alone are worth {idx:+.2f}% on the index: " +
+               ", ".join(f"{t} {c:+.1f}%" for t, _, c in top) + ". " +
+               ("Heavyweights are selling off, a direct drag on the index." if sc < 0 else
+                "Heavyweights are rallying, a direct lift to the index." if sc > 0 else "No big megacap move."), "Macro")
+
+
+def intraday_momentum_signal(cfg, pos, as_of, sess):
+    """
+    Market intraday momentum: the return from yesterday's close through the first half hour predicts the
+    rest of the day in the same direction, more so on volatile days (Gao, Han, Li & Zhou, "Market Intraday
+    Momentum", JFE 2018). Short-gamma dealers amplify it (Barbon & Buraschi, "Gamma Fragility").
+    New York Now call only, from 9:45 ET.
+    """
+    if not sess or sess[0] != "NY" or as_of.time() < time(9, 45):
+        return None
+    prev = datetime.combine(prev_weekday(as_of.date()), time(16, 0), ET)
+    h = fetch_bars(cfg["future"], prev - timedelta(minutes=30), as_of)
+    if h is None:
+        return None
+    a, b = h[h.index <= prev], h[h.index <= as_of]
+    if a.empty or b.empty:
+        return None
+    r = pct(float(b["Close"].iloc[-1]), float(a["Close"].iloc[-1]))
+    sc = -1 if r < -0.5 else 1 if r > 0.5 else 0
+    w = 1.5
+    short = pos is not None and pos.get("net_gex", 0) < 0
+    if sc and short:
+        w = round(w * 1.3, 3)
+    return sig("momentum", "Intraday momentum", sc, w,
+               f"Futures {r:+.2f}% from yesterday's close into the session. " +
+               ("Big early moves tend to carry through the rest of the day" + (", and dealers are short gamma, which feeds it." if short else ".")
+                if sc else "Too small an early move to carry."), "Macro")
+
+
+def gap_fade_signal(cfg, q):
+    """
+    Opening reversal: overnight gains tend to give back at the open and overnight losses tend to bounce,
+    as attention-driven orders hit the opening auction (Berkman, Koch, Tuttle & Zhang, "Paying Attention:
+    Overnight Returns and the Hidden Cost of Buying at the Open", JFQA 2012). Pre-open call only.
+    Our own record agreed: the pre-market move faded in the first 30 minutes on 17 of 29 mornings.
+    """
+    c = chg(q, cfg["future"])
+    if c is None:
+        return None
+    sc = -1 if c > 0.3 else 1 if c < -0.3 else 0
+    return sig("gapfade", "Opening gap fade", sc, 1.0,
+               f"Futures {c:+.2f}% pre-market. " +
+               ("A big overnight gain tends to give some back in the first half hour." if sc < 0 else
+                "A big overnight loss tends to bounce in the first half hour." if sc > 0 else "No big gap to fade."), "Macro")
+
+
+def stock_bond_corr(as_of, n=20):
+    """Correlation of NQ's daily returns with 10-year yield changes over the last n sessions."""
+    nq = {d: v for d, v in daily_closes("NQ=F", 90) if d < as_of.date()}
+    ty = {d: v for d, v in daily_closes("^TNX", 90) if d < as_of.date()}
+    ds = sorted(set(nq) & set(ty))[-(n + 1):]
+    if len(ds) < n:
+        return None
+    a = np.diff(np.log([nq[d] for d in ds])); b = np.diff([ty[d] for d in ds])
+    return float(np.corrcoef(a, b)[0, 1])
+
+
+RATE_KEYS = ("rates", "fed", "policygap", "realyield", "two")
+
+
+def apply_bond_regime(signals, corr):
+    """
+    Falling yields aren't always good for stocks. When stocks and yields have been moving together, a drop
+    in yields is a flight to safety or a growth scare, and it comes with stock losses (Baele, Bekaert,
+    Inghelbrecht & Wei, "Flights to Safety", RFS 2020; Campbell, Pflueger & Viceira, JPE 2020 on the
+    sign of the stock-bond correlation). Then the rate votes are read the other way round.
+    """
+    if corr is None:
+        return signals
+    for s_ in signals:
+        if s_["key"] not in RATE_KEYS or not s_["score"]:
+            continue
+        if corr > 0.3:
+            s_["score"], s_["raw"] = -s_["score"], -s_["raw"]
+            s_["text"] += (f" But stocks and yields have been moving together lately (correlation {corr:+.2f}), so this reads the "
+                           "other way: falling yields mean fear, rising yields mean growth.")
+        elif corr > -0.3:
+            s_["weight"] = round(s_["weight"] * 0.5, 3)
+            s_["text"] += f" Stocks and yields aren't moving in step right now (correlation {corr:+.2f}), so it counts half."
+    return signals
+
+
 def market_regime(q, as_of):
     """
     Calm or stressed, from the St. Louis Fed stress index and the VIX curve. Signals don't work
@@ -2120,6 +2230,10 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
     prior = json.loads(prior_files[-1].read_text()) if prior_files else None
 
     regime = market_regime(quotes, as_of)
+    try:
+        bond_corr = stock_bond_corr(as_of)
+    except Exception:  # noqa: BLE001
+        bond_corr = None
     pre = {}
     for sym, cfg in MARKETS.items():
         pos, why = None, None
@@ -2160,6 +2274,17 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
         mult = learned_multipliers(hist, sym, key, 1000 if view == "now" else 120, regime)
         dealer = (dealer_signals(cfg, pos, quotes, events, as_of) + (intraday_dealer_signals(cfg, pos, as_of, sess)
                   if view == "now" else [])) if pos else []
+        # each window gets the evidence that fits it
+        win = []
+        if view == "preopen":
+            win.append(gap_fade_signal(cfg, quotes))
+        if view in ("now", "overnight") and live:
+            win.append(megacap_signal(cfg, sym, as_of))
+        if view == "now":
+            win.append(intraday_momentum_signal(cfg, pos, as_of, sess))
+        base = base + [x for x in win if x]
+        if view in ("now", "overnight"):
+            base = apply_bond_regime(base, bond_corr)
         pre[sym] = (pos, apply_learning(base, mult) + dealer)
 
     if view == "overnight":
