@@ -271,7 +271,82 @@ body.compact .note{font-size:14.5px}
 .rng input[type=range]{width:100%;height:28px;accent-color:var(--text)}
 .reset{width:100%;margin-top:20px;padding:13px;border-radius:999px;color:var(--down);font-size:15px;font-weight:600;background:var(--bar)}
 
-/* ───────── quant desk (default look) ───────── */
+/* ───────── glass widgets (default look) ───────── */
+:root[data-mode="widget"] body::before{inset:0;background:radial-gradient(120% 55% at 85% -5%,var(--blob1),transparent 62%),radial-gradient(90% 40% at 0% 100%,color-mix(in srgb,var(--blob1) 35%,transparent),transparent 70%)}
+:root[data-mode="widget"] .g,:root[data-mode="widget"] .card,:root[data-mode="widget"] .big>div{background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 30px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
+:root[data-mode="widget"] .card,:root[data-mode="widget"] .big>div{border-radius:20px}
+:root[data-mode="widget"] header{padding:8px 0 2px}
+:root[data-mode="widget"] .lft{gap:6px}
+:root[data-mode="widget"] .segc{padding:2px;gap:0;border-radius:999px;background:rgba(255,255,255,.08);border:0;box-shadow:none}
+:root[data-mode="widget"] .segc button{font-size:12.5px;padding:5px 12px}
+:root[data-mode="widget"] .segc button.on{background:rgba(255,255,255,.18);box-shadow:none}
+:root[data-mode="widget"] #vt .sf{display:inline}
+:root[data-mode="widget"] #vt .lf{display:none}
+:root[data-mode="widget"] #vt button[data-view="preopen"] .sf::first-letter,:root[data-mode="widget"] #vt button[data-view="now"] .sf::first-letter{text-transform:uppercase}
+:root[data-mode="widget"] #vt button[data-view="overnight"] .sf{text-transform:uppercase}
+:root[data-mode="widget"] .tab .dot{display:none}
+:root[data-mode="widget"] .ib{width:30px;height:30px;background:rgba(255,255,255,.08);border:0;box-shadow:none}
+:root[data-mode="widget"] .ib svg{width:14px;height:14px}
+:root[data-mode="widget"] .tabbar{width:auto;max-width:none;left:50%;padding:5px;gap:2px;background:rgba(30,30,32,.72);border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 12px 40px rgba(0,0,0,.6);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%)}
+:root[data-mode="widget"] .tabbar button{flex:none;width:50px;height:38px;padding:0;font-size:0;display:grid;place-items:center;color:rgba(255,255,255,.55)}
+:root[data-mode="widget"] .tabbar button svg{display:block;width:19px;height:19px}
+:root[data-mode="widget"] .tabbar button.on{background:rgba(255,255,255,.16);box-shadow:none;color:#fff}
+:root[data-mode="widget"] h2{font-size:17px}
+.wp{padding-bottom:10px}
+.whero{padding:26px 4px 0}
+.wk{font-size:11.5px;color:var(--dim);font-weight:500}
+.wcall{font-size:68px;font-weight:600;letter-spacing:-.06em;line-height:1.02;margin-top:2px}
+.wsub{font-size:14px;color:var(--sub);margin-top:2px}
+.wgrid{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:row dense;gap:10px;margin-top:22px}
+.w{position:relative;text-align:left;font:inherit;color:inherit;min-width:0;border-radius:22px;padding:13px 15px;display:flex;flex-direction:column;justify-content:space-between;gap:4px;min-height:104px;
+  background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 2px rgba(0,0,0,.4),0 14px 34px rgba(0,0,0,.5);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s}
+.w:active{transform:scale(.97)}
+.w.wide{grid-column:1/-1;min-height:0}
+.w.on{border-color:color-mix(in srgb,var(--accent) 70%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent),0 16px 40px color-mix(in srgb,var(--accent) 22%,rgba(0,0,0,.5))}
+.wr{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%}
+.wv{font-size:23px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:6px}
+.wv2{font-size:12px;color:var(--sub)}
+.wv3{font-size:16px;font-weight:600;margin-top:6px}
+.wbars{display:flex;gap:3px;height:26px;align-items:flex-end;margin-top:10px;width:100%}
+.wbars i{flex:1;border-radius:3px;display:block}
+.w10{display:flex;gap:2px;margin-top:10px;width:100%}
+.w10 i{flex:1;height:14px;border-radius:2px;display:block}
+.wses{display:flex;gap:8px;margin-top:10px;width:100%}
+.wses button{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);text-align:left}
+.wses button span:nth-child(2){display:flex;gap:4px}
+.wses i{width:8px;height:8px;border-radius:50%;display:block}
+.wses b{font-size:14px;font-weight:600}
+.wtape{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 10px;margin-top:10px;width:100%}
+.wtape div{display:flex;flex-direction:column;gap:1px}
+.wtape b{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.wd{margin-top:10px;border-radius:22px;padding:14px 16px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 14px 34px rgba(0,0,0,.5);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);animation:wdin .25s cubic-bezier(.2,.8,.2,1)}
+@keyframes wdin{from{opacity:0;transform:translateY(-6px)}}
+.wd > .wr{margin-bottom:6px}
+.wd > .wr b{font-size:15px;font-weight:600}
+.wl{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);font-size:14px}
+.wd > .wr + .wl{border-top:0}
+.wn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb{width:56px;height:4px;border-radius:2px;background:rgba(255,255,255,.08);flex:none;display:flex}
+.wb i{display:block;height:4px;border-radius:2px}
+.wnote{font-size:13px;line-height:1.5;color:var(--sub);margin-top:10px}
+.wnote b{color:var(--text);font-weight:600}
+.wgx div{display:flex;align-items:center;gap:8px;height:16px;font-size:11px;font-variant-numeric:tabular-nums}
+.wgx span{width:46px;flex:none}
+.wgx b{flex:1;display:flex;height:6px}
+.wgx b i{display:block;height:6px;border-radius:3px}
+.wgx em{width:52px;text-align:right;font-style:normal;font-size:10.5px}
+.wgx .ln{flex:1;height:0;border-top:1px solid var(--text);display:block}
+.wgx .ln.d{border-top:1px dashed var(--amber)}
+:root[data-mode="widget"] .qp{font-family:var(--sans);font-size:13px}
+:root[data-mode="widget"] .qp .qs{border-color:rgba(255,255,255,.08)}
+:root[data-mode="widget"] .qbtn{font-family:var(--sans);border-radius:99px;font-weight:600}
+.wfoot{font-size:11.5px;color:var(--faint);line-height:1.5;margin:16px 4px 0}
+/* ───────── quant desk ───────── */
 :root{--qm:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --qd:"Inter Tight",var(--sans); --amb:#FFB000}
 :root[data-mode="quant"]{--sans:var(--qm)}
 :root[data-mode="quant"] body::before{display:none}
@@ -448,6 +523,7 @@ const THEMES = {
 };
 // glass backgrounds: a base color plus two ambient glows (the third glow follows the call)
 const BGS = {
+  widget:{name:'Glass widgets', mode:'widget', bg:'#000000', blob2:'transparent', blob3:'transparent'},
   quant:{name:'Quant desk', mode:'quant', bg:'#0B0C0E', blob2:'transparent', blob3:'transparent'},
   vivid:{name:'Vivid', mode:'vivid', bg:'#0a0614', blob2:'transparent', blob3:'transparent'},
   auto:{name:'Auto'},
@@ -457,6 +533,9 @@ const BGS = {
   black:{name:'Black', mode:'dark', bg:'#000000', blob2:'rgba(60,110,255,.22)', blob3:'rgba(0,200,170,.1)'},
 };
 const MODE = {
+  widget:{text:'#ffffff', sub:'rgba(255,255,255,.78)', dim:'rgba(235,235,245,.55)', faint:'rgba(235,235,245,.32)', glass:'rgba(255,255,255,.06)',
+    edge:'rgba(255,255,255,.09)', hi:'transparent', sel:'rgba(255,255,255,.16)', row:'rgba(255,255,255,.07)', track:'rgba(255,255,255,.06)',
+    bar:'rgba(255,255,255,.08)', shadow:'transparent', solid:'rgba(28,28,30,.92)', amber:'#FF9F0A'},
   quant:{text:'#D9DCE1', sub:'#A9AEB6', dim:'#6C727C', faint:'#4A4F57', glass:'transparent',
     edge:'#1E2126', hi:'transparent', sel:'#1A1D22', row:'#16181B', track:'#121417',
     bar:'#1A1D22', shadow:'transparent', solid:'#101214', amber:'#FFB000'},
@@ -474,7 +553,7 @@ const SECTIONS = {
   divergence:'NQ vs ES split', changed:'What changed', outcome:'How it played out', signals:'Votes',
   calendar:'Today\'s releases', earnings:'Mega-cap earnings', freshness:'Data sources', method:'How it works'
 };
-const DEFAULTS = {theme:'classic', up:null, down:null, bg:'quant', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
+const DEFAULTS = {theme:'classic', up:null, down:null, bg:'widget', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
   order:Object.keys(SECTIONS), hidden:[],
   fx:'off', fxTint:'style', fxSpeed:1, fxAmount:1, fxSize:1, fxGlow:1, fxSet:false};
 const FX_STYLES = {off:'Off', blackhole:'Black hole', petals:'Petals', ravens:'Ravens', symbiote:'Symbiote', stars:'Starfall', embers:'Embers', aurora:'Aurora'};
@@ -483,7 +562,7 @@ const FX_TINTS = {style:'Its own', call:'Follows the call', '#cdbfff':'Lavender'
 const OLD = store.get('prefs2', null) || (({theme,up,down,bg,...rest}) => rest)(store.get('prefs',{}));
 let P = {...DEFAULTS, ...OLD};
 if(!BGS[P.bg]) P.bg = 'quant';
-if(!P.bgSet || !P.qSet){ P.bg = 'quant'; P.qSet = true; P.bgSet = false; }   // quant desk is the new default look; any background can still be picked in Settings
+if(!P.bgSet || !P.wSet){ P.bg = 'widget'; P.wSet = true; P.bgSet = false; }   // glass widgets is the default look; any background can still be picked in Settings
 if(!P.fxSet) P.fx = 'off';   // default look is plain glass; an animation only runs once someone picks one
 for(const k of Object.keys(SECTIONS)) if(!P.order.includes(k)) P.order.push(k);
 P.order = P.order.filter(k=>SECTIONS[k]);
@@ -506,10 +585,11 @@ function applyPrefs(){
   let up = P.up||t.up, down = P.down||t.down;
   if(mode==='light'){ up = shade(up,.38); down = shade(down,.18); }
   if(mode==='vivid' && !P.down && P.theme==='classic') down = '#ff5c8a';   // reads cleaner on the pink
+  if(mode==='widget' && P.theme==='classic'){ if(!P.up) up = '#3EE07A'; if(!P.down) down = '#FF453A'; }
   if(mode==='quant' && P.theme==='classic'){ if(!P.up) up = '#3DDC97'; if(!P.down) down = '#FF5C5C'; }
   r.setProperty('--up', up); r.setProperty('--down', down); r.setProperty('--accent', up);
   const glow = CALL==='Bearish' ? down : CALL==='Bullish' ? up : null;
-  r.setProperty('--blob1', mode==='vivid' ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:50}%, transparent)` : 'transparent');
+  r.setProperty('--blob1', mode==='vivid' ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:mode==='widget'?24:50}%, transparent)` : 'transparent');
   document.documentElement.dataset.mode = mode;
   document.querySelector('meta[name=theme-color]').content = b.bg;
   document.body.classList.toggle('compact', P.density==='compact');
@@ -625,6 +705,8 @@ function render(){
   if(!D && !['research','journal','red','clock'].includes(PAGE)){ $('#app').innerHTML='<div class="empty">No read for this session yet. It arrives with the next run.</div>'; return; }
   $('#app').innerHTML = ({today:pageToday, levels:pageLevels, macro:pageMacro, record:pageRecord, research:pageResearch, journal:pageJournal, red:pageRed, clock:pageClock}[PAGE])(D);
   if(PAGE==='clock') wireClock();
+  $$('[data-w]').forEach(t=>t.onclick=()=>{ WOPEN = WOPEN===t.dataset.w ? null : t.dataset.w; store.set('wopen', WOPEN); render(); });
+  $$('[data-page]').forEach(t=>t.onclick=()=>go(t.dataset.page));
   if(PAGE==='journal') wireJournal();
   if(PAGE==='levels'){ const c=$('#copyLv'); if(c) c.onclick=copyLevels; }
   $$('[data-go]').forEach(t=>t.onclick=()=>{ const [s,v]=t.dataset.go.split('|'); SESSION=s; if(s==='ny') VIEW=v; render(); window.scrollTo({top:0}); });
@@ -779,6 +861,113 @@ function wireClock(){
   CLK = setInterval(()=>{ if(PAGE!=='clock'){ clearInterval(CLK); return; } $('#app').innerHTML = pageClock(); wireClock(); }, 1000);
 }
 
+/* ───────── glass widgets: today ───────── */
+let WOPEN = store.get('wopen', null);
+function gexHTML(m){
+  const L=m.levels||{}, up='var(--up)', dn='var(--down)';
+  const rows = (L.majors||[]).map(x=>({k:x.level, g:x.net_gex}));
+  for(const [k,tag] of [[L.call_wall,'call wall'],[L.put_wall,'put wall']]) if(k!=null){ const r=rows.find(r=>r.k===k); if(r) r.tag=tag; else rows.push({k, g:tag==='call wall'?1:-1, tag, est:true}); }
+  if(!rows.length) return '';
+  const gm = Math.max(...rows.filter(r=>!r.est).map(r=>Math.abs(r.g)), 1);
+  rows.forEach(r=>{ if(r.est) r.g = Math.sign(r.g)*gm*.6; });
+  const all = [...rows, ...(L.price!=null?[{k:L.price, line:'price'}]:[]), ...(L.flip!=null?[{k:L.flip, line:'flip'}]:[])].sort((a,c)=>c.k-a.k);
+  return `<div class="wgx">${all.map(r=> r.line
+    ? `<div><span style="color:${r.line==='flip'?'var(--amber)':'var(--text)'}">${fmt(r.k,0)}</span><i class="ln ${r.line==='flip'?'d':''}"></i><em style="color:${r.line==='flip'?'var(--amber)':'var(--text)'}">${r.line}</em></div>`
+    : `<div><span style="color:${r.tag?'var(--text)':'var(--dim)'}">${fmt(r.k,0)}</span><b><i style="width:${(Math.abs(r.g)/gm*100).toFixed(0)}%;background:${r.g>0?up:dn};opacity:${r.tag?1:.5}"></i></b><em style="color:${r.g>0?up:dn}">${r.tag||''}</em></div>`).join('')}</div>`;
+}
+const TAPE = [['ES=F','S&P fut'],['ZN=F','10Y fut'],['DX-Y.NYB','Dollar'],['CL=F','Oil'],['VXX','Vol'],['BTC-USD','Bitcoin']];
+function wExtra(D, m, b, on){
+  const Dl=m.dealer||{}, R=m.expected_range, up='var(--up)', dn='var(--down)', ph=phaseNow();
+  const useNow = {overnight:['Overnight','switch to Pre at 9:25'], preopen:['Pre-open','switch to Now at 10:00'], now:['Now','NY until 4 PM'], closed:['Closed','next call 6 PM'], weekend:['Closed','opens Sun 6 PM']}[ph.k];
+  let h = '';
+  if(Dl.net_gex_bn!=null){ const lg=Dl.net_gex_bn>0;
+    h += `<button class="w${on('dealers')}" data-w="dealers"><div class="wr"><span class="wk">Dealers</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${lg?up:dn}" stroke-width="2.4" stroke-linecap="round">${lg?'<path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/>':'<path d="M4 12h16M8 8l4 4-4 4M16 8l-4 4 4 4"/>'}</svg></div>
+      <div class="wv">${lg?'Long γ':'Short γ'}</div><div class="wk">${usd(Dl.net_gex_bn,1)}B · ${lg?'moves get damped':'moves can run'}</div></button>`; }
+  const L=m.levels||{}, tg = b.bias==='Bullish' ? L.call_wall : L.put_wall;
+  if(R && tg!=null && L.price!=null) h += `<button class="w${on('range')}" data-w="range"><div class="wr"><span class="wk">Expected move</span><span class="wk">1σ</span></div>
+      <div class="wv">±${fmt(R.move,0)}</div><div class="wk">${fmt(R.low,0)} – ${fmt(R.high,0)}</div></button>`;
+  if(Dl.charm_bn!=null) h += `<button class="w${on('charm')}" data-w="charm"><div class="wr"><span class="wk">Charm</span><span class="wk">into close</span></div>
+      <div class="wv" style="color:${Dl.charm_bn>0?up:dn}">${Dl.charm_bn>0?'Buy':'Sell'} ${usd(Math.abs(Dl.charm_bn),1)}B</div><div class="wk">hedge flow by 4 PM</div></button>`;
+  const nSmall = (h.match(/<button class="w[ "]/g)||[]).length + 1;
+  h += `<button class="w${nSmall%2?' wide':''}" data-page="clock"><div class="wr"><span class="wk">Use now</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--dim)" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div class="wv">${useNow[0]}</div><div class="wk">${useNow[1]}</div></button>`;
+  // every call at a glance
+  if(ROOT && ROOT.ny){ const syms=Object.keys(D.markets);
+    const reads=[['ON','overnight|preopen',ROOT.overnight],['Open','ny|preopen',ROOT.ny.preopen],['Now','ny|now',ROOT.ny.now]];
+    h += `<div class="w wide" style="cursor:default"><div class="wr"><span class="wk">All calls</span><span class="wk">${syms.join(' · ')}</span></div><div class="wses">${reads.map(([n,go,d])=>
+      `<button data-go="${go}"><span class="wk">${n}</span><span>${syms.map(s=>{const x=d&&d.markets&&d.markets[s]; return `<i title="${s}" style="background:${x?C(x.bias.bias):'var(--bar)'}"></i>`;}).join('')}</span><b style="color:${d&&d.markets&&d.markets[SYM]?C(d.markets[SYM].bias.bias):'var(--faint)'}">${d&&d.markets&&d.markets[SYM]?d.markets[SYM].bias.bias:'—'}</b></button>`).join('')}</div></div>`; }
+  // macro tape
+  const Dn = readFor('ny','preopen') || D, tape = (Dn && Dn.macro) || D.macro || {}, cells = TAPE.filter(([k])=>tape[k]);
+  if(cells.length) h += `<button class="w wide" data-page="macro"><div class="wr"><span class="wk">Macro tape</span><span class="wk">vs 4 PM ›</span></div><div class="wtape">${cells.map(([k,n])=>{const v=tape[k].chg_pct;
+      return `<div><span class="wk">${n}</span><b style="color:${v>0?up:v<0?dn:'var(--text)'}">${v>0?'+':''}${fmt(v)}%</b></div>`;}).join('')}</div></button>`;
+  return h;
+}
+function wToday(D, m, b, stale){
+  const L=m.levels||{}, sc=m.scorecard||{}, up='var(--up)', dn='var(--down)', cc=C(b.bias), bull=b.bias==='Bullish';
+  const where = SESSION==='overnight' ? 'Overnight · 6 PM to the open' : VIEW==='now' && D.window ? `${esc(D.window.name)} · until ${hm(new Date(D.window.end)).replace(/^0/,'')}` : 'NY open · 9:30–10:00';
+  const lock = SESSION==='ny' && VIEW!=='now' ? (D.mode==='point-in-time' ? 'locked '+hm(new Date(D.as_of)).replace(/^0/,'') : 'preview, updating') : 'as of '+hm(new Date(D.as_of)).replace(/^0/,'');
+  const sigs = m.signals.filter(s=>s.directional!==false && s.weight>0 && s.score);
+  const ups = sigs.filter(s=>s.score>0).sort((a,c)=>c.weight-a.weight), dns = sigs.filter(s=>s.score<0).sort((a,c)=>c.weight-a.weight);
+  const wmax = Math.max(...sigs.map(s=>s.weight), 1);
+  const bars = [...ups.map((s,i)=>[s,up,i]), ...dns.map((s,i)=>[s,dn,i])].map(([s,c,i])=>`<i title="${esc(s.label)}" style="height:${Math.max(14,s.weight/wmax*100).toFixed(0)}%;background:${c};opacity:${Math.max(.45,1-i*.11).toFixed(2)}"></i>`).join('');
+  const tgt = bull ? L.call_wall : L.put_wall, rec = (sc.recent||[]).slice(-10), nx = upcoming(D,1)[0];
+  const on = k => WOPEN===k ? ' on' : '';
+  let h = `<div class="wp">
+    <div class="whero"><div class="wk" style="color:color-mix(in srgb,${cc} 70%,#fff)">${esc(m.name||SYM)} · ${where}</div>
+      <div class="wcall">${b.bias}<span style="color:${cc}">.</span></div>
+      <div class="wsub">${esc(b.conviction)} conviction · ${lock}${stale?' · <span style="color:var(--amber)">last session</span>':''}</div></div>
+    <div class="wgrid">
+      <button class="w wide${on('votes')}" data-w="votes"><div class="wr"><span class="wk">Votes</span><span class="wv2">${b.ups??ups.length} up · ${b.downs??dns.length} down</span></div><div class="wbars">${bars||'<span class="wk">no live votes</span>'}</div></button>
+      <button class="w${on('target')}" data-w="target"><div class="wr"><span class="wk">${tgt!=null?'Target':'Range'}</span>${tgt!=null?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${cc}" stroke-width="3" stroke-linecap="round">${bull?'<path d="M12 19V5M5 12l7-7 7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>'}</svg>`:''}</div>
+        ${tgt!=null&&L.price!=null ? `<div class="wv">${fmt(tgt,0)}</div><div class="wk">${bull?'call':'put'} wall · ${tgt>L.price?'+':'−'}${fmt(Math.abs(tgt-L.price),0)}</div>`
+          : m.expected_range ? `<div class="wv">±${fmt(m.expected_range.move,0)}</div><div class="wk">expected move</div>` : `<div class="wv">—</div><div class="wk">no dealer levels</div>`}</button>
+      <button class="w${on('flip')}" data-w="flip"><div class="wr"><span class="wk">Flips ${L.flip!=null&&L.price!=null&&L.flip<L.price?'below':'at'}</span><svg width="14" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="3" stroke-linecap="round"><path d="M3 12h18" stroke-dasharray="4 4"/></svg></div>
+        ${L.flip!=null ? `<div class="wv">${fmt(L.flip,0)}</div><div class="wk">gamma flip${L.price!=null?` · ${L.flip>L.price?'+':'−'}${fmt(Math.abs(L.flip-L.price),0)}`:''}</div>` : `<div class="wv" style="font-size:15px;line-height:1.3">${esc((b.invalidation||'—').split(',')[0])}</div>`}</button>
+      <button class="w${on('record')}" data-w="record"><div class="wr"><span class="wk">Last ${rec.length||10}</span><span class="wk">›</span></div>
+        ${rec.length?`<div class="w10">${rec.map(r=>`<i style="background:${r.result==='hit'?up:r.result==='miss'?dn:'var(--bar)'}"></i>`).join('')}</div><div class="wv3">${rec.filter(r=>r.result==='hit').length} right</div>`:'<div class="wv3" style="margin-top:14px">Not graded yet</div>'}</button>
+      <button class="w${on('next')}" data-w="next"><div class="wr"><span class="wk">Up next</span><span class="wk">›</span></div>
+        ${nx?`<div class="wv">${dur(new Date(nx.ts)-Date.now())}</div><div class="wk">${esc(nx.title)} · ${hm(new Date(nx.ts)).replace(/^0/,'')}</div>`:'<div class="wv3" style="margin-top:14px">Nothing major</div><div class="wk">no big releases ahead</div>'}</button>
+      ${wExtra(D, m, b, on)}
+    </div>`;
+  // the open widget's detail (moved in under the widget that was tapped)
+  const det0 = h.length;
+  if(WOPEN==='votes'){
+    const all = m.signals.filter(s=>s.directional!==false && s.weight>0), T = all.reduce((a,s)=>a+s.weight,0)||1, mx = Math.max(...all.map(s=>Math.abs((s.score||0)*s.weight)),1e-9);
+    const ord = [...all].sort((a,c)=>(c.score||0)*c.weight-(a.score||0)*a.weight).sort((a,c)=>(!a.score)-(!c.score));
+    h += `<div class="wd"><div class="wr"><b>What's driving it</b><span class="wk">${all.length} signals</span></div>
+      ${ord.map(s=>`<div class="wl"${s.score?'':' style="opacity:.4"'}><span class="wb"><i style="width:${(Math.abs((s.score||0)*s.weight)/mx*100).toFixed(0)}%;background:${s.score>0?up:dn}"></i></span><span class="wn">${esc(s.label)}</span><span class="wk">${GRP(s.group)}</span><span style="width:14px;text-align:right;color:${s.score>0?up:s.score<0?dn:'var(--faint)'}">${s.score>0?'▲':s.score<0?'▼':'·'}</span></div>`).join('')}
+      ${b.overall?`<p class="wnote">${esc(b.overall).replace(/(^|\. )(For:|Against:|On deck:)/g,'$1<b>$2</b>')}</p>`:''}</div>`;
+  }
+  if(['target','flip','dealers','range','charm'].includes(WOPEN)){
+    const lv=(k,v,c)=>v!=null?`<div class="wl"><span class="wn">${k}</span><span style="color:${c};font-weight:600">${fmt(v,0)}</span></div>`:'';
+    h += `<div class="wd"><div class="wr"><b>Levels</b><button class="wk" data-page="levels" style="color:#0A84FF">More ›</button></div>
+      ${lv('Price',L.price,'var(--text)')}${lv('Call wall',L.call_wall,up)}${lv('Gamma flip',L.flip,'var(--amber)')}${lv('Put wall',L.put_wall,dn)}
+      ${gexHTML(m)?`<div class="wk" style="margin:12px 0 6px">Dealer gamma by strike</div>${gexHTML(m)}`:''}</div>`;
+  }
+  if(WOPEN==='record'){
+    const reads = ROOT && ROOT.ny ? [['Overnight','overnight|preopen',ROOT.overnight],['Open','ny|preopen',ROOT.ny.preopen],['Now','ny|now',ROOT.ny.now]] : [];
+    const syms = Object.keys(D.markets);
+    h += `<div class="wd"><div class="wr"><b>Track record</b><button class="wk" data-page="record" style="color:#0A84FF">Full record ›</button></div>
+      <div class="wl"><span class="wn">Hit rate</span><span style="font-weight:600">${sc.hits+sc.misses?sc.pct+'%':'—'} <span class="wk">${sc.hits||0} of ${(sc.hits||0)+(sc.misses||0)}</span></span></div>
+      ${sc.streak&&sc.streak.n?`<div class="wl"><span class="wn">Streak</span><span style="color:${sc.streak.kind==='hit'?up:dn};font-weight:600">${sc.streak.n} ${sc.streak.kind==='hit'?'right':'wrong'}</span></div>`:''}
+      <div class="wk" style="margin:12px 0 4px">Every call right now</div>
+      <div class="wl wk" style="border:0"><span class="wn"></span>${syms.map(s=>`<span style="width:62px;text-align:right">${s}</span>`).join('')}</div>
+      ${reads.map(([n,go,d])=>`<div class="wl" data-go="${go}" style="cursor:pointer"><span class="wn">${n}</span>${syms.map(s=>{const x=d&&d.markets&&d.markets[s]; return `<span style="width:62px;text-align:right;font-weight:600;color:${x?C(x.bias.bias):'var(--faint)'}">${x?x.bias.bias:'—'}</span>`;}).join('')}</div>`).join('')}</div>`;
+  }
+  if(WOPEN==='next'){
+    const evs = upcoming(D,5);
+    h += `<div class="wd"><div class="wr"><b>Up next</b><button class="wk" data-page="clock" style="color:#0A84FF">Session clock ›</button></div>
+      ${evs.length?evs.map(e=>`<div class="wl"><span class="wn"><span class="imp" style="background:${e.impact==='High'?dn:'var(--amber)'}"></span>${esc(e.title)}</span><span class="wk">${new Date(e.ts).toLocaleDateString('en-US',{timeZone:'America/New_York',weekday:'short'})} ${hm(new Date(e.ts)).replace(/^0/,'')} · ${dur(new Date(e.ts)-Date.now())}</span></div>`).join(''):'<div class="wl"><span class="wn">No major US releases ahead</span></div>'}
+      ${(b.dampened||[]).length?'<p class="wnote">A big release is close, so this call\'s conviction is capped.</p>':''}</div>`;
+  }
+  if(h.length>det0){ const det=h.slice(det0).replace('<div class="wd">','<div class="wd" style="grid-column:1/-1;margin:0">'); h=h.slice(0,det0);
+    const k=h.indexOf(`data-w="${WOPEN}"`); const end=k<0?-1:h.indexOf('</button>',k);
+    if(end>0){ const at=end+9; h=h.slice(0,at)+det+h.slice(at); } else h+=det; }
+  h += `<div class="wfoot">${modeLine(D)} Updated ${tLocal(new Date(D.generated))}<span id="agoTxt" style="display:none"></span>.</div></div>`;
+  if(D.notes && D.notes.length) h += `<section><div class="card pad err">${D.notes.map(esc).join('<br>')}</div></section>`;
+  return h;
+}
+
 /* ───────── quant desk: today ───────── */
 const hm = d => d.toLocaleTimeString('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit'});
 function dur(ms){ const m=Math.max(0,Math.round(ms/60000)); if(m<60) return m+'m'; const h=Math.floor(m/60); return h<24 ? h+'h '+String(m%60).padStart(2,'0')+'m' : Math.floor(h/24)+'d '+(h%24)+'h'; }
@@ -857,6 +1046,7 @@ function pageToday(D){
   const stale = SESSION==='ny' && VIEW!=='now' && D.date!==todayET();
   const window_ = SESSION==='overnight' ? `Asia and London, ${dayOf(D.date)} 6 PM to 9:30 AM ET`
     : VIEW==='now' && D.window ? `${esc(D.window.name)} session, until ${tET(new Date(D.window.end))}` : `NY open, ${dayOf(D.date)}, 9:30 to 10:00 ET`;
+  if(modeNow()==='widget') return wToday(D, m, b, stale);
   let h = qToday(D, m, b, stale);
   const S = {};
   if(D.divergence) S.divergence = `<section><h2>NQ vs ES <span class="pill" style="color:var(--amber)">Split</span></h2>
