@@ -27,7 +27,7 @@ import os
 import re
 import sys
 import traceback
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -2625,6 +2625,144 @@ def sunday_gap(now):
     return cur
 
 
+# ─────────────────────────── news, gamma map, move ladder ───────────────────────────
+NEWS_FEEDS = [
+    ("Fox Business", "https://moxie.foxbusiness.com/google-publisher/markets.xml"),
+    ("Fox Business", "https://moxie.foxbusiness.com/google-publisher/economy.xml"),
+    ("CNBC", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
+    ("CNBC", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258"),
+    ("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
+    ("MarketWatch", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
+    ("Investing.com", "https://www.investing.com/rss/news_25.rss"),
+]
+
+
+def _strip_html(x):
+    import html as _h
+    import re as _re
+    return _re.sub(r"\s+", " ", _h.unescape(_re.sub(r"<[^>]+>", " ", x or ""))).strip()
+
+
+def _og_image(url):
+    """The article's share image, when its feed item carries none."""
+    import re as _re
+    try:
+        r = requests.get(url, headers=BROWSER_UA, timeout=(4, 6))
+        m = _re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)', r.text[:200000]) or \
+            _re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image', r.text[:200000])
+        return m.group(1) if m else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def fetch_news(now, limit=40):
+    """Headlines with pictures from free market news feeds. Links open the publisher's own article."""
+    import xml.etree.ElementTree as ET_
+    from email.utils import parsedate_to_datetime
+    items, seen, ok = [], set(), 0
+    for src, url in NEWS_FEEDS:
+        try:
+            r = requests.get(url, headers=BROWSER_UA, timeout=(5, 10))
+            r.raise_for_status()
+            root = ET_.fromstring(r.content)
+            ok += 1
+        except Exception as e:  # noqa: BLE001
+            print(f"news {src}: {type(e).__name__}", file=sys.stderr)
+            continue
+        for it in root.iter("item"):
+            title = _strip_html(it.findtext("title"))
+            link = (it.findtext("link") or "").strip()
+            if not title or not link.startswith("http"):
+                continue
+            key = title.lower()[:80]
+            if key in seen:
+                continue
+            seen.add(key)
+            img = None
+            for el in it.iter():
+                tag = el.tag.split("}")[-1]
+                u = el.attrib.get("url") or el.attrib.get("href")
+                if tag in ("content", "thumbnail") and u and not u.endswith((".mp4", ".m3u8")):
+                    img = u
+                    if tag == "content":
+                        break
+                if tag == "enclosure" and u and "image" in el.attrib.get("type", "image"):
+                    img = img or u
+            ts = None
+            for tg in ("pubDate", "{http://purl.org/dc/elements/1.1/}date"):
+                raw = it.findtext(tg)
+                if raw:
+                    try:
+                        ts = parsedate_to_datetime(raw)
+                    except Exception:  # noqa: BLE001
+                        try:
+                            ts = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+                        except Exception:  # noqa: BLE001
+                            ts = None
+                    break
+            if ts and ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            summ = _strip_html(it.findtext("description"))
+            items.append({"title": title, "link": link, "source": src, "image": img,
+                          "summary": (summ[:240] + "…") if len(summ) > 240 else summ,
+                          "ts": ts.astimezone(ET).isoformat(timespec="minutes") if ts else None})
+    items = [i for i in items if i["ts"] and (now - datetime.fromisoformat(i["ts"])).total_seconds() < 3 * 86400]
+    items.sort(key=lambda i: i["ts"], reverse=True)
+    items = items[:limit]
+    for i in [i for i in items if not i["image"]][:15]:
+        i["image"] = _og_image(i["link"])
+    stamp("News feeds", ok > 0, now.isoformat(), f"{ok} of {len(NEWS_FEEDS)} feeds")
+    return {"generated": now.isoformat(timespec="seconds"), "items": items}
+
+
+def gamma_map(days=20):
+    """Dealer levels from each morning's locked pre-open read: how the walls and flip have moved."""
+    out = {}
+    for f in sorted((OUT / "history").glob("20*.json"))[-60:]:
+        try:
+            rep_ = json.loads(f.read_text())
+        except Exception:  # noqa: BLE001
+            continue
+        for sym, m in rep_.get("markets", {}).items():
+            L, dl = m.get("levels") or {}, m.get("dealer") or {}
+            if L.get("call_wall") is None:
+                continue
+            out.setdefault(sym, []).append({"date": rep_["date"], "price": L.get("price"), "flip": L.get("flip"),
+                                            "call_wall": L.get("call_wall"), "put_wall": L.get("put_wall"),
+                                            "net_gex_bn": dl.get("net_gex_bn")})
+    return {k: v[-days:] for k, v in out.items()}
+
+
+# Share of a full day's variance in each session (cash hours carry roughly two thirds of it;
+# a rough split for index futures, used only to size the ladder).
+SESSION_VAR = [("Asia", "5 PM – 2 AM CT", 0.15), ("London", "2 – 8:30 AM CT", 0.20), ("New York", "8:30 AM – 3 PM CT", 0.65)]
+
+
+def move_ladder(read):
+    """1σ and 2σ price levels for each session from the vol index, scaled by dealer gamma."""
+    out = {}
+    q = read.get("macro", {})
+    for sym, m in read.get("markets", {}).items():
+        cfg = MARKETS[sym]
+        px = (m.get("levels") or {}).get("price")
+        v = q.get(cfg["vol_index"], {}).get("last")
+        if not px or not v:
+            continue
+        day = px * v / 100 / math.sqrt(252)
+        gm = 1.0
+        net = (m.get("dealer") or {}).get("net_gex_bn")
+        if net is not None:
+            gm = 0.85 if net > 0 else 1.15
+        rows = []
+        for name, hours, share in SESSION_VAR:
+            sd = day * math.sqrt(share) * gm
+            rows.append({"name": name, "hours": hours, "sd": round(sd, 1),
+                         "up1": round(px + sd, 2), "dn1": round(px - sd, 2), "up2": round(px + 2 * sd, 2), "dn2": round(px - 2 * sd, 2)})
+        out[sym] = {"price": px, "vol": round(v, 2), "vol_name": cfg["vol_index"].lstrip("^"), "day_sd": round(day * gm, 1),
+                    "gamma": None if net is None else ("long" if net > 0 else "short"), "sessions": rows}
+    return out
+
+
 def resolve_overnight(now):
     """
     The evening whose overnight (London) call is showing, its evidence cut, and whether it's still live.
@@ -2680,6 +2818,17 @@ def main():
     report = {"generated": now.isoformat(timespec="seconds"), "red": red_folder(now),
               "ny": {"preopen": preopen, "now": current}, "overnight": overnight, "gap": sunday_gap(now),
               "week": sorted(WEEK_EVENTS, key=lambda e: e["ts"])}
+    if not backfill:
+        try:
+            report["gamma_map"] = gamma_map()
+            report["ladder"] = move_ladder(current if current and current.get("markets") else preopen)
+        except Exception:  # noqa: BLE001
+            traceback.print_exc()
+        try:
+            (OUT / "news.json").write_text(json.dumps(fetch_news(now), indent=1))
+        except Exception:  # noqa: BLE001
+            traceback.print_exc()
+            note("News feeds failed")
     latest = OUT / "latest.json"
     if backfill and latest.exists():
         # a backfill only adds history; keep today's reads on the page, refresh the records
