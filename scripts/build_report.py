@@ -101,24 +101,26 @@ EVE_START = time(18, 0)    # 5 PM CT
 ON_START = time(21, 0)     # 8 PM CT
 ON_END = time(9, 0)        # 8 AM CT
 ON_CUT = time(20, 50)      # the overnight call locks ten minutes before the Asia open
+ASIA_CALL = time(20, 30)   # Now switches to calling the Asia session half an hour before it opens
 
 
 def current_session(now: datetime):
     """
     Which futures session is trading right now, as (name, start, end, ny_date), in ET.
     Evening 6 → 9 PM (5 → 8 PM CT), Asia 9 PM → 2 AM, London 2 AM → 9:30 AM, NY 9:30 AM → 4 PM.
-    Between 4 and 6 PM it calls the coming evening session. ny_date is the NY day the session
+    Between 4 and 6 PM (Sunday too) it calls the coming evening session before it opens, so the
+    call is in place for the reopen move. ny_date is the NY day the session
     feeds into. None when futures are shut.
     """
     wd, t, d = now.weekday(), now.time(), now.date()
     at = lambda day, hh, mm=0: datetime.combine(day, time(hh, mm), ET)  # noqa: E731
-    if wd == 5 or (wd == 6 and t < time(18)) or (wd == 4 and t >= time(16)):
-        return None
+    if wd == 5 or (wd == 6 and t < time(16)) or (wd == 4 and t >= time(16)):
+        return None   # Sunday from 4 PM ET: the evening call builds ahead of the 5 PM CT reopen
     if time(9, 30) <= t < time(16):
         return "NY", at(d, 9, 30), at(d, 16), d
-    if time(16) <= t < ON_START:
+    if time(16) <= t < ASIA_CALL:
         return "Evening", at(d, 18), at(d, 21), next_weekday(d)
-    if t >= ON_START:
+    if t >= ASIA_CALL:   # from 7:30 PM CT the Asia call is built ahead of the 8 PM CT open
         return "Asia", at(d, 21), at(d + timedelta(days=1), 2), next_weekday(d)
     if t < time(2):
         return "Asia", at(d - timedelta(days=1), 21), at(d, 2), d
@@ -2222,6 +2224,206 @@ def red_folder(now):
     return out
 
 
+# ─────────────────────────────── Sunday gap ────────────────────────────────
+GAP_LOCK = time(17, 55)    # 4:55 PM CT, five minutes before Globex reopens
+HOURLY_CACHE = {}
+
+
+def hourly_bars(ticker, days=400):
+    """60-minute bars (incl. Globex), ET-indexed. Yahoo keeps about two years of them."""
+    if FIXTURES:
+        return None
+    if ticker in HOURLY_CACHE:
+        return HOURLY_CACHE[ticker]
+    h = None
+    try:
+        import yfinance as yf
+        h = yf.Ticker(ticker).history(period=f"{days}d", interval="60m", prepost=True, auto_adjust=False)
+        h = None if h.empty else h
+        if h is not None:
+            h.index = h.index.tz_convert(ET)
+    except Exception as e:  # noqa: BLE001
+        print(f"hourly {ticker}: {type(e).__name__} {e}", file=sys.stderr)
+        h = None
+    HOURLY_CACHE[ticker] = h
+    return h
+
+
+def gap_sunday(now):
+    """The Sunday whose reopen gap is in play: from Friday 4 PM ET until Monday's New York open."""
+    d, wd, t = now.date(), now.weekday(), now.time()
+    if wd == 4 and t >= time(16):
+        return d + timedelta(days=2)
+    if wd == 5:
+        return d + timedelta(days=1)
+    if wd == 6:
+        return d
+    if wd == 0 and t < time(9, 30):
+        return d - timedelta(days=1)
+    return None
+
+
+def _px_at(h, when):
+    x = h[h.index < when] if h is not None else None
+    return float(x["Close"].iloc[-1]) if x is not None and not x.empty else None
+
+
+def gap_history(fut, sunday):
+    """Past weekends before `sunday`: (gap % from Friday's close to Sunday's open, BTC % over the weekend)."""
+    h, b = hourly_bars(fut), hourly_bars("BTC-USD")
+    if h is None:
+        return []
+    out = []
+    for s_ in sorted({i.date() for i in h.index if i.weekday() == 6}):
+        if s_ >= sunday:
+            continue
+        fri = s_ - timedelta(days=2)
+        fclose = datetime.combine(fri, time(17, 0), ET)
+        c = h[(h.index < fclose) & (h.index.date == fri)]
+        o = h[(h.index >= datetime.combine(s_, time(18), ET)) & (h.index < datetime.combine(s_, time(19), ET))]
+        if c.empty or o.empty:
+            continue
+        c0, o0 = float(c["Close"].iloc[-1]), float(o["Open"].iloc[0])
+        b0, b1 = _px_at(b, fclose + timedelta(minutes=1)), _px_at(b, datetime.combine(s_, time(18), ET))
+        out.append((pct(o0, c0), pct(b1, b0) if b0 and b1 else None))
+    return out
+
+
+def friday_lean(sym, fri):
+    """The model's own macro + options read at the end of Friday's New York session (the last Now call)."""
+    d = OUT / "history" / "now"
+    for f in sorted(d.glob(f"{fri.isoformat()}T*.json"), reverse=True) if d.exists() else []:
+        try:
+            m = json.loads(f.read_text())["markets"].get(sym)
+            if m:
+                return m["bias"].get("own_score", m["bias"]["score"]), f.stem
+        except Exception:  # noqa: BLE001
+            continue
+    return None, None
+
+
+def build_gap(sunday, as_of):
+    """
+    The Sunday reopen gap: points from Friday's 4 PM CT settle-time close to the 5 PM CT reopen.
+    Size comes from the market's own past weekends; direction from what trades or changes over the
+    weekend (Bitcoin, the Saudi market's Sunday session) plus the model's Friday macro read.
+    """
+    fri = sunday - timedelta(days=2)
+    fclose = datetime.combine(fri, time(17, 0), ET)
+    btc = hourly_bars("BTC-USD")
+    b0, b1 = _px_at(btc, fclose + timedelta(minutes=1)), _px_at(btc, as_of)
+    r_btc = pct(b1, b0) if b0 and b1 else None
+    tasi = None
+    rows = [r for r in daily_closes("^TASI.SR", 10) if r[0] <= sunday]
+    if len(rows) >= 2 and rows[-1][0] == sunday and as_of >= datetime.combine(sunday, time(8, 0), ET):
+        tasi = pct(rows[-1][1], rows[-2][1])
+    markets = {}
+    for sym, cfg in MARKETS.items():
+        fut = cfg["future"]
+        px = _px_at(hourly_bars(fut), fclose)
+        hist = gap_history(fut, sunday)
+        if not px or len(hist) < 12:
+            continue
+        typical = float(np.median([abs(g) for g, _ in hist]))
+        pairs = [(g, r) for g, r in hist if r is not None]
+        a = beta = 0.0
+        if len(pairs) >= 20:
+            x = np.array([r for _, r in pairs]); y = np.array([g for g, _ in pairs])
+            beta, a = (np.polyfit(x, y, 1) if np.std(x) > 0 else (0.0, float(np.mean(y))))
+        votes = []
+        if r_btc is not None:
+            votes.append(sig("btc", "Bitcoin over the weekend", 1 if r_btc > 1.5 else -1 if r_btc < -1.5 else 0, 1.0,
+                             f"Bitcoin {r_btc:+.1f}% since Friday's futures close. It trades all weekend, so it is the live read on risk appetite.",
+                             "Weekend"))
+        if tasi is not None:
+            votes.append(sig("tasi", "Saudi market (Sunday)", 1 if tasi > 0.5 else -1 if tasi < -0.5 else 0, 0.5,
+                             f"Tadawul {tasi:+.1f}% in its Sunday session, the first big equity market to trade after the weekend's news.",
+                             "Weekend"))
+        lean, src = friday_lean(sym, fri)
+        if lean is not None:
+            votes.append(sig("friday", "Friday macro read", 1 if lean > NEUTRAL_BAND else -1 if lean < -NEUTRAL_BAND else 0, 1.0,
+                             f"The model's last Friday read scored {lean:+.2f} on macro and options, before the weekend.", "Weekend"))
+        tot = sum(v["weight"] for v in votes) or 1
+        score = sum(v["score"] * v["weight"] for v in votes) / tot
+        other = [v for v in votes if v["key"] != "btc"]
+        tilt = sum(v["score"] * v["weight"] for v in other) / (sum(v["weight"] for v in other) or 1)
+        pred = (a + beta * r_btc if r_btc is not None else float(a)) + 0.5 * typical * tilt
+        if abs(pred) < 1e-9:
+            pred = 0.01 * (1 if score >= 0 else -1)
+        ratio = abs(pred) / typical if typical else 0
+        markets[sym] = {
+            "name": cfg["name"], "bias": "Bullish" if pred > 0 else "Bearish",
+            "conviction": "High" if ratio >= 0.7 else "Medium" if ratio >= 0.3 else "Low",
+            "friday_close": round(px, 2), "pred_pts": round(px * pred / 100, 1), "pred_pct": round(pred, 3),
+            "typical_pts": round(px * typical / 100, 1), "typical_pct": round(typical, 3),
+            "beta_btc": round(float(beta), 3), "weekends": len(hist), "score": round(score, 3), "signals": votes,
+            "outcome": None,
+        }
+    return {"sunday": sunday.isoformat(), "friday": fri.isoformat(), "as_of": as_of.isoformat(timespec="seconds"),
+            "locked": as_of >= datetime.combine(sunday, GAP_LOCK, ET), "btc_pct": r_btc and round(r_btc, 2),
+            "tasi_pct": tasi and round(tasi, 2), "markets": markets}
+
+
+def grade_gaps(d):
+    now = datetime.now(ET)
+    for f in sorted(d.glob("20*.json"))[-20:]:
+        g = json.loads(f.read_text())
+        s_ = date.fromisoformat(g["sunday"])
+        t0 = datetime.combine(s_, time(18), ET)
+        if now < t0 + timedelta(minutes=10):
+            continue
+        changed = False
+        for sym, m in g["markets"].items():
+            if m.get("outcome"):
+                continue
+            h = fetch_bars(MARKETS[sym]["future"], t0, t0 + timedelta(minutes=30))
+            if h is None:
+                hb = hourly_bars(MARKETS[sym]["future"])
+                h = None if hb is None else hb[(hb.index >= t0) & (hb.index < t0 + timedelta(hours=1))]
+                h = None if h is None or h.empty else h
+            if h is None:
+                continue
+            o = float(h["Open"].iloc[0])
+            mv = o - m["friday_close"]
+            m["outcome"] = {"open": round(o, 2), "gap_pts": round(mv, 2),
+                            "result": "hit" if (mv > 0) == (m["bias"] == "Bullish") and mv != 0 else "miss"}
+            changed = True
+        if changed:
+            f.write_text(json.dumps(g, indent=1, default=float))
+
+
+def sunday_gap(now):
+    d = OUT / "history" / "gap"
+    d.mkdir(parents=True, exist_ok=True)
+    s_ = gap_sunday(now)
+    if s_ and not os.environ.get("REPORT_DATE", "").strip():
+        lock = datetime.combine(s_, GAP_LOCK, ET)
+        path = d / f"{s_.isoformat()}.json"
+        old = json.loads(path.read_text()) if path.exists() else None
+        if not (old and old.get("locked")):
+            try:
+                g = build_gap(s_, min(now, lock))
+                if g["markets"]:
+                    path.write_text(json.dumps(g, indent=1, default=float))
+            except Exception:  # noqa: BLE001
+                traceback.print_exc()
+                note("Sunday gap read failed")
+    grade_gaps(d)
+    files = sorted(d.glob("20*.json"))
+    if not files:
+        return None
+    cur = json.loads(files[-1].read_text())
+    past = []
+    for f in files[-26:]:
+        g = json.loads(f.read_text())
+        for sym, m in g["markets"].items():
+            if m.get("outcome"):
+                past.append({"sunday": g["sunday"], "sym": sym, "bias": m["bias"], "pred_pts": m["pred_pts"],
+                             "gap_pts": m["outcome"]["gap_pts"], "result": m["outcome"]["result"]})
+    cur["record"] = past
+    return cur
+
+
 def resolve_overnight(now):
     """The evening whose overnight call is showing, its evidence cut, and whether it's still live.
     From 4 PM ET the coming night's call is a live preview; it locks at 7:50 PM CT. Sunday evening
@@ -2269,7 +2471,7 @@ def main():
         overnight = finish(build_view(on_day, on_cut, on_live, now, "overnight", hist_on), hist_on, "overnight")
 
     report = {"generated": now.isoformat(timespec="seconds"), "red": red_folder(now),
-              "ny": {"preopen": preopen, "now": current}, "overnight": overnight,
+              "ny": {"preopen": preopen, "now": current}, "overnight": overnight, "gap": sunday_gap(now),
               "week": sorted(WEEK_EVENTS, key=lambda e: e["ts"])}
     latest = OUT / "latest.json"
     if backfill and latest.exists():
