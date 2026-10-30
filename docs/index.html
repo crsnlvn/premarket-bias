@@ -2157,7 +2157,21 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePop(); });
 $('#refresh').onclick = () => load(true);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
 applyPrefs(); shell(); load();
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+// Self-update: if a newer app version is published, drop every cached copy and reload once.
+const APP_VER = '62';
+async function checkVersion(){
+  try{
+    const v = (await (await fetch('version.txt?t='+Date.now(), {cache:'no-store'})).text()).trim();
+    if(v && v !== APP_VER && sessionStorage.getItem('reloadedFor') !== v){
+      try{ sessionStorage.setItem('reloadedFor', v); }catch(e){}
+      if(window.caches) for(const k of await caches.keys()) await caches.delete(k);
+      const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if(reg) await reg.update();
+      location.replace(location.pathname + '?v=' + v);
+    }
+  }catch(e){}
+}
+checkVersion(); document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) checkVersion(); });
 </script>
 </body>
 </html>
