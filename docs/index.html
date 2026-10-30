@@ -137,6 +137,8 @@ h2{font-size:20px;font-weight:700;letter-spacing:-.03em;margin:0 4px 10px;displa
 .sig h3{font-size:15.5px;font-weight:600}
 .sig p{font-size:13.5px;line-height:1.45;color:var(--dim);margin-top:3px}
 .w{font-size:12px;color:var(--faint);margin-left:6px;font-weight:500}
+.nov{flex:none;font-size:11px;font-weight:600;color:var(--dim);padding:3px 8px;border-radius:99px;background:var(--bar)}
+.wtag{all:unset;font-size:12px;color:var(--faint);margin-left:6px;font-weight:500;font-style:normal}
 .vbar{flex:none;position:relative;width:70px;height:6px;border-radius:999px;background:var(--bar)}
 .vbar i{position:absolute;top:0;bottom:0;border-radius:999px}
 .ico{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid;display:grid;place-items:center;font-size:13px;font-weight:700}
@@ -271,7 +273,69 @@ body.compact .note{font-size:14.5px}
 .rng input[type=range]{width:100%;height:28px;accent-color:var(--text)}
 .reset{width:100%;margin-top:20px;padding:13px;border-radius:999px;color:var(--down);font-size:15px;font-weight:600;background:var(--bar)}
 
-/* ───────── glass widgets (default look) ───────── */
+/* ───────── calm: flat, easy on the eyes, three colors ───────── */
+:root[data-mode="calm"] body::before{display:none}
+:root[data-mode="calm"] .g,:root[data-mode="calm"] .card,:root[data-mode="calm"] .hero,:root[data-mode="calm"] .tabbar,:root[data-mode="calm"] .glass,
+:root[data-mode="calm"] .sheet,:root[data-mode="calm"] .toast,:root[data-mode="calm"] .big>div,:root[data-mode="calm"] .pop,:root[data-mode="calm"] .pc{
+  background:var(--glass);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--edge);box-shadow:0 1px 2px rgba(0,0,0,.18)}
+:root[data-mode="calm"] .pop{box-shadow:0 24px 60px rgba(0,0,0,.45)}
+:root[data-mode="calm"] .pc{background:#24262F}
+:root[data-mode="calm"] .segc button.on,:root[data-mode="calm"] .tabbar button.on,:root[data-mode="calm"] .seg button.on,:root[data-mode="calm"] .chips button.on{background:var(--sel);color:#fff;box-shadow:none}
+:root[data-mode="calm"] .live{box-shadow:none}
+:root[data-mode="calm"] .vbar i,:root[data-mode="calm"] .side i{box-shadow:none!important}
+:root[data-mode="calm"] .needle{box-shadow:0 0 0 3px var(--bg)}
+:root[data-mode="calm"] .chip,:root[data-mode="calm"] .pill{background:var(--sel);border-color:transparent;color:#C9D7FA}
+:root[data-mode="calm"] .t .more{color:var(--accent)}
+:root[data-mode="calm"] .px{background:#2A2C36}
+:root[data-mode="calm"] .scrim{background:rgba(8,9,12,.55)}
+:root[data-mode="calm"]{--amb:#7AA2F7}
+:root[data-mode="calm"] .tline > div{background:#262833!important;color:var(--dim)!important}
+:root[data-mode="calm"] .tline > div:nth-child(3){background:var(--accent)!important;color:#16171D!important}
+/* ───────── tappable tiles + big popup ───────── */
+button.t{display:block;width:100%;font:inherit;color:inherit;cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+button.t:active{transform:scale(.97)}
+.t .more{margin-left:auto;color:var(--faint);font-size:15px;line-height:1}
+.pop{position:fixed;z-index:27;left:50%;width:calc(100% - 20px);max-width:540px;top:calc(env(safe-area-inset-top) + 34px);bottom:calc(env(safe-area-inset-bottom) + 14px);
+  transform:translate(-50%,40px) scale(.96);opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.2,.9,.25,1),opacity .2s;
+  border-radius:32px;background:color-mix(in srgb,var(--solid) 82%,transparent);border:1px solid var(--edge);
+  box-shadow:inset 0 1px 0 var(--hi),0 30px 80px rgba(0,0,0,.55);-webkit-backdrop-filter:blur(36px) saturate(180%);backdrop-filter:blur(36px) saturate(180%)}
+.pop.on{transform:translate(-50%,0) scale(1);opacity:1;pointer-events:auto}
+.px{position:absolute;top:14px;right:14px;z-index:2;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sel);border:1px solid var(--edge);color:var(--text)}
+.pin{position:absolute;inset:0;overflow:auto;-webkit-overflow-scrolling:touch;padding:22px 18px 30px;border-radius:32px}
+.pk{font-size:13px;color:var(--dim);font-weight:500;padding-right:44px}
+.pt{font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1.1;margin-top:4px}
+.ps{font-size:14px;color:var(--sub);margin-top:2px}
+.ph{font-size:13px;font-weight:600;color:var(--dim);margin:18px 4px 8px}
+.pc{margin-top:12px;border-radius:20px;padding:12px 14px;background:var(--glass);border:1px solid var(--edge)}
+.pc .tug{margin-top:4px}
+.ph + .pc{margin-top:0}
+.rows0{padding-top:2px;padding-bottom:2px}
+.pr{padding:10px 0;border-top:1px solid var(--row)}
+.pr:first-child{border-top:0}
+.pr.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:15px}
+.pr.row span{color:var(--sub)}
+.pr.row small{display:block;font-size:12px;color:var(--faint)}
+.pr.row b{font-weight:600;font-variant-numeric:tabular-nums}
+.pr h3{font-size:15px;font-weight:600}
+.pr p{font-size:13px;line-height:1.45;color:var(--dim);margin-top:3px}
+:root[data-mode="quant"] .pop{border-radius:8px;background:#101214}
+:root[data-mode="quant"] .pin{border-radius:8px}
+/* session clock in the glass themes: same cards as the rest of the app */
+:root:not([data-mode="quant"]) .qp{font-family:var(--sans);font-size:13.5px;margin:0}
+:root:not([data-mode="quant"]):not([data-mode="widget"]) .qp .qs{margin-top:10px;border-radius:24px;padding:14px 16px;background:var(--glass);border:1px solid var(--edge);
+  box-shadow:inset 0 1px 0 var(--hi),0 12px 40px var(--shadow);-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%)}
+:root:not([data-mode="quant"]):not([data-mode="widget"]) .qp .qs:first-child{margin-top:14px}
+:root:not([data-mode="quant"]) .qp .qk{font-size:12px}
+:root:not([data-mode="quant"]) .clk b{font-size:56px}
+:root:not([data-mode="quant"]) .qbtn{font-family:var(--sans);border-radius:99px;font-weight:600;padding:6px 12px;font-size:12.5px;background:var(--sel);border:1px solid var(--edge);color:var(--text)}
+:root:not([data-mode="quant"]) .use b.big2{color:var(--accent)}
+:root:not([data-mode="quant"]) .sch{min-height:30px;font-size:13px}
+:root:not([data-mode="quant"]) .sch span:nth-child(3){font-size:12px}
+:root:not([data-mode="quant"]) .sch.on{background:var(--sel);border-radius:10px}
+:root:not([data-mode="quant"]) .sch.on span{color:var(--text)!important;font-weight:600}
+:root:not([data-mode="quant"]) .tline{border-radius:10px;overflow:hidden}
+:root:not([data-mode="quant"]) .qev{font-size:13.5px;line-height:22px}
+/* ───────── glass widgets ───────── */
 :root[data-mode="widget"] body::before{inset:0;background:radial-gradient(120% 55% at 85% -5%,var(--blob1),transparent 62%),radial-gradient(90% 40% at 0% 100%,color-mix(in srgb,var(--blob1) 35%,transparent),transparent 70%)}
 :root[data-mode="widget"] .g,:root[data-mode="widget"] .card,:root[data-mode="widget"] .big>div{background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.1);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 30px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
@@ -295,57 +359,70 @@ body.compact .note{font-size:14.5px}
 :root[data-mode="widget"] .tabbar button.on{background:rgba(255,255,255,.16);box-shadow:none;color:#fff}
 :root[data-mode="widget"] h2{font-size:17px}
 .wp{padding-bottom:10px}
-.whero{padding:26px 4px 0}
-.wk{font-size:11.5px;color:var(--dim);font-weight:500}
-.wcall{font-size:68px;font-weight:600;letter-spacing:-.06em;line-height:1.02;margin-top:2px}
-.wsub{font-size:14px;color:var(--sub);margin-top:2px}
-.wgrid{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:row dense;gap:10px;margin-top:22px}
-.w{position:relative;text-align:left;font:inherit;color:inherit;min-width:0;border-radius:22px;padding:13px 15px;display:flex;flex-direction:column;justify-content:space-between;gap:4px;min-height:104px;
+.whero{padding:14px 4px 0}
+.wk{font-size:11px;color:var(--dim);font-weight:500}
+.wcall{font-size:52px;font-weight:600;letter-spacing:-.055em;line-height:1.04;margin-top:1px}
+.wsub{font-size:13px;color:var(--sub);margin-top:1px}
+.wgrid{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:row dense;gap:8px;margin-top:14px}
+.wgrid .w{position:relative;text-align:left;font:inherit;color:inherit;min-width:0;border-radius:18px;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:2px;min-height:80px;
   background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.12);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 2px rgba(0,0,0,.4),0 14px 34px rgba(0,0,0,.5);
   -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s}
-.w:active{transform:scale(.97)}
-.w.wide{grid-column:1/-1;min-height:0}
-.w.on{border-color:color-mix(in srgb,var(--accent) 70%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent),0 16px 40px color-mix(in srgb,var(--accent) 22%,rgba(0,0,0,.5))}
+.wgrid .w:active{transform:scale(.97)}
+.wgrid .w.wide{grid-column:1/-1;min-height:0}
+.wgrid .w.on{border-color:color-mix(in srgb,var(--accent) 70%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent),0 16px 40px color-mix(in srgb,var(--accent) 22%,rgba(0,0,0,.5))}
 .wr{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%}
-.wv{font-size:23px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:6px}
+.wv{font-size:19px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:4px}
 .wv2{font-size:12px;color:var(--sub)}
-.wv3{font-size:16px;font-weight:600;margin-top:6px}
-.wbars{display:flex;gap:3px;height:26px;align-items:flex-end;margin-top:10px;width:100%}
+.wv3{font-size:14px;font-weight:600;margin-top:4px}
+.wbars{display:flex;gap:3px;height:18px;align-items:flex-end;margin-top:7px;width:100%}
 .wbars i{flex:1;border-radius:3px;display:block}
-.w10{display:flex;gap:2px;margin-top:10px;width:100%}
-.w10 i{flex:1;height:14px;border-radius:2px;display:block}
+.w10{display:flex;gap:2px;margin-top:7px;width:100%}
+.w10 i{flex:1;height:10px;border-radius:2px;display:block}
+.wstrip{flex-direction:row!important;padding:4px!important;min-height:0!important;gap:0!important}
+.ws{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;padding:7px 8px;border-radius:14px;text-align:left;border-left:1px solid rgba(255,255,255,.07)}
+.ws:first-child{border-left:0}
+.ws b{font-size:15px;font-weight:600;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ws .wk{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws.on{background:rgba(255,255,255,.1)}
+.wrow{flex-direction:row!important;align-items:center;gap:5px!important;padding:5px!important;min-height:0!important}
+.wrow > .wk{margin-right:4px}
+.wrow button{flex:1;min-width:0;display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:13px;background:rgba(255,255,255,.06)}
+.wrow b{font-size:13px;font-weight:600}
+.wrow .dots{display:flex;gap:3px;margin-left:auto}
+.wrow .dots i{width:6px;height:6px;border-radius:50%;display:block}
 .wses{display:flex;gap:8px;margin-top:10px;width:100%}
 .wses button{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);text-align:left}
 .wses button span:nth-child(2){display:flex;gap:4px}
 .wses i{width:8px;height:8px;border-radius:50%;display:block}
 .wses b{font-size:14px;font-weight:600}
-.wtape{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 10px;margin-top:10px;width:100%}
+.wgrid .w.wtape{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:9px 10px;min-height:0}
 .wtape div{display:flex;flex-direction:column;gap:1px}
-.wtape b{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
-.wd{margin-top:10px;border-radius:22px;padding:14px 16px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.12);
+.wtape b{font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wtape .wk{font-size:10px;white-space:nowrap}
+.wd{margin-top:8px;border-radius:18px;padding:10px 13px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.12);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 14px 34px rgba(0,0,0,.5);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);animation:wdin .25s cubic-bezier(.2,.8,.2,1)}
 @keyframes wdin{from{opacity:0;transform:translateY(-6px)}}
 .wd > .wr{margin-bottom:6px}
-.wd > .wr b{font-size:15px;font-weight:600}
-.wl{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);font-size:14px}
+.wd > .wr b{font-size:14px;font-weight:600}
+.wl{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid rgba(255,255,255,.07);font-size:13px}
 .wd > .wr + .wl{border-top:0}
 .wn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wb{width:56px;height:4px;border-radius:2px;background:rgba(255,255,255,.08);flex:none;display:flex}
 .wb i{display:block;height:4px;border-radius:2px}
-.wnote{font-size:13px;line-height:1.5;color:var(--sub);margin-top:10px}
+.wnote{font-size:12px;line-height:1.45;color:var(--sub);margin-top:8px}
 .wnote b{color:var(--text);font-weight:600}
 .wgx div{display:flex;align-items:center;gap:8px;height:16px;font-size:11px;font-variant-numeric:tabular-nums}
 .wgx span{width:46px;flex:none}
 .wgx b{flex:1;display:flex;height:6px}
 .wgx b i{display:block;height:6px;border-radius:3px}
-.wgx em{width:52px;text-align:right;font-style:normal;font-size:10.5px}
+.wgx em{width:62px;text-align:right;font-style:normal;font-size:10.5px;white-space:nowrap}
 .wgx .ln{flex:1;height:0;border-top:1px solid var(--text);display:block}
 .wgx .ln.d{border-top:1px dashed var(--amber)}
 :root[data-mode="widget"] .qp{font-family:var(--sans);font-size:13px}
 :root[data-mode="widget"] .qp .qs{border-color:rgba(255,255,255,.08)}
 :root[data-mode="widget"] .qbtn{font-family:var(--sans);border-radius:99px;font-weight:600}
-.wfoot{font-size:11.5px;color:var(--faint);line-height:1.5;margin:16px 4px 0}
+.wfoot{font-size:11px;color:var(--faint);line-height:1.5;margin:16px 4px 0}
 /* ───────── quant desk ───────── */
 :root{--qm:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --qd:"Inter Tight",var(--sans); --amb:#FFB000}
 :root[data-mode="quant"]{--sans:var(--qm)}
@@ -438,7 +515,7 @@ body.compact .note{font-size:14.5px}
 .l20{display:flex;flex-wrap:wrap;gap:2px}
 .l20 i{width:calc(10% - 2px);max-width:15px;height:10px;display:block}
 .qev{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;line-height:17px}
-.qbtn{font-family:var(--qm);font-size:11px;color:var(--amb);border:1px solid var(--amb);padding:5px 10px;border-radius:2px;background:none}
+.qbtn{white-space:nowrap;font-family:var(--qm);font-size:11px;color:var(--amb);border:1px solid var(--amb);padding:5px 10px;border-radius:2px;background:none}
 .qnote{font-size:11.5px;line-height:17px;color:var(--sub)}
 .qnote b{color:var(--text);font-weight:600}
 .clk{display:flex;align-items:baseline;gap:6px;font-family:var(--qd)}
@@ -484,6 +561,7 @@ body.compact .note{font-size:14.5px}
 <div class="glass" id="glass"></div>
 <div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
 <div class="toast" id="toast"></div>
+<div class="pop" id="pop" role="dialog" aria-modal="true"><button class="px" id="popX" aria-label="Close"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="pin" id="popIn"></div></div>
 
 <script>
 const $ = s => document.querySelector(s);
@@ -512,9 +590,9 @@ const PAGES = {
   macro:{name:'Macro', sub:'Markets and calendar'}, record:{name:'Record', sub:'Hit rate'},
   red:{name:'Red folder', sub:'CPI and FOMC previews'},
   research:{name:'Research', sub:'What each vote means'}, journal:{name:'Journal', sub:'Your trades'},
-  clock:{name:'Session clock', sub:'Which view to use right now'},
+  clock:{name:'Session clock', tab:'Clock', sub:'Which view to use right now'},
 };
-const BAR = ['today','levels','macro','research'];
+const BAR = ['today','levels','macro','clock'];
 
 /* ───────── settings ───────── */
 const THEMES = {
@@ -523,6 +601,7 @@ const THEMES = {
 };
 // glass backgrounds: a base color plus two ambient glows (the third glow follows the call)
 const BGS = {
+  calm:{name:'Calm', mode:'calm', bg:'#16171D', blob2:'transparent', blob3:'transparent'},
   widget:{name:'Glass widgets', mode:'widget', bg:'#000000', blob2:'transparent', blob3:'transparent'},
   quant:{name:'Quant desk', mode:'quant', bg:'#0B0C0E', blob2:'transparent', blob3:'transparent'},
   vivid:{name:'Vivid', mode:'vivid', bg:'#0a0614', blob2:'transparent', blob3:'transparent'},
@@ -533,6 +612,9 @@ const BGS = {
   black:{name:'Black', mode:'dark', bg:'#000000', blob2:'rgba(60,110,255,.22)', blob3:'rgba(0,200,170,.1)'},
 };
 const MODE = {
+  calm:{text:'#ECEDF2', sub:'rgba(236,237,242,.76)', dim:'rgba(236,237,242,.56)', faint:'rgba(236,237,242,.53)', glass:'#1E2028',
+    edge:'rgba(255,255,255,.07)', hi:'rgba(255,255,255,.04)', sel:'rgba(122,162,247,.16)', row:'rgba(255,255,255,.06)', track:'#14151A',
+    bar:'rgba(255,255,255,.07)', shadow:'rgba(0,0,0,.18)', solid:'#1E2028', amber:'#7AA2F7'},
   widget:{text:'#ffffff', sub:'rgba(255,255,255,.78)', dim:'rgba(235,235,245,.55)', faint:'rgba(235,235,245,.32)', glass:'rgba(255,255,255,.06)',
     edge:'rgba(255,255,255,.09)', hi:'transparent', sel:'rgba(255,255,255,.16)', row:'rgba(255,255,255,.07)', track:'rgba(255,255,255,.06)',
     bar:'rgba(255,255,255,.08)', shadow:'transparent', solid:'rgba(28,28,30,.92)', amber:'#FF9F0A'},
@@ -553,7 +635,7 @@ const SECTIONS = {
   divergence:'NQ vs ES split', changed:'What changed', outcome:'How it played out', signals:'Votes',
   calendar:'Today\'s releases', earnings:'Mega-cap earnings', freshness:'Data sources', method:'How it works'
 };
-const DEFAULTS = {theme:'classic', up:null, down:null, bg:'widget', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
+const DEFAULTS = {theme:'classic', up:null, down:null, bg:'calm', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
   order:Object.keys(SECTIONS), hidden:[],
   fx:'off', fxTint:'style', fxSpeed:1, fxAmount:1, fxSize:1, fxGlow:1, fxSet:false};
 const FX_STYLES = {off:'Off', blackhole:'Black hole', petals:'Petals', ravens:'Ravens', symbiote:'Symbiote', stars:'Starfall', embers:'Embers', aurora:'Aurora'};
@@ -562,7 +644,7 @@ const FX_TINTS = {style:'Its own', call:'Follows the call', '#cdbfff':'Lavender'
 const OLD = store.get('prefs2', null) || (({theme,up,down,bg,...rest}) => rest)(store.get('prefs',{}));
 let P = {...DEFAULTS, ...OLD};
 if(!BGS[P.bg]) P.bg = 'quant';
-if(!P.bgSet || !P.wSet){ P.bg = 'widget'; P.wSet = true; P.bgSet = false; }   // glass widgets is the default look; any background can still be picked in Settings
+if(!P.bgSet || !P.cSet){ P.bg = 'calm'; P.cSet = true; P.bgSet = false; }   // calm (flat, three colors) is the default look; any background can still be picked in Settings
 if(!P.fxSet) P.fx = 'off';   // default look is plain glass; an animation only runs once someone picks one
 for(const k of Object.keys(SECTIONS)) if(!P.order.includes(k)) P.order.push(k);
 P.order = P.order.filter(k=>SECTIONS[k]);
@@ -585,11 +667,13 @@ function applyPrefs(){
   let up = P.up||t.up, down = P.down||t.down;
   if(mode==='light'){ up = shade(up,.38); down = shade(down,.18); }
   if(mode==='vivid' && !P.down && P.theme==='classic') down = '#ff5c8a';   // reads cleaner on the pink
+  let accent = null;
+  if(mode==='calm'){ if(P.theme==='classic'){ if(!P.up) up = '#4FD1A1'; if(!P.down) down = '#F2778F'; } accent = '#7AA2F7'; }
   if(mode==='widget' && P.theme==='classic'){ if(!P.up) up = '#3EE07A'; if(!P.down) down = '#FF453A'; }
   if(mode==='quant' && P.theme==='classic'){ if(!P.up) up = '#3DDC97'; if(!P.down) down = '#FF5C5C'; }
-  r.setProperty('--up', up); r.setProperty('--down', down); r.setProperty('--accent', up);
+  r.setProperty('--up', up); r.setProperty('--down', down); r.setProperty('--accent', accent || up);
   const glow = CALL==='Bearish' ? down : CALL==='Bullish' ? up : null;
-  r.setProperty('--blob1', mode==='vivid' ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:mode==='widget'?24:50}%, transparent)` : 'transparent');
+  r.setProperty('--blob1', (mode==='vivid'||mode==='calm') ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:mode==='widget'?24:50}%, transparent)` : 'transparent');
   document.documentElement.dataset.mode = mode;
   document.querySelector('meta[name=theme-color]').content = b.bg;
   document.body.classList.toggle('compact', P.density==='compact');
@@ -670,7 +754,7 @@ function shell(){
   $$('#vt button').forEach(b=>b.classList.toggle('on', SESSION==='overnight' ? b.dataset.view==='overnight' : b.dataset.view===VIEW));
   $('.brand').innerHTML = `<span class="live ${D && D.date!==todayET() && SESSION==='ny' ? 'stale':''}" id="live"></span><b>${SESSION==='overnight'?'Overnight':VIEW==='now'?esc(winName(D)):'NY open'}</b> Bias`;
   // tab bar
-  $('#tabbar').innerHTML = BAR.map(k=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}${PAGES[k].name}</button>`).join('')
+  $('#tabbar').innerHTML = BAR.map(k=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}${PAGES[k].tab||PAGES[k].name}</button>`).join('')
     + `<button data-p="all" class="${!BAR.includes(PAGE)?'on':''}">${I.all}More</button>`;
   $$('#tabbar button').forEach(b=>b.onclick=()=> b.dataset.p==='all' ? openGlass() : go(b.dataset.p));
 }
@@ -707,6 +791,7 @@ function render(){
   if(PAGE==='clock') wireClock();
   $$('[data-w]').forEach(t=>t.onclick=()=>{ WOPEN = WOPEN===t.dataset.w ? null : t.dataset.w; store.set('wopen', WOPEN); render(); });
   $$('[data-page]').forEach(t=>t.onclick=()=>go(t.dataset.page));
+  $$('[data-pop]').forEach(t=>t.onclick=()=>openPop(t.dataset.pop));
   if(PAGE==='journal') wireJournal();
   if(PAGE==='levels'){ const c=$('#copyLv'); if(c) c.onclick=copyLevels; }
   $$('[data-go]').forEach(t=>t.onclick=()=>{ const [s,v]=t.dataset.go.split('|'); SESSION=s; if(s==='ny') VIEW=v; render(); window.scrollTo({top:0}); });
@@ -772,14 +857,14 @@ function bento(D, m, b, stale, window_){
   const others = otherCalls().map(([name,s,v,d])=>{ const x=d.markets[SYM].bias;
     return `<button class="g t mini-call" data-go="${s}|${v}"><div class="lbl">${name}</div><div class="tc" style="color:${C(x.bias)}">${x.bias}</div><div class="ts">${x.conviction} conviction</div></button>`; }).join('');
   return `<div class="bento">
-    <div class="g t wide hero-t">
-      <div class="lbl" style="display:flex;align-items:center;gap:8px"><span class="live ${stale?'stale':''}" id="live"></span>${window_}</div>
+    <button class="g t wide hero-t tap" data-pop="votes">
+      <div class="lbl" style="display:flex;align-items:center;gap:8px"><span class="live ${stale?'stale':''}" id="live"></span>${window_}<span class="more">›</span></div>
       <div class="hero-row"><div class="callword" style="color:${C(b.bias)}">${b.bias}</div>
         <span class="chip conv-pill">${b.conviction} conviction</span></div>
       ${tug(m)}
-    </div>
-    <div class="g t">${tile1}</div><div class="g t">${tile2}</div>
-    ${top.length?`<div class="g t wide"><div class="lbl" style="margin-bottom:4px">Biggest votes</div>${top.map(s=>`<div class="mrow"><span>${esc(s.label)}</span><span class="num" style="color:${s.score>0?'var(--up)':'var(--down)'}">${(s.score*s.weight/T>=0?'+':'−')+Math.abs(s.score*s.weight/T).toFixed(3)}</span></div>`).join('')}</div>`:''}
+    </button>
+    <button class="g t tap" data-pop="levels">${tile1}</button><button class="g t tap" data-pop="levels">${tile2}</button>
+    ${top.length?`<button class="g t wide tap" data-pop="votes"><div class="lbl" style="margin-bottom:4px;display:flex">Biggest votes<span class="more">›</span></div>${top.map(s=>`<div class="mrow"><span>${esc(s.label)}</span><span class="num" style="color:${s.score>0?'var(--up)':'var(--down)'}">${(s.score*s.weight/T>=0?'+':'−')+Math.abs(s.score*s.weight/T).toFixed(3)}</span></div>`).join('')}</button>`:''}
     <div class="g t wide"><p class="note" style="margin:0">${esc(b.overall).replace(/(^|\. )(For:|Against:|On deck:)/g,'$1<b>$2</b>')}</p></div>
     ${others}
     <div class="g t wide"><div class="mode" style="margin:0">${modeLine(D)}</div>${stampsHTML(D)}</div>
@@ -816,9 +901,11 @@ function phaseNow(){
 }
 const cd = ms => { const s=Math.max(0,Math.floor(ms/1000)); return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(x=>String(x).padStart(2,'0')).join(':'); };
 function pageClock(){
-  const now = new Date(), ph = phaseNow(), p = ph.p, t = ph.t;
+  const now = new Date(), ph = phaseNow(), p = ph.p, t = ph.t, Q = modeNow()==='quant';
+  const T_ = (code, plain) => Q ? code : plain;
   const tz = (new Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(now).find(x=>x.type==='timeZoneName')||{}).value || '';
-  const sessName = ph.k==='overnight' ? ph.leg : ph.k==='preopen' ? (t<570?'london → ny':'ny open') : ph.k==='now' ? 'new_york' : 'closed';
+  let sessName = ph.k==='overnight' ? ph.leg : ph.k==='preopen' ? (t<570?'london → ny':'ny open') : ph.k==='now' ? 'new_york' : 'closed';
+  if(!Q) sessName = {asia:'Asia', london:'London', 'london → ny':'London → NY', 'ny open':'NY open', new_york:'New York', closed:'Closed'}[sessName] || sessName;
   const U = {
     overnight:['OVERNIGHT','overnight', `The overnight call covers 6 PM to the 9:30 open. For the ${ph.leg} leg you're trading right now, check <b>now</b>.${t>=487&&t<565?' The pre-open call is a preview until it locks at 9:25.':''}`, [['overnight','overnight ▸'],['now','now ▸']]],
     preopen:['PRE-OPEN','preopen', `Final open call is locked (9:25 read). It covers 9:30–10:00.${t<570?' NY opens in '+dur(etAt(now,0,9,30)-now)+'.':''} Switch to <b>now</b> at 10:00.`, [['preopen','open it ▸']]],
@@ -837,20 +924,20 @@ function pageClock(){
   const SC = {asia:['#16202B','#7FA7D6'], london:['#1B2A24','#6FCF97'], P:['var(--amb)','#0B0C0E'], new_york:['#2A1F14','#F2B266'], closed:['#16181B','#4A4F57']};
   const ax = [['6p',18],['2a',2],['9:25',9+25/60],['4p',16],['6p',17.9999]];
   return `<div class="qp">
-    <div class="qs"><span class="qk">// new_york  ${p.weekday.toLowerCase()} ${+p.day} ${now.toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short'}).toLowerCase()}</span>
+    <div class="qs"><span class="qk">${Q?`// new_york  ${p.weekday.toLowerCase()} ${+p.day} ${now.toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short'}).toLowerCase()}`:`New York · ${p.weekday} ${now.toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short'})} ${+p.day}`}</span>
       <div class="clk"><b>${p.hour}:${p.minute}</b><em>:${p.second}</em><small>ET</small></div>
-      <span class="qk">your time <span style="color:var(--text)">${tLocal(now)} ${esc(tz)}</span>  ·  session <span style="color:var(--text)">${sessName}</span></span></div>
-    <div class="qs use"><span class="qk">use_this_view</span>
-      <div class="qhd" style="margin:4px 0 6px;align-items:center"><b class="big2"${ph.k==='closed'||ph.k==='weekend'?' style="color:var(--dim)"':''}>${U[0]}</b>
-        <span style="display:flex;gap:6px">${U[3].map(([v,l])=>`<button class="qbtn" data-open="${v}">${l}</button>`).join('')}</span></div>
+      <span class="qk">${T_('your time','Your time')} <span style="color:var(--text)">${tLocal(now)} ${esc(tz)}</span>  ·  ${T_('session','Session')} <span style="color:var(--text)">${sessName}</span></span></div>
+    <div class="qs use"><span class="qk">${T_('use_this_view','Use this view')}</span>
+      <div class="qhd" style="margin:4px 0 6px;align-items:center"><b class="big2"${ph.k==='closed'||ph.k==='weekend'?' style="color:var(--dim)"':''}>${Q?U[0]:U[0][0]+U[0].slice(1).toLowerCase()}</b>
+        <span style="display:flex;gap:6px">${U[3].map(([v,l])=>`<button class="qbtn" data-open="${v}">${Q?l:l[0].toUpperCase()+l.slice(1)}</button>`).join('')}</span></div>
       <div class="qnote">${U[2]}</div></div>
-    <div class="qs"><div class="qhd"><span class="qk">24h_session_map (ET)</span><span class="qk">6p → 6p</span></div>
-      <div class="tline">${SEGS.map(([n,,,w])=>`<div style="flex:${w};background:${SC[n][0]};color:${SC[n][1]};${n==='P'?'font-weight:700':''}">${n}</div>`).join('')}<i class="mk" style="left:${stripPos(hr).toFixed(2)}%"></i></div>
+    <div class="qs"><div class="qhd"><span class="qk">${T_('24h_session_map (ET)','24-hour map, New York time')}</span><span class="qk">6p → 6p</span></div>
+      <div class="tline">${SEGS.map(([n,,,w])=>`<div style="flex:${w};background:${SC[n][0]};color:${SC[n][1]};${n==='P'?'font-weight:700':''}">${Q?n:{asia:'Asia',london:'London',P:'P',new_york:'New York',closed:'Closed'}[n]}</div>`).join('')}<i class="mk" style="left:${stripPos(hr).toFixed(2)}%"></i></div>
       <div class="tax">${ax.map(([l,h])=>`<span style="left:${stripPos(h).toFixed(2)}%;${l==='9:25'?'color:var(--amb)':''}">${l}</span>`).join('')}</div></div>
     <div class="qs"><div class="sch qk" style="border:0;min-height:18px"><span>time ET</span><span>view</span><span>what it's for</span></div>
       ${sch.map(r=>`<div class="sch ${onRow(r)?'on':''}"><span>${r[0]}</span><span>${r[1]}</span><span>${r[2]}</span></div>`).join('')}</div>
-    <div class="qs"><span class="qk">next</span>
-      ${nexts.map(([n,d],i)=>`<div class="qev"><span>${esc(n)}</span><span style="color:${i?'var(--text)':'var(--amb)'}">${cd(d-now)}</span></div>`).join('')}</div>
+    <div class="qs"><span class="qk">${T_('next','Coming up')}</span>
+      ${nexts.map(([n,d],i)=>`<div class="qev"><span>${esc(Q?n:(n[0].toUpperCase()+n.slice(1)).replace(/\bny\b/gi,'NY'))}</span><span style="color:${i?'var(--text)':'var(--amb)'}">${cd(d-now)}</span></div>`).join('')}</div>
     <div class="qs"><div class="qk" style="line-height:1.6">Pre-open refreshes every 15 min from about 8:07 ET and locks at the 9:25 read. Now and Overnight update hourly. Times follow New York, so daylight saving is handled.</div></div>
   </div>`;
 }
@@ -860,6 +947,41 @@ function wireClock(){
   clearInterval(CLK);
   CLK = setInterval(()=>{ if(PAGE!=='clock'){ clearInterval(CLK); return; } $('#app').innerHTML = pageClock(); wireClock(); }, 1000);
 }
+
+/* ───────── big glass popup (opened from a widget) ───────── */
+function openPop(kind){
+  const D = readFor(); if(!D || !D.markets[SYM]) return;
+  const m = D.markets[SYM], b = m.bias, L = m.levels||{}, Dl = m.dealer||{}, up='var(--up)', dn='var(--down)';
+  let h = '';
+  if(kind==='votes'){
+    const groups={}; m.signals.forEach(s=>(groups[s.group]=groups[s.group]||[]).push(s));
+    h = `<div class="pk">${esc(SYM)} · ${SESSION==='overnight'?'Overnight':VIEW==='now'?esc(winName(D)):'NY open'}</div>
+      <h3 class="pt" style="color:${C(b.bias)}">${b.bias}</h3><div class="ps">${esc(b.conviction)} conviction · ${b.ups??'—'} bullish, ${b.downs??'—'} bearish</div>
+      <div class="pc">${tug(m)}</div>
+      ${b.overall?`<div class="pc"><p class="note" style="margin:0">${esc(b.overall).replace(/(^|\. )(For:|Against:|On deck:)/g,'$1<b>$2</b>')}</p></div>`:''}
+      ${Object.entries(groups).map(([g,list])=>`<div class="ph">${esc(g)}</div><div class="pc rows0">${list.map(s=>
+        `<div class="pr"><div class="sig-h"><h3>${esc(s.label)}<em class="wtag">${s.directional===false?'context':'×'+s.weight}</em></h3>${s.score?vbar(s):`<span class="nov">${s.directional===false?'context':'no vote'}</span>`}</div><p>${esc(lead(s.text))}</p></div>`).join('')}</div>`).join('')}`;
+  }
+  if(kind==='levels'){
+    const lv=(k,v,c,sub)=>v!=null?`<div class="pr row"><span>${k}${sub?`<small>${sub}</small>`:''}</span><b style="color:${c}">${fmt(v,0)}</b></div>`:'';
+    const R = m.expected_range, gx = gexHTML(m);
+    h = `<div class="pk">${esc(SYM)} · as of ${tET(new Date(D.as_of))}</div><h3 class="pt">Levels</h3>
+      <div class="pc rows0">${lv('Futures price',L.price,'var(--text)')}${lv('Call wall',L.call_wall,up,'resistance')}${lv('Gamma flip',L.flip,'var(--amber)','dealers short below')}${lv('Put wall',L.put_wall,dn,'support')}
+        ${R?`<div class="pr row"><span>Expected move<small>one standard move</small></span><b>±${fmt(R.move,0)}</b></div><div class="pr row"><span>Range</span><b>${fmt(R.low,0)} – ${fmt(R.high,0)}</b></div>`:''}
+        ${!L.flip&&!L.call_wall?'<div class="pr"><p>No dealer levels for this read: the free feed did not have open interest for it.</p></div>':''}</div>
+      ${gx?`<div class="ph">Dealer gamma by strike</div><div class="pc">${gx}</div>`:''}
+      ${Dl.net_gex_bn!=null?`<div class="ph">Dealers</div><div class="pc rows0">
+        <div class="pr row"><span>Positioning</span><b style="color:${Dl.net_gex_bn>0?up:dn}">${Dl.net_gex_bn>0?'Long gamma':'Short gamma'}</b></div>
+        <div class="pr row"><span>Net GEX per 1%</span><b>${usd(Dl.net_gex_bn,1)}B</b></div>
+        ${Dl.charm_bn!=null?`<div class="pr row"><span>Charm into close</span><b style="color:${Dl.charm_bn>0?up:dn}">${Dl.charm_bn>0?'Buy':'Sell'} ${usd(Math.abs(Dl.charm_bn),1)}B</b></div>`:''}</div>`:''}
+      <button class="btn" style="width:100%;margin-top:14px" id="popGo">Open the Levels page</button>`;
+  }
+  $('#popIn').innerHTML = h; $('#popIn').scrollTop = 0;
+  const g=$('#popGo'); if(g) g.onclick=()=>{ closePop(); go('levels'); };
+  $('#scrim').classList.add('on'); $('#pop').classList.add('on'); document.body.style.overflow='hidden';
+}
+function closePop(){ const p=$('#pop'); if(!p||!p.classList.contains('on')) return; p.classList.remove('on'); document.body.style.overflow='';
+  if(!$('#sheet').classList.contains('on') && !$('#glass').classList.contains('on')) $('#scrim').classList.remove('on'); }
 
 /* ───────── glass widgets: today ───────── */
 let WOPEN = store.get('wopen', null);
@@ -877,29 +999,22 @@ function gexHTML(m){
 }
 const TAPE = [['ES=F','S&P fut'],['ZN=F','10Y fut'],['DX-Y.NYB','Dollar'],['CL=F','Oil'],['VXX','Vol'],['BTC-USD','Bitcoin']];
 function wExtra(D, m, b, on){
-  const Dl=m.dealer||{}, R=m.expected_range, up='var(--up)', dn='var(--down)', ph=phaseNow();
-  const useNow = {overnight:['Overnight','switch to Pre at 9:25'], preopen:['Pre-open','switch to Now at 10:00'], now:['Now','NY until 4 PM'], closed:['Closed','next call 6 PM'], weekend:['Closed','opens Sun 6 PM']}[ph.k];
-  let h = '';
-  if(Dl.net_gex_bn!=null){ const lg=Dl.net_gex_bn>0;
-    h += `<button class="w${on('dealers')}" data-w="dealers"><div class="wr"><span class="wk">Dealers</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${lg?up:dn}" stroke-width="2.4" stroke-linecap="round">${lg?'<path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/>':'<path d="M4 12h16M8 8l4 4-4 4M16 8l-4 4 4 4"/>'}</svg></div>
-      <div class="wv">${lg?'Long γ':'Short γ'}</div><div class="wk">${usd(Dl.net_gex_bn,1)}B · ${lg?'moves get damped':'moves can run'}</div></button>`; }
-  const L=m.levels||{}, tg = b.bias==='Bullish' ? L.call_wall : L.put_wall;
-  if(R && tg!=null && L.price!=null) h += `<button class="w${on('range')}" data-w="range"><div class="wr"><span class="wk">Expected move</span><span class="wk">1σ</span></div>
-      <div class="wv">±${fmt(R.move,0)}</div><div class="wk">${fmt(R.low,0)} – ${fmt(R.high,0)}</div></button>`;
-  if(Dl.charm_bn!=null) h += `<button class="w${on('charm')}" data-w="charm"><div class="wr"><span class="wk">Charm</span><span class="wk">into close</span></div>
-      <div class="wv" style="color:${Dl.charm_bn>0?up:dn}">${Dl.charm_bn>0?'Buy':'Sell'} ${usd(Math.abs(Dl.charm_bn),1)}B</div><div class="wk">hedge flow by 4 PM</div></button>`;
-  const nSmall = (h.match(/<button class="w[ "]/g)||[]).length + 1;
-  h += `<button class="w${nSmall%2?' wide':''}" data-page="clock"><div class="wr"><span class="wk">Use now</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--dim)" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-      <div class="wv">${useNow[0]}</div><div class="wk">${useNow[1]}</div></button>`;
-  // every call at a glance
+  const Dl=m.dealer||{}, R=m.expected_range, up='var(--up)', dn='var(--down)', ph=phaseNow(), L=m.levels||{};
+  const useNow = {overnight:['Overnight','Pre at 9:25'], preopen:['Pre-open','Now at 10:00'], now:['Now','until 4 PM'], closed:['Closed','next 6 PM'], weekend:['Closed','Sun 6 PM']}[ph.k];
+  const cells = [];
+  if(Dl.net_gex_bn!=null){ const lg=Dl.net_gex_bn>0; cells.push(['dealers','Dealers', lg?'Long γ':'Short γ', lg?'damped':'can run', '']); }
+  if(R) cells.push(['range','Move', '±'+fmt(R.move,0), '1σ range', '']);
+  if(Dl.charm_bn!=null) cells.push(['charm','Charm', (Dl.charm_bn>0?'+':'−')+usd(Math.abs(Dl.charm_bn),1).replace('$','$')+'B', Dl.charm_bn>0?'buy into close':'sell into close', Dl.charm_bn>0?up:dn]);
+  cells.push(['clock','Use', useNow[0], useNow[1], '']);
+  let h = `<div class="w wide wstrip">${cells.map(([k,l,v,sub,c])=>`<button class="ws${on(k)}" ${k==='clock'?'data-page="clock"':`data-w="${k}"`}><span class="wk">${l}</span><b${c?` style="color:${c}"`:''}>${v}</b><span class="wk">${sub}</span></button>`).join('')}</div><!--/strip-->`;
+  // every call at a glance + macro tape, each one compact row
   if(ROOT && ROOT.ny){ const syms=Object.keys(D.markets);
     const reads=[['ON','overnight|preopen',ROOT.overnight],['Open','ny|preopen',ROOT.ny.preopen],['Now','ny|now',ROOT.ny.now]];
-    h += `<div class="w wide" style="cursor:default"><div class="wr"><span class="wk">All calls</span><span class="wk">${syms.join(' · ')}</span></div><div class="wses">${reads.map(([n,go,d])=>
-      `<button data-go="${go}"><span class="wk">${n}</span><span>${syms.map(s=>{const x=d&&d.markets&&d.markets[s]; return `<i title="${s}" style="background:${x?C(x.bias.bias):'var(--bar)'}"></i>`;}).join('')}</span><b style="color:${d&&d.markets&&d.markets[SYM]?C(d.markets[SYM].bias.bias):'var(--faint)'}">${d&&d.markets&&d.markets[SYM]?d.markets[SYM].bias.bias:'—'}</b></button>`).join('')}</div></div>`; }
-  // macro tape
-  const Dn = readFor('ny','preopen') || D, tape = (Dn && Dn.macro) || D.macro || {}, cells = TAPE.filter(([k])=>tape[k]);
-  if(cells.length) h += `<button class="w wide" data-page="macro"><div class="wr"><span class="wk">Macro tape</span><span class="wk">vs 4 PM ›</span></div><div class="wtape">${cells.map(([k,n])=>{const v=tape[k].chg_pct;
-      return `<div><span class="wk">${n}</span><b style="color:${v>0?up:v<0?dn:'var(--text)'}">${v>0?'+':''}${fmt(v)}%</b></div>`;}).join('')}</div></button>`;
+    h += `<div class="w wide wrow">${reads.map(([n,go,d])=>{ const x=d&&d.markets&&d.markets[SYM];
+      return `<button data-go="${go}"><span class="wk">${n}</span><b style="color:${x?C(x.bias.bias):'var(--faint)'}">${x?(x.bias.bias==='Bullish'?'Bull':'Bear'):'—'}</b><span class="dots">${syms.map(s=>{const y=d&&d.markets&&d.markets[s]; return `<i title="${s}" style="background:${y?C(y.bias.bias):'var(--bar)'}"></i>`;}).join('')}</span></button>`;}).join('')}</div>`; }
+  const Dn = readFor('ny','preopen') || D, tape = (Dn && Dn.macro) || D.macro || {}, tc = TAPE.filter(([k])=>tape[k]);
+  if(tc.length) h += `<button class="w wide wtape" data-page="macro">${tc.map(([k,n])=>{const v=tape[k].chg_pct;
+      return `<div><span class="wk">${n}</span><b style="color:${v>0?up:v<0?dn:'var(--text)'}">${v>0?'+':''}${fmt(v,1)}%</b></div>`;}).join('')}</button>`;
   return h;
 }
 function wToday(D, m, b, stale){
@@ -961,8 +1076,9 @@ function wToday(D, m, b, stale){
       ${(b.dampened||[]).length?'<p class="wnote">A big release is close, so this call\'s conviction is capped.</p>':''}</div>`;
   }
   if(h.length>det0){ const det=h.slice(det0).replace('<div class="wd">','<div class="wd" style="grid-column:1/-1;margin:0">'); h=h.slice(0,det0);
-    const k=h.indexOf(`data-w="${WOPEN}"`); const end=k<0?-1:h.indexOf('</button>',k);
-    if(end>0){ const at=end+9; h=h.slice(0,at)+det+h.slice(at); } else h+=det; }
+    const k=h.indexOf(`data-w="${WOPEN}"`), strip=h.indexOf('<!--/strip-->');
+    let at = k<0 ? -1 : (strip>k && h.lastIndexOf('wstrip',k)>-1 ? strip : h.indexOf('</button>',k)+9);
+    if(at>8) h=h.slice(0,at)+det+h.slice(at); else h+=det; }
   h += `<div class="wfoot">${modeLine(D)} Updated ${tLocal(new Date(D.generated))}<span id="agoTxt" style="display:none"></span>.</div></div>`;
   if(D.notes && D.notes.length) h += `<section><div class="card pad err">${D.notes.map(esc).join('<br>')}</div></section>`;
   return h;
@@ -1046,8 +1162,9 @@ function pageToday(D){
   const stale = SESSION==='ny' && VIEW!=='now' && D.date!==todayET();
   const window_ = SESSION==='overnight' ? `Asia and London, ${dayOf(D.date)} 6 PM to 9:30 AM ET`
     : VIEW==='now' && D.window ? `${esc(D.window.name)} session, until ${tET(new Date(D.window.end))}` : `NY open, ${dayOf(D.date)}, 9:30 to 10:00 ET`;
-  if(modeNow()==='widget') return wToday(D, m, b, stale);
-  let h = qToday(D, m, b, stale);
+  const md = modeNow();
+  if(md==='widget') return wToday(D, m, b, stale);
+  let h = md==='quant' ? qToday(D, m, b, stale) : bento(D, m, b, stale, window_);
   const S = {};
   if(D.divergence) S.divergence = `<section><h2>NQ vs ES <span class="pill" style="color:var(--amber)">Split</span></h2>
       <div class="card pad" style="font-size:14.5px;line-height:1.55;color:var(--sub)">${esc(D.divergence)}</div></section>`;
@@ -1623,7 +1740,9 @@ $('#sheet').addEventListener('input', e=>{
   if(e.target.id==='cDown'){ P.down=e.target.value; save(); applyPrefs(); if(ROOT) render(); }
 });
 $('#gear').onclick = openSettings;
-$('#scrim').onclick = () => { closeGlass(); closeSettings(); };
+$('#scrim').onclick = () => { closeGlass(); closeSettings(); closePop(); };
+$('#popX').onclick = closePop;
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePop(); });
 $('#refresh').onclick = () => load(true);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
 applyPrefs(); shell(); load();
