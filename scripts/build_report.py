@@ -651,6 +651,60 @@ def macro_z_signal(as_of):
                f"together {both:+.1f}σ. Biggest mover: {top[0]} ({top[1]:+.1f}σ over 5 sessions).", "Macro")
 
 
+def fomc_drift_signal(events, as_of):
+    """
+    Fed announcement days. Long-term Treasury yields tend to fall the day before an FOMC announcement,
+    and that bond move predicts the equity drift into the statement (Pan & Peng, SSRN 4764451). But the
+    pre-FOMC drift and announcement premium only show up when key macro data came out right before the
+    meeting; on the other two thirds of FOMC days there is neither (Alam, SSRN 4065084).
+    """
+    fomc = [e for e in (events or []) if e.get("impact") == "High" and
+            any(w in e.get("title", "") for w in ("FOMC", "Federal Funds Rate"))]
+    if not fomc or fomc[0]["ts"][:10] != as_of.date().isoformat() or fomc[0]["ts"] <= as_of.isoformat():
+        return None
+    day = as_of.date()
+    lo = prev_weekday(prev_weekday(day))
+    pool = {(e["ts"], e["title"]): e for e in WEEK_EVENTS + list(events)}.values()
+    macro = [e for e in pool if e.get("impact") == "High" and e is not fomc[0]
+             and not any(w in e.get("title", "") for w in ("FOMC", "Federal Funds Rate", "Press Conference", "Statement", "Projections"))
+             and lo.isoformat() <= e["ts"][:10] and e["ts"] < fomc[0]["ts"]]
+    y = _upto(fred("DGS10"), as_of, 1)
+    if len(y) < 2:
+        return None
+    dy = (y[-1][1] - y[-2][1]) * 100
+    if not macro:
+        return sig("fomcdrift", "Fed-day drift", 0, 0.75,
+                   f"Fed decision at {fomc[0]['time']}. 10-year yield {dy:+.0f} bp yesterday. No key data came out just before "
+                   "this meeting, and on days like that there's historically no pre-Fed drift.", "Macro")
+    sc = 1 if dy <= -2 else -1 if dy >= 3 else 0
+    return sig("fomcdrift", "Fed-day drift", sc, 0.75,
+               f"Fed decision at {fomc[0]['time']}, right after {macro[-1]['title']}. 10-year yield {dy:+.0f} bp yesterday. " +
+               ("Long bonds rallied into the meeting, which has led a stock drift into the statement." if sc > 0 else
+                "Long yields rose into the meeting: no bond-led drift." if sc < 0 else "Bonds were flat into the meeting."), "Macro")
+
+
+def vrp_signal(cfg, q, target):
+    """
+    Variance risk premium: implied vol (the vol index at yesterday's close) minus the index's realized vol
+    over the past month. A fat premium means investors are paying up for protection, which has preceded
+    better equity returns; realized vol above implied marks real stress (Bardgett, Gourier & Leippold,
+    SSRN 2787161, on the premium's predictive power). Slow-moving, so a background vote.
+    """
+    v = q.get(cfg["vol_index"])
+    rows = [r for r in daily_closes(cfg["future"], 45) if r[0] < target]
+    if not v or len(rows) < 22:
+        return None
+    px = np.array([x for _, x in rows[-22:]])
+    rv = float(np.std(np.diff(np.log(px)), ddof=1) * math.sqrt(252) * 100)
+    iv = float(v["prev"])
+    gap = iv - rv
+    sc = 1 if gap > 4 else -1 if gap < -2 else 0
+    return sig("vrp", "Volatility risk premium", sc, 0.4,
+               f"Implied vol {iv:.1f} vs realized {rv:.1f} over the past month: premium {gap:+.1f} pts. " +
+               ("Protection is expensive relative to actual moves, a backdrop where dips get bought." if sc > 0 else
+                "Realized vol is running above implied: genuine stress." if sc < 0 else "A normal premium."), "Volatility")
+
+
 def market_regime(q, as_of):
     """
     Calm or stressed, from the St. Louis Fed stress index and the VIX curve. Signals don't work
@@ -889,6 +943,7 @@ def analyse_positioning(cfg, q, target, as_of, live):
     dT = hrs / (24 * 365)
     grid = np.linspace(px * 0.94, px * 1.06, 361)
     gex_now, gex_close = np.zeros_like(grid), np.zeros_like(grid)
+    gex_ex0, gross_ex0 = 0.0, 0.0      # net / gross gamma without same-day expiries
     tot = dict(cg=0.0, pg=0.0, D=0.0, gross=0.0, Dc=0.0, vanna=0.0)
     levels, flow, sflow = {}, dict(call=0.0, put=0.0), {}
 
@@ -900,6 +955,8 @@ def analyse_positioning(cfg, q, target, as_of, live):
         cc = {k: (v[alive] if isinstance(v, np.ndarray) else v) for k, v in c.items()}
         gex_close += dealer_gex(grid / r, cc, T=cc["T"] - dT)
         g = bs_gamma(S, c["K"], c["T"], c["IV"]) * c["OI"] * 100 * S**2 * 0.01
+        later = c["T"] * 365 > 1.0
+        gex_ex0 += float((c["CP"] * g)[later].sum()); gross_ex0 += float(g[later].sum())
         tot["cg"] += float(g[c["CP"] > 0].sum())
         tot["pg"] += float(g[c["CP"] < 0].sum())
         for k, gg, cp in zip(c["K"] * r, g, c["CP"]):
@@ -928,6 +985,7 @@ def analyse_positioning(cfg, q, target, as_of, live):
     return dict(
         px=px, chains=[c["sym"] for c in chains],
         net_gex=float(np.interp(px, grid, gex_now)), flip=flip,
+        gamma_ratio_ex0=(gex_ex0 / gross_ex0) if gross_ex0 else None,
         flip_close=find_flip(grid, gex_close, px) if hrs > 0.5 else None,
         call_gamma=tot["cg"], put_gamma=tot["pg"],
         call_wall=max(above, key=lambda k: near[k][0]), put_wall=max(below, key=lambda k: near[k][1]),
@@ -1353,7 +1411,15 @@ def expected_range(cfg, pos, q, px, hours=6.5):
     if not (v and px):
         return None
     scale = math.sqrt(max(min(hours, 6.5), 0.25) / 6.5)   # 1-sigma for the window being called
-    move = px * v["prev"] / 100 / math.sqrt(252) * scale * (0.85 if pos and pos["net_gex"] > 0 else 1.0 if not pos else 1.15)
+    # Dealer gamma damps or amplifies the move. Ardia & Vaudescal (2026, SSRN 7202999): with public open
+    # interest, net gamma that excludes same-day expiries predicts lower realized variance (about a third
+    # lower per standard deviation, roughly 20% less vol); the 0DTE part does not survive with public data.
+    ratio = pos.get("gamma_ratio_ex0") if pos else None
+    if ratio is None:
+        gm = 1.0 if not pos else (0.85 if pos["net_gex"] > 0 else 1.15)
+    else:
+        gm = 1.0 - 0.2 * max(-1.0, min(1.0, ratio / 0.5))
+    move = px * v["prev"] / 100 / math.sqrt(252) * scale * gm
     return {"move": round(move, 2), "low": round(px - move, 2), "high": round(px + move, 2)}
 
 
@@ -1537,7 +1603,9 @@ def build_view(target, as_of, live, now, view, hist, sess=None):
             base = macro_signals(cfg, quotes)
         extra = [x for x in (fed_pressure_signal(as_of), surprise_signal(events, as_of),
                              None if view == "overnight" else vol_crush_signal(events, quotes, as_of),
-                             policy_gap_signal(as_of), stress_signal(as_of), macro_z_signal(as_of)) if x] + liquidity_signals(cfg, as_of)
+                             policy_gap_signal(as_of), stress_signal(as_of), macro_z_signal(as_of),
+                             None if view == "overnight" else fomc_drift_signal(events, as_of),
+                             vrp_signal(cfg, quotes, target)) if x] + liquidity_signals(cfg, as_of)
         base = base + extra
         # learn only from sessions graded before this one, so every read stays point-in-time
         key = as_of.strftime("%Y-%m-%dT%H%M") if view == "now" else target.isoformat()
