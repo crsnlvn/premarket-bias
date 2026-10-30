@@ -12,6 +12,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#05070d; --text:#f4f6fb; --sub:rgba(235,240,250,.74); --dim:rgba(235,240,250,.52); --faint:rgba(235,240,250,.34);
@@ -268,6 +270,120 @@ body.compact .note{font-size:14.5px}
 .rng output{color:var(--text);font-variant-numeric:tabular-nums}
 .rng input[type=range]{width:100%;height:28px;accent-color:var(--text)}
 .reset{width:100%;margin-top:20px;padding:13px;border-radius:999px;color:var(--down);font-size:15px;font-weight:600;background:var(--bar)}
+
+/* ───────── quant desk (default look) ───────── */
+:root{--qm:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --qd:"Inter Tight",var(--sans); --amb:#FFB000}
+:root[data-mode="quant"]{--sans:var(--qm)}
+:root[data-mode="quant"] body::before{display:none}
+:root[data-mode="quant"] html,:root[data-mode="quant"] body{font-size:13px;letter-spacing:0}
+:root[data-mode="quant"] .wrap{padding:0}
+:root[data-mode="quant"] .g,:root[data-mode="quant"] .card,:root[data-mode="quant"] .big>div,:root[data-mode="quant"] .toast{
+  background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;border:0;border-radius:0}
+:root[data-mode="quant"] .card{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge)}
+:root[data-mode="quant"] .toast{background:#16181B;border:1px solid var(--edge);border-radius:4px}
+:root[data-mode="quant"] .tabbar{left:0;right:0;transform:none;bottom:0;width:100%;max-width:none;border-radius:0;padding:10px 0 calc(env(safe-area-inset-bottom) + 10px);
+  background:var(--bg);border:0;border-top:1px solid var(--edge);box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+:root[data-mode="quant"] .tabbar button{font-size:11.5px;font-weight:500;border-radius:0;padding:6px 0;text-transform:lowercase}
+:root[data-mode="quant"] .tabbar button.on{background:none;box-shadow:none;color:var(--amb)}
+:root[data-mode="quant"] .tabbar button.on::before{content:"["}
+:root[data-mode="quant"] .tabbar button.on::after{content:"]"}
+:root[data-mode="quant"] .glass,:root[data-mode="quant"] .sheet{background:#101214;border:1px solid var(--edge);box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;border-radius:6px}
+:root[data-mode="quant"] .sheet{border-radius:8px 8px 0 0}
+:root[data-mode="quant"] .glass{bottom:calc(env(safe-area-inset-bottom) + 58px)}
+:root[data-mode="quant"] header{padding:10px 16px 8px;border-bottom:1px solid var(--edge)}
+:root[data-mode="quant"] .segc{background:none;border:0;box-shadow:none;padding:0;gap:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+:root[data-mode="quant"] .segc button{font-size:12.5px;font-weight:500;padding:4px 0;border-radius:0;color:var(--dim)}
+:root[data-mode="quant"] .segc button.on{background:none;box-shadow:none;color:var(--amb)}
+:root[data-mode="quant"] #tabs button + button::before{content:"/";color:var(--faint);margin:0 6px}
+:root[data-mode="quant"] #vt{padding-left:10px;margin-left:10px;border-left:1px solid var(--edge)}
+:root[data-mode="quant"] #vt button + button::before{content:"·";color:var(--faint);margin:0 7px}
+:root[data-mode="quant"] .tab .dot{display:none}
+:root[data-mode="quant"] .ib{width:28px;height:28px;border-radius:4px;background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:var(--dim)}
+:root[data-mode="quant"] .ib svg{width:15px;height:15px}
+:root[data-mode="quant"] section{margin-top:18px}
+:root[data-mode="quant"] h2{font-family:var(--qm);font-size:11px;font-weight:500;color:var(--dim);letter-spacing:0;margin:0 16px 6px;text-transform:lowercase}
+:root[data-mode="quant"] .ptitle{font-family:var(--qd);font-size:26px;margin:16px 16px 2px}
+:root[data-mode="quant"] .psub,:root[data-mode="quant"] .foot{margin:0 16px}
+:root[data-mode="quant"] .pill,:root[data-mode="quant"] .chip,:root[data-mode="quant"] .hbtn{border-radius:3px;background:none}
+:root[data-mode="quant"] .rows .r,:root[data-mode="quant"] .ev,:root[data-mode="quant"] .sig,:root[data-mode="quant"] .jrow{font-size:12.5px;padding:8px 16px}
+:root[data-mode="quant"] .sig h3,:root[data-mode="quant"] details.rs summary h3{font-size:12.5px;font-weight:500}
+:root[data-mode="quant"] .sig p{font-size:11.5px}
+:root[data-mode="quant"] .btn,:root[data-mode="quant"] .seg button,:root[data-mode="quant"] .chips button,:root[data-mode="quant"] .colors label,:root[data-mode="quant"] .reset,:root[data-mode="quant"] .mv{border-radius:3px}
+:root[data-mode="quant"] .big b{font-family:var(--qd)}
+:root[data-mode="quant"] .dots span{border-radius:2px}
+:root[data-mode="quant"] .field input,:root[data-mode="quant"] .field textarea{border-radius:3px}
+:root[data-mode="quant"] .empty{padding:60px 16px}
+
+.lft{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-width:0}
+.sf{display:none}
+:root[data-mode="quant"] .sf{display:inline}
+:root[data-mode="quant"] .lf{display:none}
+:root[data-mode="quant"] #tabs button:not(.on){text-transform:lowercase}
+:root[data-mode="quant"] .lft{gap:0;flex-wrap:nowrap}
+:root:not([data-mode="quant"]) .top{align-items:flex-start}
+/* quant today + clock (work in every theme) */
+.qp{font-family:var(--qm);font-size:12px;color:var(--text);margin:0 -16px}
+:root[data-mode="quant"] .qp{margin:0}
+.qs{padding:9px 16px;border-top:1px solid var(--edge)}
+.qs:first-child{border-top:0}
+.qk{font-size:10.5px;color:var(--dim)}
+.qhd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:5px}
+.qcall{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:2px 0}
+.qcall b{font-family:var(--qd);font-size:46px;font-weight:700;letter-spacing:-.04em;line-height:1.05}
+:root[data-mode="quant"] .qcall b{text-transform:uppercase}
+.qp .stamps{margin-top:0;padding-top:0;border-top:0;gap:6px 14px}
+.qp .stamps div{font-size:11.5px;font-weight:500}
+.qp .stamps span,.qp .stamps em{font-size:10.5px}
+.qmeta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--dim)}
+.qmeta span b{color:var(--text);font-weight:500}
+.qt{display:flex;align-items:center;height:19px;gap:0}
+.qt .n{flex:1;min-width:0;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt .s{width:62px;font-size:10px;color:var(--dim)}
+.qt .w{width:42px;text-align:right;font-size:11px;margin:0}
+.qt .v{width:20px;text-align:center}
+.qt .bar2{width:104px;flex:none;display:flex;height:8px;margin-right:12px}
+.qt .bar2 > i{width:50%;display:flex}
+.qt .bar2 > i:first-child{justify-content:flex-end;border-right:1px solid var(--edge)}
+.qt .bar2 em{display:block;height:8px}
+.qth{height:16px;font-size:10px;color:var(--dim)}
+.q2{display:flex;gap:18px}
+.q2 > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.qr{display:flex;justify-content:space-between;gap:8px;font-size:11.5px}
+.qr > span:first-child{color:var(--dim)}
+.gx{display:flex;align-items:center;gap:6px;height:12px;font-size:10px}
+.gx .p{width:40px;color:var(--dim)}
+.gx .b{flex:1;display:flex;height:7px}
+.gx .gt{width:30px;text-align:right}
+.gx .ln{flex:1;height:0;border-top:1px solid var(--text)}
+.gx .ln.d{border-top:1px dashed var(--amb)}
+.qmx{display:flex;font-size:11.5px;height:17px;align-items:center}
+.qmx span:first-child{flex:1;color:var(--dim)}
+.qmx span{width:40px}
+.qmx.on span:first-child{color:var(--text)}
+.l20{display:flex;flex-wrap:wrap;gap:2px}
+.l20 i{width:calc(10% - 2px);max-width:15px;height:10px;display:block}
+.qev{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;line-height:17px}
+.qbtn{font-family:var(--qm);font-size:11px;color:var(--amb);border:1px solid var(--amb);padding:5px 10px;border-radius:2px;background:none}
+.qnote{font-size:11.5px;line-height:17px;color:var(--sub)}
+.qnote b{color:var(--text);font-weight:600}
+.clk{display:flex;align-items:baseline;gap:6px;font-family:var(--qd)}
+.clk b{font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.clk em{font-style:normal;font-size:24px;font-weight:500;color:var(--dim)}
+.clk small{font-family:var(--qm);font-size:12px;color:var(--dim)}
+.use{background:color-mix(in srgb,var(--text) 3%,transparent)}
+.use b.big2{font-family:var(--qd);font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--amb)}
+.tline{position:relative;display:flex;gap:2px;height:24px;margin:2px 0 5px}
+.tline > div{display:flex;align-items:center;justify-content:center;font-size:10px;overflow:hidden;white-space:nowrap}
+.tline .mk{position:absolute;top:-4px;width:2px;height:32px;background:var(--text);margin-left:-1px}
+.tax{position:relative;height:13px;font-size:10px;color:var(--dim)}
+.tax span{position:absolute;transform:translateX(-50%)}
+.tax span:first-child{transform:none}.tax span:last-child{transform:translateX(-100%)}
+.sch{display:flex;align-items:center;min-height:26px;font-size:11.5px;border-top:1px solid color-mix(in srgb,var(--edge) 60%,transparent)}
+.sch span:nth-child(1){width:92px;color:var(--dim)}
+.sch span:nth-child(2){width:84px}
+.sch span:nth-child(3){flex:1;color:var(--sub);font-size:11px}
+.sch.on{background:color-mix(in srgb,var(--amb) 7%,transparent)}
+.sch.on span{color:var(--amb)!important}
 </style>
 </head>
 <body>
@@ -277,14 +393,13 @@ body.compact .note{font-size:14.5px}
   <header>
     <div class="brand"><span class="live" id="live"></span></div>
     <div class="top">
-      <div class="segc g" id="tabs"></div>
+      <div class="lft"><div class="segc g" id="tabs"></div>
+      <div class="segc g" id="vt"><button data-view="preopen" class="on"><span class="lf">Pre-open</span><span class="sf">pre</span></button><button data-view="now"><span class="lf">Now</span><span class="sf">now</span></button><button data-view="overnight"><span class="lf">Overnight</span><span class="sf">on</span></button></div></div>
       <div class="btns">
         <button class="ib g" id="refresh" aria-label="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button>
         <button class="ib g" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       </div>
     </div>
-    <div class="row2"><div class="segc g" id="sess"><button data-s="ny" class="on">NY</button><button data-s="overnight">Overnight</button></div>
-      <div class="segc g" id="vt"><button data-view="preopen" class="on">Pre-open</button><button data-view="now">Now</button></div></div>
   </header>
   <main id="app"><div class="empty">Loading…</div></main>
 </div>
@@ -311,6 +426,7 @@ const I = {
   levels:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h16"/><circle cx="18" cy="12" r="2"/></svg>',
   macro:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
   record:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
   research:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h6"/></svg>',
   red:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/></svg>',
   journal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
@@ -321,6 +437,7 @@ const PAGES = {
   macro:{name:'Macro', sub:'Markets and calendar'}, record:{name:'Record', sub:'Hit rate'},
   red:{name:'Red folder', sub:'CPI and FOMC previews'},
   research:{name:'Research', sub:'What each vote means'}, journal:{name:'Journal', sub:'Your trades'},
+  clock:{name:'Session clock', sub:'Which view to use right now'},
 };
 const BAR = ['today','levels','macro','research'];
 
@@ -331,6 +448,7 @@ const THEMES = {
 };
 // glass backgrounds: a base color plus two ambient glows (the third glow follows the call)
 const BGS = {
+  quant:{name:'Quant desk', mode:'quant', bg:'#0B0C0E', blob2:'transparent', blob3:'transparent'},
   vivid:{name:'Vivid', mode:'vivid', bg:'#0a0614', blob2:'transparent', blob3:'transparent'},
   auto:{name:'Auto'},
   dark:{name:'Dark', mode:'dark', bg:'#05070d', blob2:'rgba(60,110,255,.42)', blob3:'rgba(0,200,170,.2)'},
@@ -339,6 +457,9 @@ const BGS = {
   black:{name:'Black', mode:'dark', bg:'#000000', blob2:'rgba(60,110,255,.22)', blob3:'rgba(0,200,170,.1)'},
 };
 const MODE = {
+  quant:{text:'#D9DCE1', sub:'#A9AEB6', dim:'#6C727C', faint:'#4A4F57', glass:'transparent',
+    edge:'#1E2126', hi:'transparent', sel:'#1A1D22', row:'#16181B', track:'#121417',
+    bar:'#1A1D22', shadow:'transparent', solid:'#101214', amber:'#FFB000'},
   vivid:{text:'#ffffff', sub:'rgba(255,255,255,.80)', dim:'rgba(255,255,255,.62)', faint:'rgba(255,255,255,.42)', glass:'rgba(255,255,255,.085)',
     edge:'rgba(255,255,255,.20)', hi:'rgba(255,255,255,.28)', sel:'rgba(255,255,255,.20)', row:'rgba(255,255,255,.12)', track:'rgba(0,0,0,.25)',
     bar:'rgba(255,255,255,.14)', shadow:'rgba(0,0,0,.28)', solid:'rgba(30,16,52,.82)', amber:'#ffd27a'},
@@ -353,7 +474,7 @@ const SECTIONS = {
   divergence:'NQ vs ES split', changed:'What changed', outcome:'How it played out', signals:'Votes',
   calendar:'Today\'s releases', earnings:'Mega-cap earnings', freshness:'Data sources', method:'How it works'
 };
-const DEFAULTS = {theme:'classic', up:null, down:null, bg:'vivid', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
+const DEFAULTS = {theme:'classic', up:null, down:null, bg:'quant', bgSet:false, size:'m', density:'comfortable', market:'NQ', reasons:true,
   order:Object.keys(SECTIONS), hidden:[],
   fx:'off', fxTint:'style', fxSpeed:1, fxAmount:1, fxSize:1, fxGlow:1, fxSet:false};
 const FX_STYLES = {off:'Off', blackhole:'Black hole', petals:'Petals', ravens:'Ravens', symbiote:'Symbiote', stars:'Starfall', embers:'Embers', aurora:'Aurora'};
@@ -361,8 +482,8 @@ const FX_TINTS = {style:'Its own', call:'Follows the call', '#cdbfff':'Lavender'
 // new look: carry over everything from the old settings except colors and background
 const OLD = store.get('prefs2', null) || (({theme,up,down,bg,...rest}) => rest)(store.get('prefs',{}));
 let P = {...DEFAULTS, ...OLD};
-if(!BGS[P.bg]) P.bg = 'vivid';
-if(!P.bgSet) P.bg = 'vivid';   // the vivid glass is the default look until someone picks another background
+if(!BGS[P.bg]) P.bg = 'quant';
+if(!P.bgSet || !P.qSet){ P.bg = 'quant'; P.qSet = true; P.bgSet = false; }   // quant desk is the new default look; any background can still be picked in Settings
 if(!P.fxSet) P.fx = 'off';   // default look is plain glass; an animation only runs once someone picks one
 for(const k of Object.keys(SECTIONS)) if(!P.order.includes(k)) P.order.push(k);
 P.order = P.order.filter(k=>SECTIONS[k]);
@@ -385,6 +506,7 @@ function applyPrefs(){
   let up = P.up||t.up, down = P.down||t.down;
   if(mode==='light'){ up = shade(up,.38); down = shade(down,.18); }
   if(mode==='vivid' && !P.down && P.theme==='classic') down = '#ff5c8a';   // reads cleaner on the pink
+  if(mode==='quant' && P.theme==='classic'){ if(!P.up) up = '#3DDC97'; if(!P.down) down = '#FF5C5C'; }
   r.setProperty('--up', up); r.setProperty('--down', down); r.setProperty('--accent', up);
   const glow = CALL==='Bearish' ? down : CALL==='Bullish' ? up : null;
   r.setProperty('--blob1', mode==='vivid' ? 'transparent' : glow ? `color-mix(in srgb, ${glow} ${mode==='light'?45:50}%, transparent)` : 'transparent');
@@ -464,11 +586,8 @@ function shell(){
   if(!syms.includes(SYM)) SYM = syms[0];
   $('#tabs').innerHTML = syms.map(s=>`<button class="tab ${s===SYM?'on':''}" data-s="${s}">${s}${D?`<span class="dot" style="background:${C(D.markets[s].bias.bias)}"></span>`:''}</button>`).join('');
   $$('#tabs .tab').forEach(t=>t.onclick=()=>{SYM=t.dataset.s;render();window.scrollTo({top:0})});
-  const sessUsed = ['today','levels','record'].includes(PAGE);
-  $('#sess').style.display = sessUsed && ROOT && ROOT.ny ? '' : 'none';
-  $$('#sess button').forEach(b=>b.classList.toggle('on', b.dataset.s===SESSION));
-  $('#vt').style.display = (SESSION==='ny' && ['today','levels','record'].includes(PAGE)) ? '' : 'none';
-  $$('#vt button').forEach(b=>b.classList.toggle('on', b.dataset.view===VIEW));
+  $('#vt').style.display = (['today','levels','record'].includes(PAGE) && ROOT && ROOT.ny) ? '' : 'none';
+  $$('#vt button').forEach(b=>b.classList.toggle('on', SESSION==='overnight' ? b.dataset.view==='overnight' : b.dataset.view===VIEW));
   $('.brand').innerHTML = `<span class="live ${D && D.date!==todayET() && SESSION==='ny' ? 'stale':''}" id="live"></span><b>${SESSION==='overnight'?'Overnight':VIEW==='now'?esc(winName(D)):'NY open'}</b> Bias`;
   // tab bar
   $('#tabbar').innerHTML = BAR.map(k=>`<button data-p="${k}" class="${PAGE===k?'on':''}">${I[k]}${PAGES[k].name}</button>`).join('')
@@ -486,21 +605,26 @@ function openGlass(){
 }
 function closeGlass(){ $('#glass').classList.remove('on'); if(!$('#sheet').classList.contains('on')) $('#scrim').classList.remove('on'); }
 
-$$('#vt button').forEach(b=>b.onclick=()=>{
-  if(b.dataset.view==='now' && ROOT && ROOT.ny && !ROOT.ny.now){ toast('No Now read yet. It shows up after the next run.'); return; }
-  VIEW=b.dataset.view; render(); window.scrollTo({top:0});
-  toast(VIEW==='now' ? 'Now: rest of the current session' : 'Pre-open: the 9:30 to 10:00 move');
-});
-$$('#sess button').forEach(b=>b.onclick=()=>{
-  if(b.dataset.s==='overnight' && !(ROOT && ROOT.overnight)){ toast('No overnight read yet. It\'s built after 6 PM ET.'); return; }
-  SESSION=b.dataset.s; render(); window.scrollTo({top:0});
-});
+function setView(v, quiet){
+  if(v==='overnight'){
+    if(!(ROOT && ROOT.overnight)){ toast('No overnight read yet. It\'s built after 6 PM ET.'); return false; }
+    SESSION='overnight';
+  } else {
+    if(v==='now' && ROOT && ROOT.ny && !ROOT.ny.now){ toast('No Now read yet. It shows up after the next run.'); return false; }
+    SESSION='ny'; VIEW=v;
+  }
+  render(); window.scrollTo({top:0});
+  if(!quiet) toast(v==='now' ? 'Now: rest of the current session' : v==='overnight' ? 'Overnight: 6 PM to the 9:30 open' : 'Pre-open: the 9:30 to 10:00 move');
+  return true;
+}
+$$('#vt button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 
 function render(){
   shell();
   const D = readFor();
-  if(!D && !['research','journal','red'].includes(PAGE)){ $('#app').innerHTML='<div class="empty">No read for this session yet. It arrives with the next run.</div>'; return; }
-  $('#app').innerHTML = ({today:pageToday, levels:pageLevels, macro:pageMacro, record:pageRecord, research:pageResearch, journal:pageJournal, red:pageRed}[PAGE])(D);
+  if(!D && !['research','journal','red','clock'].includes(PAGE)){ $('#app').innerHTML='<div class="empty">No read for this session yet. It arrives with the next run.</div>'; return; }
+  $('#app').innerHTML = ({today:pageToday, levels:pageLevels, macro:pageMacro, record:pageRecord, research:pageResearch, journal:pageJournal, red:pageRed, clock:pageClock}[PAGE])(D);
+  if(PAGE==='clock') wireClock();
   if(PAGE==='journal') wireJournal();
   if(PAGE==='levels'){ const c=$('#copyLv'); if(c) c.onclick=copyLevels; }
   $$('[data-go]').forEach(t=>t.onclick=()=>{ const [s,v]=t.dataset.go.split('|'); SESSION=s; if(s==='ny') VIEW=v; render(); window.scrollTo({top:0}); });
@@ -579,12 +703,161 @@ function bento(D, m, b, stale, window_){
     <div class="g t wide"><div class="mode" style="margin:0">${modeLine(D)}</div>${stampsHTML(D)}</div>
   </div>`;
 }
+/* ───────── session clock ───────── */
+const ETF = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',weekday:'short'});
+const etParts = d => Object.fromEntries(ETF.formatToParts(d).map(p=>[p.type,p.value]));
+function etAt(base, addDays, h, mi){   // the instant when New York's clock reads h:mi, addDays after base's ET date
+  const p = etParts(base), want = Date.UTC(+p.year, +p.month-1, +p.day+addDays, h, mi);
+  let g = want + 5*3600e3;
+  for(let i=0;i<3;i++){ const q=etParts(new Date(g)); g += want - Date.UTC(+q.year,+q.month-1,+q.day,+q.hour%24,+q.minute,+q.second); }
+  return new Date(g);
+}
+function nextAt(h, mi, days){   // next time NY reads h:mi on one of the allowed weekdays
+  const now = new Date();
+  for(let k=0;k<9;k++){ const d=etAt(now,k,h,mi); if(d>now && days.includes(etParts(d).weekday)) return d; }
+}
+const WD = ['Mon','Tue','Wed','Thu','Fri'], SUN_THU = ['Sun','Mon','Tue','Wed','Thu'];
+// display weights for the 24h strip (6 PM to 6 PM); the open window is drawn wider than its 35 minutes so it can be seen
+const SEGS = [['asia',18,26,8],['london',26,33+25/60,7.4167],['P',33+25/60,34,1.2],['new_york',34,40,6],['closed',40,42,2]];
+function stripPos(hr){   // hours since midnight ET → percent across the strip
+  let x = hr < 18 ? hr+24 : hr; const tot = SEGS.reduce((a,s)=>a+s[3],0); let acc=0;
+  for(const [,a,b,w] of SEGS){ if(x<=b) return (acc + (x-a)/(b-a)*w)/tot*100; acc+=w; }
+  return 100;
+}
+function phaseNow(){
+  const p = etParts(new Date()), t = (+p.hour%24)*60 + +p.minute, wd = p.weekday;
+  if(wd==='Sat' || (wd==='Sun' && t<1080) || (wd==='Fri' && t>=1020)) return {k:'weekend', t, p};
+  if(t>=1080 || t<565) return {k:'overnight', t, p, leg: (t>=1080 || t<120) ? 'asia' : 'london'};
+  if(t<600) return {k:'preopen', t, p};
+  if(t<960) return {k:'now', t, p};
+  return {k:'closed', t, p};
+}
+const cd = ms => { const s=Math.max(0,Math.floor(ms/1000)); return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(x=>String(x).padStart(2,'0')).join(':'); };
+function pageClock(){
+  const now = new Date(), ph = phaseNow(), p = ph.p, t = ph.t;
+  const tz = (new Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(now).find(x=>x.type==='timeZoneName')||{}).value || '';
+  const sessName = ph.k==='overnight' ? ph.leg : ph.k==='preopen' ? (t<570?'london → ny':'ny open') : ph.k==='now' ? 'new_york' : 'closed';
+  const U = {
+    overnight:['OVERNIGHT','overnight', `The overnight call covers 6 PM to the 9:30 open. For the ${ph.leg} leg you're trading right now, check <b>now</b>.${t>=487&&t<565?' The pre-open call is a preview until it locks at 9:25.':''}`, [['overnight','overnight ▸'],['now','now ▸']]],
+    preopen:['PRE-OPEN','preopen', `Final open call is locked (9:25 read). It covers 9:30–10:00.${t<570?' NY opens in '+dur(etAt(now,0,9,30)-now)+'.':''} Switch to <b>now</b> at 10:00.`, [['preopen','open it ▸']]],
+    now:['NOW','now', 'Covers the rest of the NY session to 4 PM. The open call was graded at 10:00.', [['now','open it ▸']]],
+    closed:['CLOSED','', 'NY is done for the day. The next overnight call builds at 6 PM ET. Good time to check the record.', [['record','record ▸']]],
+    weekend:['CLOSED','', 'Weekend. Futures reopen Sunday at 6 PM ET, and the first overnight call builds then.', [['record','record ▸']]],
+  }[ph.k];
+  const sch = [['6p – 9:25a','overnight','asia + london move','overnight'],['6p – 9:30a','now','current asia / london leg','overnight'],
+    ['8:07 – 9:25a','pre-open','preview, still updating','prev'],['9:25 – 10a','pre-open ●','final open call, locked','preopen'],
+    ['10a – 4p','now','rest of ny session','now'],['4p – 6p','—','closed · check record','closed']];
+  const onRow = r => r[3]===ph.k || (r[3]==='prev' && ph.k==='overnight' && t>=487 && t<565) || (r[3]==='closed' && ph.k==='weekend');
+  const nexts = [['final open call',nextAt(9,25,WD)],['ny open',nextAt(9,30,WD)],['switch → now',nextAt(10,0,WD)],['ny close',nextAt(16,0,WD)],['next overnight call',nextAt(18,0,SUN_THU)]];
+  const ev = upcoming(readFor(),1)[0]; if(ev) nexts.push([ev.title.toLowerCase(), new Date(ev.ts)]);
+  nexts.sort((a,b)=>a[1]-b[1]);
+  const hr = (+p.hour%24) + (+p.minute)/60 + (+p.second)/3600;
+  const SC = {asia:['#16202B','#7FA7D6'], london:['#1B2A24','#6FCF97'], P:['var(--amb)','#0B0C0E'], new_york:['#2A1F14','#F2B266'], closed:['#16181B','#4A4F57']};
+  const ax = [['6p',18],['2a',2],['9:25',9+25/60],['4p',16],['6p',17.9999]];
+  return `<div class="qp">
+    <div class="qs"><span class="qk">// new_york  ${p.weekday.toLowerCase()} ${+p.day} ${now.toLocaleDateString('en-US',{timeZone:'America/New_York',month:'short'}).toLowerCase()}</span>
+      <div class="clk"><b>${p.hour}:${p.minute}</b><em>:${p.second}</em><small>ET</small></div>
+      <span class="qk">your time <span style="color:var(--text)">${tLocal(now)} ${esc(tz)}</span>  ·  session <span style="color:var(--text)">${sessName}</span></span></div>
+    <div class="qs use"><span class="qk">use_this_view</span>
+      <div class="qhd" style="margin:4px 0 6px;align-items:center"><b class="big2"${ph.k==='closed'||ph.k==='weekend'?' style="color:var(--dim)"':''}>${U[0]}</b>
+        <span style="display:flex;gap:6px">${U[3].map(([v,l])=>`<button class="qbtn" data-open="${v}">${l}</button>`).join('')}</span></div>
+      <div class="qnote">${U[2]}</div></div>
+    <div class="qs"><div class="qhd"><span class="qk">24h_session_map (ET)</span><span class="qk">6p → 6p</span></div>
+      <div class="tline">${SEGS.map(([n,,,w])=>`<div style="flex:${w};background:${SC[n][0]};color:${SC[n][1]};${n==='P'?'font-weight:700':''}">${n}</div>`).join('')}<i class="mk" style="left:${stripPos(hr).toFixed(2)}%"></i></div>
+      <div class="tax">${ax.map(([l,h])=>`<span style="left:${stripPos(h).toFixed(2)}%;${l==='9:25'?'color:var(--amb)':''}">${l}</span>`).join('')}</div></div>
+    <div class="qs"><div class="sch qk" style="border:0;min-height:18px"><span>time ET</span><span>view</span><span>what it's for</span></div>
+      ${sch.map(r=>`<div class="sch ${onRow(r)?'on':''}"><span>${r[0]}</span><span>${r[1]}</span><span>${r[2]}</span></div>`).join('')}</div>
+    <div class="qs"><span class="qk">next</span>
+      ${nexts.map(([n,d],i)=>`<div class="qev"><span>${esc(n)}</span><span style="color:${i?'var(--text)':'var(--amb)'}">${cd(d-now)}</span></div>`).join('')}</div>
+    <div class="qs"><div class="qk" style="line-height:1.6">Pre-open refreshes every 15 min from about 8:07 ET and locks at the 9:25 read. Now and Overnight update hourly. Times follow New York, so daylight saving is handled.</div></div>
+  </div>`;
+}
+let CLK = null;
+function wireClock(){
+  $$('[data-open]').forEach(b=>b.onclick=()=>{ const v=b.dataset.open; if(v==='record') return go('record'); PAGE='today'; if(!setView(v,true)) render(); });
+  clearInterval(CLK);
+  CLK = setInterval(()=>{ if(PAGE!=='clock'){ clearInterval(CLK); return; } $('#app').innerHTML = pageClock(); wireClock(); }, 1000);
+}
+
+/* ───────── quant desk: today ───────── */
+const hm = d => d.toLocaleTimeString('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit'});
+function dur(ms){ const m=Math.max(0,Math.round(ms/60000)); if(m<60) return m+'m'; const h=Math.floor(m/60); return h<24 ? h+'h '+String(m%60).padStart(2,'0')+'m' : Math.floor(h/24)+'d '+(h%24)+'h'; }
+const GRP = g => ({'Macro':'macro','Volatility':'vol','Dealer positioning':'options','Options':'options','Options flow':'flow'}[g] || String(g||'').toLowerCase().slice(0,8));
+function upcoming(D, n=3){
+  const now=Date.now(), src=[...((ROOT&&ROOT.week)||[]), ...((D&&D.events)||[])], seen=new Set();
+  return src.filter(e=>e.ts && new Date(e.ts)>now && !seen.has(e.ts+e.title) && seen.add(e.ts+e.title))
+    .sort((a,b)=>new Date(a.ts)-new Date(b.ts)).slice(0,n);
+}
+function rankBand(b){
+  const c=b.conv_cuts, a=Math.abs(b.raw_score ?? b.score ?? 0);
+  if(!c || c.length<3) return '—';
+  return a<c[0] ? '<35th' : a<c[1] ? '35–70th' : a<c[2] ? '70–90th' : '>90th';
+}
+function qToday(D, m, b, stale){
+  const L=m.levels||{}, Dl=m.dealer||{}, sc=m.scorecard||{}, up='var(--up)', dn='var(--down)';
+  const span = SESSION==='overnight' ? ['overnight_bias', '18:00–09:30 ET'] : VIEW==='now' && D.window ? [String(D.window.name||'session').toLowerCase().replace(/\W+/g,'_')+'_bias', hm(new Date(D.window.start))+'–'+hm(new Date(D.window.end))+' ET'] : ['open_bias', '09:30–10:00 ET'];
+  const nx = upcoming(D,1)[0];
+  const hit = sc.hits+sc.misses ? `<span>hit <b>${sc.pct}%/${sc.hits+sc.misses}</b></span>` : '';
+  const regime = Dl.net_gex_bn!=null ? `<span>regime <b>${Dl.net_gex_bn>0?'long-γ':'short-γ'}</b></span>` : '';
+  const evt = nx ? `<span>event <b style="color:var(--amb)">${esc(nx.title.split(' ').slice(0,2).join(' ').toLowerCase())} ${hm(new Date(nx.ts))}</b></span>` : '';
+  let h = `<div class="qp">
+  <div class="qs"><div class="qk">// ${span[0]}  ${span[1]}  asof ${hm(new Date(D.as_of))}${stale?' <span style="color:var(--amb)">· last session</span>':''}</div>
+    <div class="qcall"><b style="color:${C(b.bias)}">${b.bias}</b><span style="font-size:12px">conv <span style="color:${C(b.bias)}">${esc(b.conviction).toLowerCase()}</span></span></div>
+    <div class="qmeta">${regime}${evt}${hit}${(b.dampened||[]).length?'<span style="color:var(--amb)">event-damped</span>':''}</div></div>`;
+  // factor table
+  const sigs = m.signals.filter(s=>s.directional!==false && s.weight>0), T = sigs.reduce((a,s)=>a+s.weight,0)||1;
+  const ctb = s => (s.score||0)*s.weight/T, mx = Math.max(...sigs.map(s=>Math.abs(ctb(s))), 1e-9);
+  const ord = [...sigs].sort((a,c)=>ctb(c)-ctb(a)).sort((a,c)=>(!a.score)-(!c.score));
+  h += `<div class="qs"><div class="qt qth"><span class="bar2" style="justify-content:center;height:auto">contrib</span><span class="n">factor</span><span class="s">src</span><span class="v">vote</span><span class="w">wt</span></div>
+    ${ord.map(s=>{ const c=ctb(s), w=(Math.abs(c)/mx*100).toFixed(0), col=c>0?up:dn;
+      return `<div class="qt"${s.score?'':' style="opacity:.45"'}><span class="bar2"><i>${c<0?`<em style="width:${w}%;background:${col}"></em>`:''}</i><i>${c>0?`<em style="width:${w}%;background:${col}"></em>`:''}</i></span>
+        <span class="n">${esc(s.label)}</span><span class="s">${GRP(s.group)}</span>
+        <span class="v" style="color:${s.score>0?up:s.score<0?dn:'var(--dim)'}">${s.score>0?'▲':s.score<0?'▼':'·'}</span><span class="w">×${s.weight}</span></div>`; }).join('')}</div>`;
+  if(b.overall) h += `<div class="qs"><div class="qnote">${esc(b.overall).replace(/(^|\. )(For:|Against:|On deck:)/g,'$1<b>$2</b>')}</div></div>`;
+  // levels + model
+  const other = Object.keys(D.markets).find(k=>k!==SYM), ob = other && D.markets[other].bias;
+  const lv = (k,v,c) => v!=null ? `<div class="qr"><span>${k}</span><span style="color:${c}">${fmt(v,0)}</span></div>` : '';
+  h += `<div class="qs q2"><div><span class="qk">levels</span>${lv('spot',L.price,'var(--text)')}${lv('cw',L.call_wall,up)}${lv('flip',L.flip,'var(--amb)')}${lv('pw',L.put_wall,dn)}${L.price==null&&L.flip==null?'<div class="qr"><span>no dealer levels</span></div>':''}</div>
+    <div><span class="qk">model</span><div class="qr"><span>votes</span><span><span style="color:${up}">${b.ups??'—'}▲</span> <span style="color:${dn}">${b.downs??'—'}▼</span></span></div>
+      <div class="qr"><span>rank</span><span>${rankBand(b)}</span></div>
+      ${ob?`<div class="qr"><span>peer ${other.toLowerCase()}</span><span style="color:${ob.bias===b.bias?up:dn}">${ob.bias===b.bias?'agrees':'disagrees'}</span></div>`:''}
+      ${b.macro_share!=null?`<div class="qr"><span>macro wt</span><span>${b.macro_share}%</span></div>`:''}</div></div>`;
+  // gamma by strike: the big dealer strikes plus spot and the flip
+  const rows = (L.majors||[]).map(x=>({k:x.level, g:x.net_gex}));
+  for(const [k,tag] of [[L.call_wall,'cw'],[L.put_wall,'pw']]) if(k!=null){ const r=rows.find(r=>r.k===k); if(r) r.tag=tag; else rows.push({k, g:tag==='cw'?1:-1, tag, est:true}); }
+  if(rows.length){
+    const gm = Math.max(...rows.filter(r=>!r.est).map(r=>Math.abs(r.g)), 1);
+    rows.forEach(r=>{ if(r.est) r.g = Math.sign(r.g)*gm*.6; });
+    const all = [...rows, ...(L.price!=null?[{k:L.price, line:'spot'}]:[]), ...(L.flip!=null?[{k:L.flip, line:'flip'}]:[])].sort((a,c)=>c.k-a.k);
+    h += `<div class="qs"><div class="qhd"><span class="qk">gex_by_strike</span><span class="qk">${Dl.net_gex_bn!=null?`net <span style="color:${Dl.net_gex_bn>0?up:dn}">${usd(Dl.net_gex_bn,1)}B</span>`:''}${Dl.charm_bn!=null?`  charm <span style="color:${Dl.charm_bn>0?up:dn}">${Dl.charm_bn>0?'buy':'sell'} ${usd(Math.abs(Dl.charm_bn),1)}B</span>`:''}</span></div>
+      ${all.map(r=> r.line
+        ? `<div class="gx"><span class="p" style="color:${r.line==='flip'?'var(--amb)':'var(--text)'}">${fmt(r.k,0).replace(',','')}</span><span class="ln ${r.line==='flip'?'d':''}"></span><span class="gt" style="color:${r.line==='flip'?'var(--amb)':'var(--text)'}">${r.line}</span></div>`
+        : `<div class="gx"><span class="p" style="color:${r.tag?(r.g>0?up:dn):'var(--dim)'}">${fmt(r.k,0).replace(',','')}</span><span class="b"><em style="display:block;height:7px;width:${(Math.abs(r.g)/gm*100).toFixed(0)}%;background:${r.g>0?up:dn};opacity:${r.tag?1:.55}"></em></span><span class="gt" style="color:${r.g>0?up:dn}">${r.tag||''}</span></div>`).join('')}</div>`;
+  }
+  // session matrix + last 20 graded calls
+  const reads = ROOT && ROOT.ny ? [['overnight','overnight|preopen',ROOT.overnight],['open','ny|preopen',ROOT.ny.preopen],['now','ny|now',ROOT.ny.now]] : [];
+  const cur = SESSION==='overnight' ? 'overnight' : VIEW==='now' ? 'now' : 'open';
+  const cell = (d,s) => { const x=d&&d.markets&&d.markets[s]; return x ? `<span style="color:${C(x.bias.bias)}">${x.bias.bias==='Bullish'?'bull':'bear'}</span>` : '<span style="color:var(--faint)">—</span>'; };
+  const syms = Object.keys(D.markets);
+  const rec = (sc.recent||[]).slice(-20);
+  h += `<div class="qs q2"><div><div class="qmx qk"><span>session</span>${syms.map(s=>`<span>${s.toLowerCase()}</span>`).join('')}</div>
+      ${reads.map(([n,go,d])=>`<div class="qmx ${n===cur?'on':''}" data-go="${go}" style="cursor:pointer"><span>${n}${n===cur?' ▸':''}</span>${syms.map(s=>cell(d,s)).join('')}</div>`).join('')}</div>
+    <div><div class="qhd" style="margin:0"><span class="qk">last_${rec.length||20}</span>${rec.length?`<span class="qk" style="color:${(sc.pct??0)>=50?up:dn}">${sc.hits}/${sc.hits+sc.misses}</span>`:''}</div>
+      ${rec.length?`<div class="l20">${rec.map(r=>`<i title="${r.date}: ${r.bias}, ${r.result}" style="background:${r.result==='hit'?up:r.result==='miss'?dn:'var(--bar)'}"></i>`).join('')}</div>
+      ${sc.streak&&sc.streak.n?`<span class="qk">streak <span style="color:${sc.streak.kind==='hit'?up:dn}">${sc.streak.n} ${sc.streak.kind==='hit'?'right':'wrong'}</span></span>`:''}`:'<span class="qk">nothing graded yet</span>'}</div></div>`;
+  // what's next
+  const evs = upcoming(D,3);
+  h += `<div class="qs">${evs.length ? evs.map((e,i)=>`<div class="qev"><span style="color:${i?'var(--dim)':e.impact==='High'?'var(--amb)':'var(--text)'}">${i?'○':'●'} ${hm(new Date(e.ts))} ${esc(e.title).toLowerCase()}</span><span class="qk">in ${dur(new Date(e.ts)-Date.now())}${!i&&(b.dampened||[]).length?' · damp':''}</span></div>`).join('')
+      : '<div class="qev"><span class="qk">no major US releases ahead</span></div>'}</div>`;
+  h += `<div class="qs"><div class="qk" style="margin-bottom:6px">${modeLine(D)}</div>${stampsHTML(D)}</div></div>`;
+  return h;
+}
 function pageToday(D){
   const m = D.markets[SYM], b = m.bias;
   const stale = SESSION==='ny' && VIEW!=='now' && D.date!==todayET();
   const window_ = SESSION==='overnight' ? `Asia and London, ${dayOf(D.date)} 6 PM to 9:30 AM ET`
     : VIEW==='now' && D.window ? `${esc(D.window.name)} session, until ${tET(new Date(D.window.end))}` : `NY open, ${dayOf(D.date)}, 9:30 to 10:00 ET`;
-  let h = bento(D, m, b, stale, window_);
+  let h = qToday(D, m, b, stale);
   const S = {};
   if(D.divergence) S.divergence = `<section><h2>NQ vs ES <span class="pill" style="color:var(--amber)">Split</span></h2>
       <div class="card pad" style="font-size:14.5px;line-height:1.55;color:var(--sub)">${esc(D.divergence)}</div></section>`;
