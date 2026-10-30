@@ -9,7 +9,7 @@
  },
  "mode": "point-in-time",
  "as_of": "2026-10-29T18:00:00-04:00",
- "generated": "2026-10-30T01:19:34-04:00",
+ "generated": "2026-10-30T02:17:01-04:00",
  "events": [
   {
    "time": "8:30 AM",
@@ -259,7 +259,7 @@
      "when": "after close",
      "date": "2026-10-29",
      "eps_est": 2.01,
-     "eps": null,
+     "eps": 1.95,
      "surprise": null
     }
    ],
@@ -431,7 +431,7 @@
      "score": 0,
      "raw": 0,
      "weight": 0.4,
-     "text": "Implied vol \u2248 +0.09 pts pre-market, worth about $2.36B of dealer selling.",
+     "text": "Implied vol \u2248 +0.09 pts pre-market, worth about $2.34B of dealer selling.",
      "group": "Dealer positioning"
     }
    ],
@@ -478,9 +478,9 @@
    "dealer": {
     "net_gex_bn": -84.811,
     "call_put_gamma": 0.63,
-    "dealer_delta_bn": 2551.16,
+    "dealer_delta_bn": 2600.86,
     "charm_bn": -0.0,
-    "vanna_bn_per_pt": 26.557,
+    "vanna_bn_per_pt": 26.296,
     "chains": [
      "SPX",
      "SPY"
@@ -550,7 +550,7 @@
     },
     {
      "px": 7475.31,
-     "gex": -122534297506.76213
+     "gex": -122534297506.76215
     },
     {
      "px": 7490.72,
@@ -558,7 +558,7 @@
     },
     {
      "px": 7506.13,
-     "gex": -123488364173.025
+     "gex": -123488364173.02502
     },
     {
      "px": 7521.54,
@@ -598,7 +598,7 @@
     },
     {
      "px": 7660.26,
-     "gex": -104178078154.70117
+     "gex": -104178078154.70114
     },
     {
      "px": 7675.67,
@@ -634,11 +634,11 @@
     },
     {
      "px": 7798.98,
-     "gex": -9572285991.482683
+     "gex": -9572285991.482685
     },
     {
      "px": 7814.39,
-     "gex": 6493881106.890501
+     "gex": 6493881106.890503
     },
     {
      "px": 7829.8,
@@ -690,7 +690,7 @@
     },
     {
      "px": 8014.76,
-     "gex": 122263440390.41055
+     "gex": 122263440390.41057
     },
     {
      "px": 8030.17,
@@ -739,7 +739,7 @@
      "when": "after close",
      "date": "2026-10-29",
      "eps_est": 2.01,
-     "eps": null,
+     "eps": 1.95,
      "surprise": null
     },
     {
@@ -762,43 +762,43 @@
  "sources": {
   "Yahoo prices": {
    "ok": true,
-   "fetched": "2026-10-30T01:20:02-04:00",
+   "fetched": "2026-10-30T02:17:31-04:00",
    "data_time": "2026-10-29T18:00:00-04:00",
    "detail": "16 of 16 tickers \u00b7 1m bars, cut at 6:00 PM ET"
   },
   "Economic calendar": {
    "ok": true,
-   "fetched": "2026-10-30T01:20:02-04:00",
+   "fetched": "2026-10-30T02:17:31-04:00",
    "data_time": null,
    "detail": ""
   },
   "Earnings Oct 29": {
    "ok": true,
-   "fetched": "2026-10-30T01:20:04-04:00",
+   "fetched": "2026-10-30T02:17:33-04:00",
    "data_time": null,
    "detail": "303 companies"
   },
   "Earnings Oct 30": {
    "ok": true,
-   "fetched": "2026-10-30T01:20:05-04:00",
+   "fetched": "2026-10-30T02:17:34-04:00",
    "data_time": null,
    "detail": "63 companies"
   },
   "CBOE NDX options": {
    "ok": true,
-   "fetched": "2026-10-30T01:20:06-04:00",
-   "data_time": "2026-10-30T01:08:10-04:00",
+   "fetched": "2026-10-30T02:17:35-04:00",
+   "data_time": "2026-10-30T02:17:04-04:00",
    "detail": "16,512 contracts"
   },
   "CBOE SPX options": {
    "ok": true,
-   "fetched": "2026-10-30T01:20:07-04:00",
+   "fetched": "2026-10-30T02:17:36-04:00",
    "data_time": "2026-10-29T23:35:16-04:00",
    "detail": "28,872 contracts"
   },
   "CBOE SPY options": {
    "ok": true,
-   "fetched": "2026-10-30T01:20:08-04:00",
+   "fetched": "2026-10-30T02:17:37-04:00",
    "data_time": "2026-10-29T20:13:44-04:00",
    "detail": "12,170 contracts"
   }
